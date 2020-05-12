@@ -347,13 +347,13 @@ skopeo inspect --tls-verify=false --creds=$OREG_ID:$OREG_PWD docker://$OREG/open
 > :information_source: Run this on ESX
 
 ```
-vim-cmd vmsvc/getallvms | awk '$2 ~ "[mw][1-5]|lb" && $1 !~ "Vmid" {print "vim-cmd vmsvc/power.shutdown " $1}' | sh
+vim-cmd vmsvc/getallvms | awk '$2 ~ "[mw][1-5]|lb|cli" && $1 !~ "Vmid" {print "vim-cmd vmsvc/power.shutdown " $1}' | sh
 sleep 10
-vim-cmd vmsvc/getallvms | awk '$2 ~ "[mw][1-5]|lb" && $1 !~ "Vmid" {print "vim-cmd vmsvc/power.getstate " $1}' | sh
+vim-cmd vmsvc/getallvms | awk '$2 ~ "[mw][1-5]|lb|cli" && $1 !~ "Vmid" {print "vim-cmd vmsvc/power.getstate " $1}' | sh
 
 SNAPNAME="BeforeInstallingOCP"
-vim-cmd vmsvc/getallvms | awk '$2 ~ "[mw][1-5]|lb" && $1 !~ "Vmid" {print "vim-cmd vmsvc/snapshot.create " $1 " '$SNAPNAME' "}' | sh
-vim-cmd vmsvc/getallvms | awk '$2 ~ "[mw][1-5]|lb" && $1 !~ "Vmid" {print "vim-cmd vmsvc/power.on " $1}' | sh
+vim-cmd vmsvc/getallvms | awk '$2 ~ "[mw][1-5]|lb|cli" && $1 !~ "Vmid" {print "vim-cmd vmsvc/snapshot.create " $1 " '$SNAPNAME' "}' | sh
+vim-cmd vmsvc/getallvms | awk '$2 ~ "[mw][1-5]|lb|cli" && $1 !~ "Vmid" {print "vim-cmd vmsvc/power.on " $1}' | sh
 ```
 :checkered_flag::checkered_flag::checkered_flag:
 
@@ -410,12 +410,12 @@ ansible-playbook playbooks/deploy_cluster.yml
 > :information_source: Run this on ESX
 
 ```
-vim-cmd vmsvc/getallvms | awk '$2 ~ "[mw][1-5]" && $1 !~ "Vmid" {print "vim-cmd vmsvc/power.shutdown " $1}' | sh
+vim-cmd vmsvc/getallvms | awk '$2 ~ "[mw][1-5]|lb|cli" && $1 !~ "Vmid" {print "vim-cmd vmsvc/power.shutdown " $1}' | sh
 
-vim-cmd vmsvc/getallvms | awk '$2 ~ "[mw][1-5]|cli" && $1 !~ "Vmid" {print "vim-cmd vmsvc/power.getstate " $1}' | sh
+vim-cmd vmsvc/getallvms | awk '$2 ~ "[mw][1-5]|lb|cli" && $1 !~ "Vmid" {print "vim-cmd vmsvc/power.getstate " $1}' | sh
 
 SNAPNAME="BeforeInstallingOCP"
-for vmid in $(vim-cmd vmsvc/getallvms | awk '$2 ~ "[mw][1-5]|lb" {print $1}'); do vim-cmd vmsvc/snapshot.get $vmid | grep -A 1 'Snapshot Name\s\{1,\}: '$SNAPNAME | awk -F' : ' 'NR>1 {print "vim-cmd vmsvc/snapshot.revert "'$vmid'" " $2 " suppressPowerOn"}' | sh; done
+for vmid in $(vim-cmd vmsvc/getallvms | awk '$2 ~ "[mw][1-5]|lb|cli" {print $1}'); do vim-cmd vmsvc/snapshot.get $vmid | grep -A 1 'Snapshot Name\s\{1,\}: '$SNAPNAME | awk -F' : ' 'NR>1 {print "vim-cmd vmsvc/snapshot.revert "'$vmid'" " $2 " suppressPowerOn"}' | sh; done
 ```
 
 <br>
@@ -468,13 +468,13 @@ Proceed as describe [here](https://docs.openshift.com/container-platform/3.11/da
 > :information_source: Run this on ESX
 
 ```
-vim-cmd vmsvc/getallvms | awk '$2 ~ "[mw][1-5]|lb" && $1 !~ "Vmid" {print "vim-cmd vmsvc/power.shutdown " $1}' | sh
+vim-cmd vmsvc/getallvms | awk '$2 ~ "[mw][1-5]|lb|cli" && $1 !~ "Vmid" {print "vim-cmd vmsvc/power.shutdown " $1}' | sh
 sleep 10
-vim-cmd vmsvc/getallvms | awk '$2 ~ "[mw][1-5]|lb" && $1 !~ "Vmid" {print "vim-cmd vmsvc/power.getstate " $1}' | sh
+vim-cmd vmsvc/getallvms | awk '$2 ~ "[mw][1-5]|lb|cli" && $1 !~ "Vmid" {print "vim-cmd vmsvc/power.getstate " $1}' | sh
 
 SNAPNAME="OCPInstalled"
-vim-cmd vmsvc/getallvms | awk '$2 ~ "[mw][1-5]|lb" && $1 !~ "Vmid" {print "vim-cmd vmsvc/snapshot.create " $1 " '$SNAPNAME' "}' | sh
-vim-cmd vmsvc/getallvms | awk '$2 ~ "[mw][1-5]|lb" && $1 !~ "Vmid" {print "vim-cmd vmsvc/power.on " $1}' | sh
+vim-cmd vmsvc/getallvms | awk '$2 ~ "[mw][1-5]|lb|cli" && $1 !~ "Vmid" {print "vim-cmd vmsvc/snapshot.create " $1 " '$SNAPNAME' "}' | sh
+vim-cmd vmsvc/getallvms | awk '$2 ~ "[mw][1-5]|lb|cli" && $1 !~ "Vmid" {print "vim-cmd vmsvc/power.on " $1}' | sh
 ```
 
 :checkered_flag::checkered_flag::checkered_flag:
