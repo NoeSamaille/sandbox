@@ -188,9 +188,19 @@ wget -c $WEB_SERVER_URL/extendRootLV.sh
 chmod +x extendRootLV.sh
 ```
 
-#### Create and copy ESX public key to cluster nodes
+#### Create and copy ESXi public key to cluster nodes
 
-> :information_source: Run this on ESX
+> :warning: To be able to ssh from ESXi you need to enable sshClient rule outgoing port
+
+> :information_source: Run this on ESXi
+
+
+```
+esxcli network firewall ruleset set -e true -r sshClient
+```
+
+
+> :information_source: Run this on ESXi
 
 ```
 [ ! -d "/.ssh" ] && mkdir /.ssh 
@@ -355,13 +365,13 @@ skopeo inspect --tls-verify=false --creds=$OREG_ID:$OREG_PWD docker://$OREG/open
 > :information_source: Run this on ESX
 
 ```
-vim-cmd vmsvc/getallvms | awk '$2 ~ "[mw][1-5]|lb|cli" && $1 !~ "Vmid" {print "vim-cmd vmsvc/power.shutdown " $1}' | sh
+vim-cmd vmsvc/getallvms | awk '$2 ~ "[mw][1-5]|lb|cli|nfs|ctl" && $1 !~ "Vmid" {print "vim-cmd vmsvc/power.shutdown " $1}' | sh
 sleep 10
-vim-cmd vmsvc/getallvms | awk '$2 ~ "[mw][1-5]|lb|cli" && $1 !~ "Vmid" {print "vim-cmd vmsvc/power.getstate " $1}' | sh
+vim-cmd vmsvc/getallvms | awk '$2 ~ "[mw][1-5]|lb|cli|nfs|ctl" && $1 !~ "Vmid" {print "vim-cmd vmsvc/power.getstate " $1}' | sh
 
 SNAPNAME="BeforeInstallingOCP"
-vim-cmd vmsvc/getallvms | awk '$2 ~ "[mw][1-5]|lb|cli" && $1 !~ "Vmid" {print "vim-cmd vmsvc/snapshot.create " $1 " '$SNAPNAME' "}' | sh
-vim-cmd vmsvc/getallvms | awk '$2 ~ "[mw][1-5]|lb|cli" && $1 !~ "Vmid" {print "vim-cmd vmsvc/power.on " $1}' | sh
+vim-cmd vmsvc/getallvms | awk '$2 ~ "[mw][1-5]|lb|cli|nfs|ctl" && $1 !~ "Vmid" {print "vim-cmd vmsvc/snapshot.create " $1 " '$SNAPNAME' "}' | sh
+vim-cmd vmsvc/getallvms | awk '$2 ~ "[mw][1-5]|lb|cli|nfs|ctl" && $1 !~ "Vmid" {print "vim-cmd vmsvc/power.on " $1}' | sh
 ```
 :checkered_flag::checkered_flag::checkered_flag:
 
