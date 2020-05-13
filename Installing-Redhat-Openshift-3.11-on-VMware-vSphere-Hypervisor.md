@@ -312,9 +312,12 @@ grep -e 'ocp[0-9]\{1,\}' /etc/ansible/hosts
 > :information_source: Run this on First Master
 
 ```
-OREG_ID="iicparis"
-OREG_PWD="Spc5pc\\\$pc"
+OREG_ID=""
+OREG_PWD=""
+```
 
+
+```
 sed -i 's/\(oreg_auth_user=\).*$/\1'$OREG_ID'/' /etc/ansible/hosts
 sed -i 's/\(oreg_auth_password=\).*$/\1'$OREG_PWD'/' /etc/ansible/hosts
 ```
