@@ -193,6 +193,7 @@ chmod +x extendRootLV.sh
 > :information_source: Run this on ESX
 
 ```
+[ ! -d "/.ssh" ] && mkdir /.ssh
 /usr/lib/vmware/openssh/bin/ssh-keygen -t rsa -b 4096 -N "" -f /.ssh/id_rsa
 
 for ip in $(awk -F ";" '{print $3}' $VM_DYN_ADDR); do cat /.ssh/id_rsa.pub | ssh -o StrictHostKeyChecking=no root@$ip 'cat >> /root/.ssh/authorized_keys'; done
