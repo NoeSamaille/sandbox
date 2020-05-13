@@ -193,7 +193,7 @@ chmod +x extendRootLV.sh
 > :information_source: Run this on ESX
 
 ```
-[ ! -d "/.ssh" ] && mkdir /.ssh
+[ ! -d "/.ssh" ] && mkdir /.ssh 
 /usr/lib/vmware/openssh/bin/ssh-keygen -t rsa -b 4096 -N "" -f /.ssh/id_rsa
 
 for ip in $(awk -F ";" '{print $3}' $VM_DYN_ADDR); do cat /.ssh/id_rsa.pub | ssh -o StrictHostKeyChecking=no root@$ip '[ ! -d "/root/.ssh" ] && mkdir /root/.ssh && cat >> /root/.ssh/authorized_keys'; done
@@ -232,7 +232,7 @@ for ip in $(awk -F ";" '{print $3}' $VM_DYN_ADDR); do ssh -o StrictHostKeyChecki
 > :information_source: Run this on ESX
 
 ```
-watch -n 5 ./getVMAddress.sh
+watch -n 5 "./getVMAddress.sh"
 ```
 
 > :bulb: Leave watch with **Ctrl + c** 
@@ -247,6 +247,10 @@ watch -n 5 ./getVMAddress.sh
 
 ```
 OCP="ocp1"
+```
+
+
+```
 cat >> ~/.bashrc << EOF
 
 export OCP=$OCP
@@ -303,13 +307,13 @@ grep -e 'ocp[0-9]\{1,\}' /etc/ansible/hosts
 
 > :warning: Escape **'$'** character in your password if necessary.
 
-> e.g. OREG_PWD="mypa\\\\\\$sword"
+> e.g. OREG_PWD="mypa\\\$sword"
 
 > :information_source: Run this on First Master
 
 ```
-OREG_ID="eagparis"
-OREG_PWD=""
+OREG_ID="iicparis"
+OREG_PWD="Spc5pc\\\$pc"
 
 sed -i 's/\(oreg_auth_user=\).*$/\1'$OREG_ID'/' /etc/ansible/hosts
 sed -i 's/\(oreg_auth_password=\).*$/\1'$OREG_PWD'/' /etc/ansible/hosts
