@@ -151,8 +151,8 @@ chmod +x createOCP3Cluster.sh
 > :information_source: Run this on ESX
 
 ```
-vim-cmd vmsvc/getallvms | awk '$2 ~ "[wm][1-5]|lb" && $1 !~ "Vmid" {print "vim-cmd vmsvc/power.on " $1}' | sh
-vim-cmd vmsvc/getallvms | awk '$2 ~ "[wm][1-5]|lb" && $1 !~ "Vmid" {print "vim-cmd vmsvc/power.getstate " $1}' | sh
+vim-cmd vmsvc/getallvms | awk '$2 ~ "[wm][1-5]|lb|cli" && $1 !~ "Vmid" {print "vim-cmd vmsvc/power.on " $1}' | sh
+vim-cmd vmsvc/getallvms | awk '$2 ~ "[wm][1-5]|lb|cli" && $1 !~ "Vmid" {print "vim-cmd vmsvc/power.getstate " $1}' | sh
 ```
 
 ### Get cluster nodes dhcp ip address

@@ -12,6 +12,7 @@ OCP=""
 [ -z "$OCP" ] && { echo -e "$RED ERROR: OCP is empty. Exiting... $NC"; exit 1; }
 
 DATASTORE="/vmfs/volumes/V7000F-Volume-10TB"
+DATASTORE="/vmfs/volumes/datastore1"
 VMS_PATH="$DATASTORE/$OCP"
 
 [ ! -d "$DATASTORE/$OCP" ] && { echo -e "$RED ERROR: $DATASTORE/$OCP directory not found. Exiting... $NC"; exit 1; }
