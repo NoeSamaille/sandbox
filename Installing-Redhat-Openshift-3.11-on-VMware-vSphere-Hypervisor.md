@@ -151,8 +151,8 @@ chmod +x createOCP3Cluster.sh
 > :information_source: Run this on ESX
 
 ```
-vim-cmd vmsvc/getallvms | awk '$2 ~ "[wm][1-5]|lb|cli" && $1 !~ "Vmid" {print "vim-cmd vmsvc/power.on " $1}' | sh
-vim-cmd vmsvc/getallvms | awk '$2 ~ "[wm][1-5]|lb|cli" && $1 !~ "Vmid" {print "vim-cmd vmsvc/power.getstate " $1}' | sh
+vim-cmd vmsvc/getallvms | awk '$2 ~ "[wm][1-5]|lb|cli|nfs|ctl" && $1 !~ "Vmid" {print "vim-cmd vmsvc/power.on " $1}' | sh
+vim-cmd vmsvc/getallvms | awk '$2 ~ "[wm][1-5]|lb|cli|nfs|ctl" && $1 !~ "Vmid" {print "vim-cmd vmsvc/power.getstate " $1}' | sh
 ```
 
 ### Get cluster nodes dhcp ip address
@@ -167,7 +167,7 @@ vim-cmd vmsvc/getallvms | awk '$2 ~ "[wm][1-5]|lb|cli" && $1 !~ "Vmid" {print "v
 VM_DYN_ADDR="dyn-addresses"
 wget -c $WEB_SERVER_URL/getVMAddress.sh
 chmod +x getVMAddress.sh
-watch -n 5 ./getVMAddress.sh | tee $VM_DYN_ADDR
+watch -n 5 "./getVMAddress.sh | tee $VM_DYN_ADDR"
 ```
 
 > :bulb: Leave watch with **Ctrl + c**

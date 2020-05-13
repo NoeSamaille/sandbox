@@ -9,5 +9,7 @@ for LINE in $(vim-cmd vmsvc/getallvms | awk '{if (NR > 1) print $1 ";" $2}'); do
 	case $VMNAME in w*) echo $VMID";"$VMNAME";"$VMIP;; esac
 	case $VMNAME in lb*) echo $VMID";"$VMNAME";"$VMIP;; esac
 	case $VMNAME in bs*) echo $VMID";"$VMNAME";"$VMIP;; esac
+	case $VMNAME in rhel*) echo $VMID";"$VMNAME";"$VMIP;; esac
+	case $VMNAME in cli*) echo $VMID";"$VMNAME";"$VMIP;; esac
 done
 
