@@ -1,0 +1,6 @@
+{
+"input":{
+"text": "blablabla."
+},
+"context": {"conversation_id":"55d27289-720c-47c9-b75c-541a173a4670","system":{"initialized":true,"dialog_stack":[{"dialog_node":"root"}],"dialog_turn_counter":1,"dialog_request_counter":1,"_node_output_map":{"Tout le reste":{"0":[0]}},"branch_exited":true,"branch_exited_reason":"completed"}}
+}

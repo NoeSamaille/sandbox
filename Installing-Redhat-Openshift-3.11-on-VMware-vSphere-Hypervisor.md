@@ -292,7 +292,7 @@ for node in m1 w1 w2 w3; do ssh -o StrictHostKeyChecking=no root@$node-$OCP 'hos
 > :information_source: Run this on First Master
 
 ```
-WEB_SERVER_URL="http://web"
+WEB_SERVER_URL="http://web/soft"
 wget -c $WEB_SERVER_URL/hosts-cluster
 
 sed 's/\([\.-]\)ocp./\1'$OCP'/g' hosts-cluster > /etc/ansible/hosts
@@ -320,7 +320,7 @@ grep -e 'ocp[0-9]\{1,\}' /etc/ansible/hosts
 > :information_source: Run this on First Master
 
 ```
-OREG_ID=""
+OREG_ID="iicparis"
 OREG_PWD=""
 ```
 
@@ -431,7 +431,7 @@ vim-cmd vmsvc/getallvms | awk '$2 ~ "[mw][1-5]|lb|cli|nfs|ctl" && $1 !~ "Vmid" {
 vim-cmd vmsvc/getallvms | awk '$2 ~ "[mw][1-5]|lb|cli|nfs|ctl" && $1 !~ "Vmid" {print "vim-cmd vmsvc/power.getstate " $1}' | sh
 
 SNAPNAME="BeforeInstallingOCP"
-for vmid in $(vim-cmd vmsvc/getallvms | awk '$2 ~ "[mw][1-5]||lb|cli|nfs|ctl" {print $1}'); do vim-cmd vmsvc/snapshot.get $vmid | grep -A 1 'Snapshot Name\s\{1,\}: '$SNAPNAME | awk -F' : ' 'NR>1 {print "vim-cmd vmsvc/snapshot.revert "'$vmid'" " $2 " suppressPowerOn"}' | sh; done
+for vmid in $(vim-cmd vmsvc/getallvms | awk 'NR>1 && $2 ~ "[mw][1-5]||lb|cli|nfs|ctl" {print $1}'); do vim-cmd vmsvc/snapshot.get $vmid | grep -A 1 'Snapshot Name\s\{1,\}: '$SNAPNAME | awk -F' : ' 'NR>1 {print "vim-cmd vmsvc/snapshot.revert "'$vmid'" " $2 " suppressPowerOn"}' | sh; done
 ```
 
 <br>
