@@ -1,51 +1,46 @@
-# Installing Redhat Openshift 4.3 on Bare Metal
+# Installing Redhat Openshift 3.11 on VMware vSphere Hypervisor
 
 
 ## Redhat requirements
 
-Be a [Redhat partner](https://partnercenter.redhat.com/Dashboard_page).
+Be a [Redhat partner](https://partnercenter.redhat.com/Dashboard_page) and ask for [NEW NFR](https://partnercenter.redhat.com/NFR_Redirect) to get access to Redhat Openshift packages.
 
+:warning: NFR request could take several days to be validate.
 
 
 ## Hardware requirements
 
-One Lenovo **X3550M5** or similar to host **5** virtual machines (bootstrap will be removed after cluster install):
+One Lenovo **X3550M5** or similar to host **4** virtual machines:
 
 | name                        | role                  | vcpus  | ram (GB) | storage (GB) | ethernet (10GB) |
 | --------------------------- | --------------------- | ------ | -------- | ------------ | --------------- |
-| cli-ocp1.iicparis.fr.ibm.com | load balancer + installer | 4      | 16       | 250          | 1               |
-| m1-ocp1.iicparis.fr.ibm.com | master + etcd | 4      | 16       | 250          | 1               |
+| m1-ocp1.iicparis.fr.ibm.com | master + infra + etcd | 8      | 16       | 250          | 1               |
 | w1-ocp1.iicparis.fr.ibm.com | worker                | 16     | 64       | 250          | 1               |
 | w2-ocp1.iicparis.fr.ibm.com | worker                | 16     | 64       | 250          | 1               |
 | w3-ocp1.iicparis.fr.ibm.com | worker                | 16     | 64       | 250          | 1               |
-| bs-ocp1.iicparis.fr.ibm.com | bootstrap (will be removed after cluster install) | 4     | 16       | 120          | 1               |
-| **TOTAL**                   |                       | **56** | **224** | **1250**   | **5**          |
+| **TOTAL**                   |                       | **56** | **196**  | **1000**     | **4**           |
 
 
 ## System requirements
 
 - One **VMware vSphere Hypervisor** [5.5](https://my.vmware.com/en/web/vmware/evalcenter?p=free-esxi5), [6.7](https://my.vmware.com/en/web/vmware/evalcenter?p=free-esxi6) or [7.0](https://my.vmware.com/en/web/vmware/evalcenter?p=free-esxi7) with **ESXi Shell access enabled**. VCenter is NOT required.
 
-- Two **vmdk (centos.vmdk and centos-flat.vmdk)** file who host  a [Centos 7](https://docs.centos.org/en-US/centos/install-guide/Simple_Installation/) **booting in dhcp**, **running VMware Tools** with **localhost.localdomain** as hostname. 
+- Two **vmdk (rhel.vmdk and rhel-flat.vmdk)** file which host  a [minimal](https://access.redhat.com/documentation/en-us/red_hat_enterprise_linux/7/html/installation_guide/chap-simple-install#sect-simple-install) and  [prepared](https://docs.openshift.com/container-platform/3.11/install/host_preparation.html) RHEL7 **booting in dhcp**, **running VMware Tools** with **localhost.localdomain** as hostname. 
 
 - One **DNS server**.
+
 - One **DHCP server**.
+
 - One **WEB server** where following files are available in **read mode**:
 
-  - [pull-secret.txt](https://cloud.redhat.com/openshift/install/pull-secret)
-  - [OpenShift installer](https://mirror.openshift.com/pub/openshift-v4/clients/ocp/latest/openshift-install-linux.tar.gz)
-  - [Command line interface](https://mirror.openshift.com/pub/openshift-v4/clients/ocp/latest/openshift-client-linux.tar.gz)
-  - [Red Hat Enterprise Linux CoreOS (RHCOS)](https://mirror.openshift.com/pub/openshift-v4/dependencies/rhcos/latest/latest/)
-  - [install-config.yaml](scripts/install-config.yaml)
-  - centos.vmdk
-  - centos-flat.vmdk
+  - rhel.vmdk
+  - rhel-flat.vmdk
   - [rhel.vmx](scripts/rhel.vmx)
-  - [rhcos.vmx](scripts/rhcos.vmx)
-  - [createCli.sh](scripts/createCli.sh)
-  - [createOCP4Cluster.sh](scripts/createOCP3Cluster.sh)
+  - [createOCP3Cluster.sh](scripts/createOCP3Cluster.sh)
   - [setHostAndIP.sh](scripts/setHostAndIP.sh)
   - [extendRootLV.sh](scripts/extendRootLV.sh)
   - [getVMAddress.sh](scripts/getVMAddress.sh)
+  - [hosts-cluster](scripts/hosts-cluster)
 
 
 :checkered_flag::checkered_flag::checkered_flag:
@@ -55,34 +50,26 @@ One Lenovo **X3550M5** or similar to host **5** virtual machines (bootstrap will
 > :information_source: Run this on DNS
 
 ```
-DOMAIN=$(cat /etc/resolv.conf | awk '$1 ~ "search" {print $2}') && echo $DOMAINexport IP_HEAD="172.16"
-OCP=ocp1
-CLI_IP=$IP_HEAD.187.10
-M1_IP=$IP_HEAD.187.11
-W1_IP=$IP_HEAD.187.14
-W2_IP=$IP_HEAD.187.15
-W3_IP=$IP_HEAD.187.16
-MZONE=/var/lib/bind/$DOMAIN.hosts
-RZONE=/var/lib/bind/$IP_HEAD.rev
+export DOMAIN="iicparis.fr.ibm.com"
+export IP_HEAD="172.16"
+export OCP=ocp1
+export M1_IP=$IP_HEAD.187.11
+export W1_IP=$IP_HEAD.187.14
+export W2_IP=$IP_HEAD.187.15
+export W3_IP=$IP_HEAD.187.16
 ```
 ### Add records to master zone
 
 > :information_source: Run this on DNS
 
 ```
-cat >> $MZONE << EOF
-cli-$OCP.$DOMAIN.   IN      A       $CLI_IP
+cat >> /var/lib/bind/$DOMAIN.hosts << EOF
 m1-$OCP.$DOMAIN.   IN      A       $M1_IP
 w1-$OCP.$DOMAIN.   IN      A       $W1_IP
 w2-$OCP.$DOMAIN.   IN      A       $W2_IP
 w3-$OCP.$DOMAIN.   IN      A       $W3_IP
-bs-$OCP.$DOMAIN.   IN      A       $BS_IP
-api.$OCP.$DOMAIN.  IN      A       $CLI_IP
-api-int.$OCP.$DOMAIN.      IN      A       $CLI_IP
-apps.$OCP.$DOMAIN. IN      A       $CLI_IP
-etcd-0.$OCP.$DOMAIN.       IN      A       $M1_IP
+apps.$OCP.$DOMAIN. IN      A       $M1_IP
 *.apps.$OCP.$DOMAIN.       IN      CNAME   apps.$OCP.$DOMAIN.
-_etcd-server-ssl._tcp.$OCP.$DOMAIN.        86400   IN      SRV     0 10 2380 etcd-0.$OCP.$DOMAIN.
 EOF
 ```
 
@@ -91,13 +78,11 @@ EOF
 > :information_source: Run this on DNS
 
 ```
-cat >> RZONE << EOF
-$(echo $CLI_IP | awk -F. '{print $4 "." $3 "." $2 "." $1}').in-addr.arpa.    IN      PTR     cli-$OCP.$DOMAIN.
+cat >> /var/lib/bind/$IP_HEAD.rev << EOF
 $(echo $M1_IP | awk -F. '{print $4 "." $3 "." $2 "." $1}').in-addr.arpa.    IN      PTR     m1-$OCP.$DOMAIN.
 $(echo $W1_IP | awk -F. '{print $4 "." $3 "." $2 "." $1}').in-addr.arpa.    IN      PTR     w1-$OCP.$DOMAIN.
 $(echo $W2_IP | awk -F. '{print $4 "." $3 "." $2 "." $1}').in-addr.arpa.    IN      PTR     w2-$OCP.$DOMAIN.
 $(echo $W3_IP | awk -F. '{print $4 "." $3 "." $2 "." $1}').in-addr.arpa.    IN      PTR     w3-$OCP.$DOMAIN.
-$(echo $BS_IP | awk -F. '{print $4 "." $3 "." $2 "." $1}').in-addr.arpa.    IN      PTR     bs-$OCP.$DOMAIN.
 EOF
 ```
 
@@ -132,276 +117,7 @@ for host in m1 w1 w2 w3; do IP=$(dig @localhost +short $host-$OCP.$DOMAIN); echo
 ```
 dig @localhost +short *.apps.$OCP.iicparis.fr.ibm.com
 ```
-
-### Test service
-
-> :information_source: Run this on DNS
-
-```
-dig @localhost +short _etcd-server-ssl._tcp.$OCP.$DOMAIN SRV
-```
-
 :checkered_flag::checkered_flag::checkered_flag:
-
-
-## Create Cli
-
-### Download necessary stuff
-
-> :information_source: Run this on ESX
-
-```
-WEB_SERVER_URL="http://web"
-VMDK_PATH="/vmfs/volumes/datastore1/vmdk/"
-```
-
-```
-wget -c $WEB_SERVER_URL/vmdk/centos-gui-flat.vmdk -P $VMDK_PATH
-wget -c $WEB_SERVER_URL/vmdk/centos-gui.vmdk -P $VMDK_PATH
-wget -c $WEB_SERVER_URL/vmdk/rhel.vmx -P $VMDK_PATH
-wget -c $WEB_SERVER_URL/soft/createCli.sh
-```
-
-### Create Cli
-
->:warning: Set **OCP**, **DATASTORE**, **VMS_PATH**, **CENTOS_VMDK** and **VMX** variables accordingly in **createCli.sh** before proceeding.
-
-```
-chmod +x ./createCli.sh
-./createCli.sh nfs
-```
-
-### Start Cli
-
-```
-PATTERN="cli"
-vim-cmd vmsvc/getallvms | awk '$2 ~ "'$PATTERN'" && $1 !~ "Vmid" {print "vim-cmd vmsvc/power.on " $1}' | sh
-vim-cmd vmsvc/getallvms | awk '$2 ~ "'$PATTERN'" && $1 !~ "Vmid" {print "vim-cmd vmsvc/power.getstate " $1}' | sh
-```
-
-### Get cli dhcp address
-
-> :warning: Set **IP_HEAD** variables accordingly in **getVMAddress.sh** before proceeding.
-
-> :warning: Wait for cluster nodes to be up and display its dhcp address in the **3rd column**
-
-> :information_source: Run this on ESX
-
-```
-CLI_DYN_ADDR="cli-addresses"
-wget -c $WEB_SERVER_URL/soft/getVMAddress.sh
-chmod +x ./getVMAddress.sh
-watch -n 5 "./getVMAddress.sh | tee $CLI_DYN_ADDR"
-```
-
-> :bulb: Leave watch with **Ctrl + c**
-
-### Configure cli 
-
-#### Download necessary stuff
-
-> :information_source: Run this on ESX
-
-```
-WEB_SERVER_URL="http://web"
-
-wget -c $WEB_SERVER_URL/soft/setHostAndIP.sh 
-chmod +x setHostAndIP.sh
-wget -c $WEB_SERVER_URL/soft/extendRootLV.sh
-chmod +x extendRootLV.sh
-```
-
-#### Create and copy ESXi public key to cli
-
-> :warning: To be able to ssh from ESXi you need to enable sshClient rule outgoing port
-
-> :information_source: Run this on ESXi
-
-```
-esxcli network firewall ruleset set -e true -r sshClient
-```
-
-> :information_source: Run this on ESXi
-
-```
-[ ! -d "/.ssh" ] && mkdir /.ssh 
-/usr/lib/vmware/openssh/bin/ssh-keygen -t rsa -b 4096 -N "" -f /.ssh/id_rsa
-
-for ip in $(awk -F ";" '{print $3}' $CLI_DYN_ADDR); do cat /.ssh/id_rsa.pub | ssh -o StrictHostKeyChecking=no root@$ip '[ ! -d "/root/.ssh" ] && mkdir /root/.ssh && cat >> /root/.ssh/authorized_keys'; done
-```
-
-#### Extend cli Root logical volume
-
->:warning: Set **DISK**, **PART**, **VG** and **LV** variables accordingly in **extendRootLV.sh** before proceeding.
-
-> :information_source: Run this on ESX
-
-```
-for ip in $(awk -F ";" '{print $3}' $CLI_DYN_ADDR); do echo "copying extendRootLV.sh to" $ip "..."; scp -o StrictHostKeyChecking=no extendRootLV.sh root@$ip:/root; done
-
-for ip in $(awk -F ";" '{print $3}' $CLI_DYN_ADDR); do ssh -o StrictHostKeyChecking=no root@$ip 'hostname -f; /root/extendRootLV.sh'; done
-
-for ip in $(awk -F ";" '{print $3}' $CLI_DYN_ADDR); do ssh -o StrictHostKeyChecking=no root@$ip 'hostname -f; lvs'; done
-```
-
-#### Set cli static ip address and reboot
-
-> :information_source: Run this on ESX
-
-```
-for ip in $(awk -F ";" '{print $3}' $CLI_DYN_ADDR); do echo "copy to" $ip; scp -o StrictHostKeyChecking=no setHostAndIP.sh root@$ip:/root; done
-
-for LINE in $(awk -F ";" '{print $0}' $CLI_DYN_ADDR); do  HOSTNAME=$(echo $LINE | cut -d ";" -f2); IPADDR=$(echo $LINE | cut -d ";" -f3); echo $HOSTNAME; echo $IPADDR; ssh -o StrictHostKeyChecking=no root@$IPADDR '/root/setHostAndIP.sh '$HOSTNAME; done
-
-for ip in $(awk -F ";" '{print $3}' $CLI_DYN_ADDR); do ssh -o StrictHostKeyChecking=no root@$ip 'reboot'; done
-```
-
-#### Check cli static ip address
-
-> :warning: Wait for cluster nodes to be up and display it static address in the **3rd column**
-
-> :information_source: Run this on ESX
-
-```
-watch -n 5 "./getVMAddress.sh"
-```
-
-> :bulb: Leave watch with **Ctrl + c** 
-
-:checkered_flag::checkered_flag::checkered_flag:
-
-
-## Install load balancer
-
-### Set env variables
-
-> :information_source: Run this on cli
-
-```
-OCP="ocp1"
-```
-
-```
-cat >> ~/.bashrc << EOF
-
-export OCP=$OCP
-export SSHPASS=spcspc
-alias l='ls -Alhtr'
-
-EOF
-
-source ~/.bashrc
-```
-
-### Disable security
-
-> :information_source: Run this on cli
-
-```
-systemctl stop firewalld
-systemctl disable firewalld
-setenforce 0
-sed -i -e 's/^SELINUX=\w*/SELINUX=disabled/' /etc/selinux/config
-```
-
-### install load balancer
-
-> :information_source: Run this on cli
-
-```
-yum install haproxy -y
-```
-
-### Configure load balancer
-
-> :information_source: Run this on cli
-
-```
-DOMAIN=$(cat /etc/resolv.conf | awk '$1 ~ "^search" {print $2}')
-LB_CONF="/etc/haproxy/haproxy.cfg"
-
-sed '/^\s\{1,\}maxconn\s\{1,\}3000$/q' $LB_CONF
-
-cat >> $LB_CONF << EOF
-
-listen stats
-    bind :9000
-    mode http
-    stats enable
-    stats uri /
-
-frontend ingress-http
-    bind *:80
-    default_backend ingress-http
-    mode tcp
-    option tcplog
-
-backend ingress-http
-    balance source
-    mode tcp
-    server w1-$OCP $(dig +short w1-$OCP.$DOMAIN):80 check
-    server w2-$OCP $(dig +short w2-$OCP.$DOMAIN):80 check
-    server w3-$OCP $(dig +short w3-$OCP.$DOMAIN):80 check
-    # server w4-$OCP $(dig +short w4-$OCP.$DOMAIN):80 check
-    # server w5-$OCP $(dig +short w5-$OCP.$DOMAIN):80 check
-
-frontend ingress-https
-    bind *:443
-    default_backend ingress-https
-    mode tcp
-    option tcplog
-
-backend ingress-https
-    balance source
-    mode tcp
-    server w1-$OCP $(dig +short w1-$OCP.$DOMAIN):443 check
-    server w2-$OCP $(dig +short w2-$OCP.$DOMAIN):443 check
-    server w3-$OCP $(dig +short w3-$OCP.$DOMAIN):443 check
-    # server w4-$OCP $(dig +short w4-$OCP.$DOMAIN):443 check
-    # server w5-$OCP $(dig +short w5-$OCP.$DOMAIN):443 check
-
-frontend openshift-api-server
-    bind *:6443
-    default_backend openshift-api-server
-    mode tcp
-    option tcplog
-
-backend openshift-api-server
-    balance source
-    mode tcp
-    server m1-$OCP $(dig +short m1-$OCP.$DOMAIN):6443 check
-    # server m2-$OCP $(dig +short m2-$OCP.$DOMAIN):6443 check
-    # server m3-$OCP $(dig +short m3-$OCP.$DOMAIN):6443 check
-    server bs-$OCP $(dig +short bs-$OCP.$DOMAIN):6443 check
-
-frontend machine-config-server
-    bind *:22623
-    default_backend machine-config-server
-    mode tcp
-    option tcplog
-
-backend machine-config-server
-    balance source
-    mode tcp
-    server m1-$OCP $(dig +short m1-$OCP.$DOMAIN):22623 check
-    # server m2-$OCP $(dig +short m2-$OCP.$DOMAIN):22623 check
-    # server m3-$OCP $(dig +short m3-$OCP.$DOMAIN):22623 check
-    server bs-$OCP $(dig +short bs-$OCP.$DOMAIN):22623 check
-
-EOF
-```
-
-### Start  load balancer
-
-> :information_source: Run this on cli
-
-```
-systemctl restart haproxy
-systemctl enable haproxy
-RC=$(curl -I http://cli-$OCP:9000 | awk 'NR==1 {print $3}') && echo $RC
-```
-
-
 
 ## Create Cluster
 
@@ -439,7 +155,7 @@ vim-cmd vmsvc/getallvms | awk '$2 ~ "[wm][1-5]|lb|cli|nfs|ctl" && $1 !~ "Vmid" {
 vim-cmd vmsvc/getallvms | awk '$2 ~ "[wm][1-5]|lb|cli|nfs|ctl" && $1 !~ "Vmid" {print "vim-cmd vmsvc/power.getstate " $1}' | sh
 ```
 
-### Get cluster nodes dhcp address
+### Get cluster nodes dhcp ip address
 
 > :warning: **getVMAddress.sh** will need to be adapted if network is different from **172.16.160.0/19**
 
@@ -595,7 +311,7 @@ grep -e 'ocp[0-9]\{1,\}' /etc/ansible/hosts
 
 	ansible nodes -a 'ping -c 2 registry.redhat.io'
 
-### Set ansible hosts with your Redhat partner credential
+### Set ansible hosts with you Redhat partner credential
 
 > :warning: Escape **'$'** character in your password if necessary.
 
