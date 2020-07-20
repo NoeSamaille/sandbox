@@ -745,15 +745,15 @@ for vmid in $(vim-cmd vmsvc/getallvms | awk 'NR>1 && $2 ~ "'$PATTERN'" {print $1
 
 ## Post install OCP
 
-### Give admin user cluster-admin role
+### Create an admin userwith  cluster-admin role
 
-> :information_source: Run this on First Master
+> :information_source: Run this on Cli
 
 ```
-oc login -u system:admin
-
-oc create clusterrolebinding registry-controller --clusterrole=cluster-admin --user=admin
+export KUBECONFIG=~/ocpinst/auth/kubeconfig
+oc whoami
 ```
+>:bulb: Command above should return **system:admin**
 
 
 ### Check install
