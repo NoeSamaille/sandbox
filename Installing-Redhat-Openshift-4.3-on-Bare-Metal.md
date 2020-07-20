@@ -512,7 +512,7 @@ sshpass -e ssh -o StrictHostKeyChecking=no root@web "chmod -R +r /web/$OCP"
 
 ### Customize RHCOS iso
 
-#### Mount RHCOS iso in rw mode
+#### Prepare RHCOS iso customization
 
 > :information_source: Run this on Cli 
 
