@@ -40,6 +40,7 @@ One Lenovo **X3550M5** or similar to host **5** virtual machines (bootstrap will
   - centos.vmdk
   - centos-flat.vmdk
   - [rhel.vmx](scripts/rhel.vmx)
+  - [rhcos.vmx](scripts/rhcos.vmx)
   - [createCli.sh](scripts/createCli.sh)
   - [createOCP4Cluster.sh](scripts/createOCP3Cluster.sh)
   - [setHostAndIP.sh](scripts/setHostAndIP.sh)
@@ -268,6 +269,137 @@ watch -n 5 "./getVMAddress.sh"
 > :bulb: Leave watch with **Ctrl + c** 
 
 :checkered_flag::checkered_flag::checkered_flag:
+
+
+## Install load balancer
+
+### Set env variables
+
+> :information_source: Run this on cli
+
+```
+OCP="ocp1"
+```
+
+```
+cat >> ~/.bashrc << EOF
+
+export OCP=$OCP
+export SSHPASS=spcspc
+alias l='ls -Alhtr'
+
+EOF
+
+source ~/.bashrc
+```
+
+### Disable security
+
+> :information_source: Run this on cli
+
+```
+systemctl stop firewalld
+systemctl disable firewalld
+setenforce 0
+sed -i -e 's/^SELINUX=\w*/SELINUX=disabled/' /etc/selinux/config
+```
+
+### install load balancer
+
+> :information_source: Run this on cli
+
+```
+yum install haproxy -y
+```
+
+### Configure load balancer
+
+> :information_source: Run this on cli
+
+```
+DOMAIN=$(cat /etc/resolv.conf | awk '$1 ~ "^search" {print $2}')
+LB_CONF="/etc/haproxy/haproxy.cfg"
+
+sed '/^\s\{1,\}maxconn\s\{1,\}3000$/q' $LB_CONF
+
+cat >> $LB_CONF << EOF
+
+listen stats
+    bind :9000
+    mode http
+    stats enable
+    stats uri /
+
+frontend ingress-http
+    bind *:80
+    default_backend ingress-http
+    mode tcp
+    option tcplog
+
+backend ingress-http
+    balance source
+    mode tcp
+    server w1-$OCP $(dig +short w1-$OCP.$DOMAIN):80 check
+    server w2-$OCP $(dig +short w2-$OCP.$DOMAIN):80 check
+    server w3-$OCP $(dig +short w3-$OCP.$DOMAIN):80 check
+    # server w4-$OCP $(dig +short w4-$OCP.$DOMAIN):80 check
+    # server w5-$OCP $(dig +short w5-$OCP.$DOMAIN):80 check
+
+frontend ingress-https
+    bind *:443
+    default_backend ingress-https
+    mode tcp
+    option tcplog
+
+backend ingress-https
+    balance source
+    mode tcp
+    server w1-$OCP $(dig +short w1-$OCP.$DOMAIN):443 check
+    server w2-$OCP $(dig +short w2-$OCP.$DOMAIN):443 check
+    server w3-$OCP $(dig +short w3-$OCP.$DOMAIN):443 check
+    # server w4-$OCP $(dig +short w4-$OCP.$DOMAIN):443 check
+    # server w5-$OCP $(dig +short w5-$OCP.$DOMAIN):443 check
+
+frontend openshift-api-server
+    bind *:6443
+    default_backend openshift-api-server
+    mode tcp
+    option tcplog
+
+backend openshift-api-server
+    balance source
+    mode tcp
+    server m1-$OCP $(dig +short m1-$OCP.$DOMAIN):6443 check
+    # server m2-$OCP $(dig +short m2-$OCP.$DOMAIN):6443 check
+    # server m3-$OCP $(dig +short m3-$OCP.$DOMAIN):6443 check
+    server bs-$OCP $(dig +short bs-$OCP.$DOMAIN):6443 check
+
+frontend machine-config-server
+    bind *:22623
+    default_backend machine-config-server
+    mode tcp
+    option tcplog
+
+backend machine-config-server
+    balance source
+    mode tcp
+    server m1-$OCP $(dig +short m1-$OCP.$DOMAIN):22623 check
+    # server m2-$OCP $(dig +short m2-$OCP.$DOMAIN):22623 check
+    # server m3-$OCP $(dig +short m3-$OCP.$DOMAIN):22623 check
+    server bs-$OCP $(dig +short bs-$OCP.$DOMAIN):22623 check
+
+EOF
+```
+
+### Start  load balancer
+
+> :information_source: Run this on cli
+
+```
+systemctl restart haproxy
+systemctl enable haproxy
+RC=$(curl -I http://cli-$OCP:9000 | awk 'NR==1 {print $3}') && echo $RC
+```
 
 
 
