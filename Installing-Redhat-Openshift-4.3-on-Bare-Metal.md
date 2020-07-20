@@ -706,6 +706,9 @@ ssh-add ~/.ssh/id_rsa
 
 ```
 INST_DIR=~/ocpinst
+```
+
+```
 cd $INST_DIR
 ./openshift-install --dir=$PWD wait-for install-complete
 ```
@@ -750,7 +753,11 @@ for vmid in $(vim-cmd vmsvc/getallvms | awk 'NR>1 && $2 ~ "'$PATTERN'" {print $1
 > :information_source: Run this on Cli
 
 ```
-export KUBECONFIG=~/ocpinst/auth/kubeconfig
+INST_DIR=~/ocpinst
+```
+
+```
+export KUBECONFIG=$INST_DIR/auth/kubeconfig
 oc whoami
 ```
 >:bulb: Command above should return **system:admin**
