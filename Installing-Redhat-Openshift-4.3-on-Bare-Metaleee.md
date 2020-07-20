@@ -26,7 +26,7 @@ One Lenovo **X3550M5** or similar to host **5** virtual machines (bootstrap will
 
 - One **VMware vSphere Hypervisor** [5.5](https://my.vmware.com/en/web/vmware/evalcenter?p=free-esxi5), [6.7](https://my.vmware.com/en/web/vmware/evalcenter?p=free-esxi6) or [7.0](https://my.vmware.com/en/web/vmware/evalcenter?p=free-esxi7) with **ESXi Shell access enabled**. VCenter is NOT required.
 
-- Two **vmdk (centos.vmdk and centos-flat.vmdk)** file who host  a [Centos 7](https://docs.centos.org/en-US/centos/install-guide/Simple_Installation/) **booting in dhcp**, **running VMware Tools** with **localhost.localdomain** as hostname. 
+- Two **vmdk (centos.vmdk and centos-flat.vmdk)** file who host  a [minimal Centos 7](https://docs.centos.org/en-US/centos/install-guide/Simple_Installation/) **booting in dhcp**, **running VMware Tools** with **localhost.localdomain** as hostname. 
 
 - One **DNS server**.
 - One **DHCP server**.
@@ -46,7 +46,7 @@ One Lenovo **X3550M5** or similar to host **5** virtual machines (bootstrap will
   - [setHostAndIP.sh](scripts/setHostAndIP.sh)
   - [extendRootLV.sh](scripts/extendRootLV.sh)
   - [getVMAddress.sh](scripts/getVMAddress.sh)
-
+  - [buildIso.sh](scripts/buildIso.sh)
 
 :checkered_flag::checkered_flag::checkered_flag:
 
@@ -55,7 +55,8 @@ One Lenovo **X3550M5** or similar to host **5** virtual machines (bootstrap will
 > :information_source: Run this on DNS
 
 ```
-DOMAIN=$(cat /etc/resolv.conf | awk '$1 ~ "search" {print $2}') && echo $DOMAINexport IP_HEAD="172.16"
+DOMAIN=$(cat /etc/resolv.conf | awk '$1 ~ "search" {print $2}') && echo $DOMAIN
+IP_HEAD="172.16"
 OCP=ocp1
 CLI_IP=$IP_HEAD.187.10
 M1_IP=$IP_HEAD.187.11
@@ -400,6 +401,113 @@ systemctl restart haproxy
 systemctl enable haproxy
 RC=$(curl -I http://cli-$OCP:9000 | awk 'NR==1 {print $3}') && echo $RC
 ```
+:checkered_flag::checkered_flag::checkered_flag:
+
+
+## Prepare installing OCP 4.3
+
+### Set install-config.yaml
+
+> :information_source: Run this on cli 
+
+```
+DOMAIN=$(cat /etc/resolv.conf | awk '$1 ~ "^search" {print $2}') && echo $DOMAIN
+WEB_SERVER_URL="http://web"
+INST_DIR=~/ocpinst
+```
+
+```
+[ -d "$INST_DIR" ] && rm -rf $INST_DIR/* || mkdir $INST_DIR
+cd $INST_DIR
+
+wget -c $WEB_SERVER_URL/soft/install-config.yaml
+sed '10s/.*/  replicas: 1/'  install-config.yaml
+sed -i "s/\(^baseDomain: \).*$/\1$DOMAIN/" install-config.yaml
+sed -i -e '12s/^  name:.*$/  name: '$OCP'/' install-config.yaml
+
+wget WEB_SERVER_URL/soft/pull-secret.txt
+SECRET=$(cat iicparis-pull-secret.txt) && echo $SECRET
+sed -i "s/^pullSecret:.*$/pullSecret: '$SECRET'/"  install-config.yaml
+
+[ ! -f ~/.ssh/id_rsa ] && yes y | ssh-keygen -b 4096 -f ~/.ssh/id_rsa -N ""
+PUB_KEY=$(cat ~/.ssh/id_rsa.pub) && echo $PUB_KEY
+sed -i "s:^sshKey\:.*$:sshKey\: '$PUB_KEY':"  install-config.yaml 
+```
+
+### Backup install-config.yaml on web server
+
+> :information_source: Run this on cli 
+
+```
+WEB_SERVER="web"
+WEB_SERVER_PATH="/web/$OCP"
+```
+
+```
+[ -z $(command -v sshpass) ] && yum install -y sshpass || echo "sshpass already installed"
+
+sshpass -e ssh -o StrictHostKeyChecking=no root@$WEB_SERVER "rm -rf $WEB_SERVER_PATH"
+
+sshpass -e ssh -o StrictHostKeyChecking=no root@$WEB_SERVER "mkdir $WEB_SERVER_PATH"
+
+sshpass -e scp -o StrictHostKeyChecking=no install-config.yaml root@$WEB_SERVER:$WEB_SERVER_PATH
+
+sshpass -e ssh -o StrictHostKeyChecking=no root@$WEB_SERVER "chmod -R +r $WEB_SERVER_PATH"
+```
+
+### Install oc and kubectl commands
+
+> :information_source: Run this on cli 
+
+```
+WEB_SERVER_URL="http://web"
+```
+
+```
+cd $INST_DIR
+
+wget -c $WEB_SERVER_URL/soft/openshift-client-linux.tar.gz
+tar xvzf openshift-client-linux.tar.gz
+
+wget -c $WEB_SERVER_URL/soft/openshift-client-linux.tar.gz
+tar -xvzf oc-4.3.18-linux.tar.gz -C $(echo $PATH | awk -F":" 'NR==1 {print $1}')
+```
+
+### Create manifest and ignition files
+
+> :warning:You have to be on line to execute this step.
+
+> :information_source: Run this on cli 
+
+```
+cd $INST_DIR
+
+./openshift-install create manifests --dir=$PWD
+sed -i 's/mastersSchedulable: true/mastersSchedulable: false/' manifests/cluster-scheduler-02-config.yml
+
+./openshift-install create ignition-configs --dir=$PWD
+```
+
+### Make ignition files and RHCOS image available on web server
+
+> :information_source: Run this on cli 
+
+```
+WEB_SERVER="web"
+WEB_SERVER_PATH="/web/$OCP"
+RHCOS_IMG_PATH="/img/rhcos-4.4.3-x86_64-metal.x86_64.raw.gz"
+```
+
+```
+cd $INST_DIR
+
+sshpass -e scp -o StrictHostKeyChecking=no *.ign root@$WEB_SERVER:$WEB_SERVER_PATH
+
+sshpass -e ssh -o StrictHostKeyChecking=no root@$WEB_SERVER "ln -s $RHCOS_IMG_PATH $WEB_SERVER_PATH"
+
+sshpass -e ssh -o StrictHostKeyChecking=no root@web "chmod -R +r /web/$OCP"
+```
+
 
 
 
@@ -411,236 +519,24 @@ RC=$(curl -I http://cli-$OCP:9000 | awk 'NR==1 {print $3}') && echo $RC
 
 ```
 WEB_SERVER_URL="http://web"
+VMDK_PATH="/vmfs/volumes/datastore1/vmdk/"
+```
 
-wget -c $WEB_SERVER_URL/rhel-flat.vmdk
-wget -c $WEB_SERVER_URL/rhel.vmdk
-wget -c $WEB_SERVER_URL/rhel.vmx
-wget -c $WEB_SERVER_URL/createOCP3Cluster.sh
-chmod +x createOCP3Cluster.sh
+```
+wget -c WEB_SERVER_URL/soft/createOCP4Cluster.sh
+wget -c WEB_SERVER_URL/vmdk/rhcos.vmx -P VMDK_PATH
 ```
 
 ### Create cluster nodes
 
->:warning: Set **OCP**, **DATASTORE**, **VMS_PATH**, **VMDK** and **VMX** variables accordingly in **createOCP3Cluster.sh** before proceeding.
+>:warning: Set **OCP**, **DATASTORE**, **VMS_PATH**, **ISO_PATH** and **VMX** variables accordingly in **createOCP4Cluster.sh** before proceeding.
 
 > :information_source: Run this on ESX
 
 ```
-./createOCP3Cluster.sh masters
-./createOCP3Cluster.sh workers
+chmod +x ./createOCP4Cluster.sh
+./createOCP4Cluster.sh
 ```
-
-### Start cluster nodes
-
-> :information_source: Run this on ESX
-
-```
-vim-cmd vmsvc/getallvms | awk '$2 ~ "[wm][1-5]|lb|cli|nfs|ctl" && $1 !~ "Vmid" {print "vim-cmd vmsvc/power.on " $1}' | sh
-vim-cmd vmsvc/getallvms | awk '$2 ~ "[wm][1-5]|lb|cli|nfs|ctl" && $1 !~ "Vmid" {print "vim-cmd vmsvc/power.getstate " $1}' | sh
-```
-
-### Get cluster nodes dhcp address
-
-> :warning: **getVMAddress.sh** will need to be adapted if network is different from **172.16.160.0/19**
-
-> :warning: Wait for cluster nodes to be up and display its dhcp address in the **3rd column**
-
-> :information_source: Run this on ESX
-
-```
-VM_DYN_ADDR="dyn-addresses"
-wget -c $WEB_SERVER_URL/getVMAddress.sh
-chmod +x getVMAddress.sh
-watch -n 5 "./getVMAddress.sh | tee $VM_DYN_ADDR"
-```
-
-> :bulb: Leave watch with **Ctrl + c**
-
-
-### Configure cluster nodes
-
-#### Download necessary stuff
-
-> :information_source: Run this on ESX
-
-```
-WEB_SERVER_URL="http://web"
-
-wget -c $WEB_SERVER_URL/setHostAndIP.sh 
-chmod +x setHostAndIP.sh
-wget -c $WEB_SERVER_URL/extendRootLV.sh
-chmod +x extendRootLV.sh
-```
-
-#### Create and copy ESXi public key to cluster nodes
-
-> :warning: To be able to ssh from ESXi you need to enable sshClient rule outgoing port
-
-> :information_source: Run this on ESXi
-
-```
-esxcli network firewall ruleset set -e true -r sshClient
-```
-
-> :information_source: Run this on ESXi
-
-```
-[ ! -d "/.ssh" ] && mkdir /.ssh 
-/usr/lib/vmware/openssh/bin/ssh-keygen -t rsa -b 4096 -N "" -f /.ssh/id_rsa
-
-for ip in $(awk -F ";" '{print $3}' $VM_DYN_ADDR); do cat /.ssh/id_rsa.pub | ssh -o StrictHostKeyChecking=no root@$ip '[ ! -d "/root/.ssh" ] && mkdir /root/.ssh && cat >> /root/.ssh/authorized_keys'; done
-```
-
-#### Extend cluster nodes Root logical volume
-
->:warning: Set **DISK**, **PART**, **VG** and **LV** variables accordingly in **extendRootLV.sh** before proceeding.
-
-> :information_source: Run this on ESX
-
-```
-for ip in $(awk -F ";" '{print $3}' $VM_DYN_ADDR); do echo "copying extendRootLV.sh to" $ip "..."; scp -o StrictHostKeyChecking=no extendRootLV.sh root@$ip:/root; done
-
-for ip in $(awk -F ";" '{print $3}' $VM_DYN_ADDR); do ssh -o StrictHostKeyChecking=no root@$ip 'hostname -f; /root/extendRootLV.sh'; done
-
-for ip in $(awk -F ";" '{print $3}' $VM_DYN_ADDR); do ssh -o StrictHostKeyChecking=no root@$ip 'hostname -f; lvs'; done
-```
-
-#### Set cluster nodes static ip address and reboot
-
-> :information_source: Run this on ESX
-
-```
-for ip in $(awk -F ";" '{print $3}' $VM_DYN_ADDR); do echo "copy to" $ip; scp -o StrictHostKeyChecking=no setHostAndIP.sh root@$ip:/root; done
-
-for LINE in $(awk -F ";" '{print $0}' $VM_DYN_ADDR); do  HOSTNAME=$(echo $LINE | cut -d ";" -f2); IPADDR=$(echo $LINE | cut -d ";" -f3); echo $HOSTNAME; echo $IPADDR; ssh -o StrictHostKeyChecking=no root@$IPADDR '/root/setHostAndIP.sh '$HOSTNAME; done
-
-for ip in $(awk -F ";" '{print $3}' $VM_DYN_ADDR); do ssh -o StrictHostKeyChecking=no root@$ip 'reboot'; done
-```
-
-#### Check cluster nodes static ip address
-
-> :warning: Wait for cluster nodes to be up and display it static address in the **3rd column**
-
-> :information_source: Run this on ESX
-
-```
-watch -n 5 "./getVMAddress.sh"
-```
-
-> :bulb: Leave watch with **Ctrl + c** 
-
-:checkered_flag::checkered_flag::checkered_flag:
-
-## Prepare Install OCP
-
-### Create and copy First Master public key to cluster nodes
-
-> :information_source: Run this on First Master
-
-```
-OCP="ocp1"
-```
-
-
-```
-cat >> ~/.bashrc << EOF
-
-export OCP=$OCP
-export SSHPASS=spcspc
-alias l='ls -Alhtr'
-
-EOF
-
-source ~/.bashrc
-
-[ -z $(command -v sshpass) ] && yum install -y sshpass || echo sshpass installed
-
-yes y | ssh-keygen -b 4096 -f ~/.ssh/id_rsa -N ""
-
-for node in m1 w1 w2 w3; do sshpass -e ssh-copy-id -i /root/.ssh/id_rsa.pub -o StrictHostKeyChecking=no root@$node-$OCP; done
-
-```
-
-### Check cluster nodes are time synchronized and Redhat subscribed
-
-> :information_source: Run this on First Master
-
-```
-for node in m1 w1 w2 w3; do ssh -o StrictHostKeyChecking=no root@$node-$OCP 'hostname -f; date; timedatectl | grep "Local time"; yum repolist'; done
-```
-
-### Configure ansible inventory file
-
->:warning: **Read comments** in **hosts-cluster** and **adapt inventory file settings** before proceeding.
-
-> :information_source: Run this on First Master
-
-```
-WEB_SERVER_URL="http://web/soft"
-wget -c $WEB_SERVER_URL/hosts-cluster
-
-sed 's/\([\.-]\)ocp./\1'$OCP'/g' hosts-cluster > /etc/ansible/hosts
-grep -e 'ocp[0-9]\{1,\}' /etc/ansible/hosts
-```
-
-### Check ansible can speak with every cluster nodes
-
-> :information_source: Run this on First Master
-
-	ansible OSEv3 -m ping
-
-### Check every cluster nodes can speak to registry.redhat.io
-
-> :information_source: Run this on First Master
-
-	ansible nodes -a 'ping -c 2 registry.redhat.io'
-
-### Set ansible hosts with your Redhat partner credential
-
-> :warning: Escape **'$'** character in your password if necessary.
-
-> e.g. OREG_PWD="mypa\\\$sword"
-
-> :information_source: Run this on First Master
-
-```
-OREG_ID="iicparis"
-OREG_PWD=""
-```
-
-
-```
-sed -i 's/\(oreg_auth_user=\).*$/\1'$OREG_ID'/' /etc/ansible/hosts
-sed -i 's/\(oreg_auth_password=\).*$/\1'$OREG_PWD'/' /etc/ansible/hosts
-```
-
-#### Check ansible access to Redhat docker registry
-
-> :warning: docker login should return **Login Succeeded**
-
-> :information_source: Run this on First Master
-
-```
-OREG=$(docker info | awk -F ': https://' '$1 ~ "Registry" {print $2}' | awk -F '/' '{print $1}') && echo $OREG
-OREG_ID=$(cat /etc/ansible/hosts | awk -F'=' '$1 ~ "^oreg_auth_user" {print $2}') && echo $OREG_ID
-OREG_PWD=$(cat /etc/ansible/hosts | awk -F'=' '$1 ~ "^oreg_auth_password" {print $2}') && echo $OREG_PWD
-
-docker login -u $OREG_ID -p $OREG_PWD $OREG
-```
-> :bulb: A new entry should have been added to **~/.docker/config.json** 
-
-<br>
-
-> :warning: Skopeo should return informations about **ose-docker-registry** image
-
-> :information_source: Run this on First Master
-
-```
-[ ! -z $(command -v skopeo) ] && echo skopeo installed || yum install skopeo -y
-
-skopeo inspect --tls-verify=false --creds=$OREG_ID:$OREG_PWD docker://$OREG/openshift3/ose-docker-registry:latest
-```
-:checkered_flag::checkered_flag::checkered_flag:
 
 ## Make a BeforeInstallingOCP snapshot
 
