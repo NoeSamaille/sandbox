@@ -180,7 +180,7 @@ vim-cmd vmsvc/getallvms | awk '$2 ~ "'$PATTERN'" && $1 !~ "Vmid" {print "vim-cmd
 vim-cmd vmsvc/getallvms | awk '$2 ~ "'$PATTERN'" && $1 !~ "Vmid" {print "vim-cmd vmsvc/power.getstate " $1}' | sh
 ```
 
-### Get cli dhcp address
+### Get Cli dhcp address
 
 > :warning: Set **IP_HEAD** variables accordingly in **getVMAddress.sh** before proceeding.
 
@@ -197,7 +197,7 @@ watch -n 5 "./getVMAddress.sh | tee $CLI_DYN_ADDR"
 
 > :bulb: Leave watch with **Ctrl + c**
 
-### Configure cli 
+### Configure Cli 
 
 #### Download necessary stuff
 
@@ -212,7 +212,7 @@ wget -c $WEB_SERVER_URL/soft/extendRootLV.sh
 chmod +x extendRootLV.sh
 ```
 
-#### Create and copy ESXi public key to cli
+#### Create and copy ESX public key to Cli
 
 > :warning: To be able to ssh from ESXi you need to enable sshClient rule outgoing port
 
@@ -231,7 +231,7 @@ esxcli network firewall ruleset set -e true -r sshClient
 for ip in $(awk -F ";" '{print $3}' $CLI_DYN_ADDR); do cat /.ssh/id_rsa.pub | ssh -o StrictHostKeyChecking=no root@$ip '[ ! -d "/root/.ssh" ] && mkdir /root/.ssh && cat >> /root/.ssh/authorized_keys'; done
 ```
 
-#### Extend cli Root logical volume
+#### Extend Cli Root logical volume
 
 >:warning: Set **DISK**, **PART**, **VG** and **LV** variables accordingly in **extendRootLV.sh** before proceeding.
 
@@ -245,7 +245,7 @@ for ip in $(awk -F ";" '{print $3}' $CLI_DYN_ADDR); do ssh -o StrictHostKeyCheck
 for ip in $(awk -F ";" '{print $3}' $CLI_DYN_ADDR); do ssh -o StrictHostKeyChecking=no root@$ip 'hostname -f; lvs'; done
 ```
 
-#### Set cli static ip address and reboot
+#### Set Cli static ip address and reboot
 
 > :information_source: Run this on ESX
 
@@ -257,7 +257,7 @@ for LINE in $(awk -F ";" '{print $0}' $CLI_DYN_ADDR); do  HOSTNAME=$(echo $LINE 
 for ip in $(awk -F ";" '{print $3}' $CLI_DYN_ADDR); do ssh -o StrictHostKeyChecking=no root@$ip 'reboot'; done
 ```
 
-#### Check cli static ip address
+#### Check Cli static ip address
 
 > :warning: Wait for cluster nodes to be up and display it static address in the **3rd column**
 
@@ -276,7 +276,7 @@ watch -n 5 "./getVMAddress.sh"
 
 ### Set env variables
 
-> :information_source: Run this on cli
+> :information_source: Run this on Cli
 
 ```
 OCP="ocp1"
@@ -296,7 +296,7 @@ source ~/.bashrc
 
 ### Disable security
 
-> :information_source: Run this on cli
+> :information_source: Run this on Cli
 
 ```
 systemctl stop firewalld
@@ -307,7 +307,7 @@ sed -i -e 's/^SELINUX=\w*/SELINUX=disabled/' /etc/selinux/config
 
 ### Install load balancer
 
-> :information_source: Run this on cli
+> :information_source: Run this on Cli
 
 ```
 yum install haproxy -y
@@ -315,12 +315,14 @@ yum install haproxy -y
 
 ### Configure load balancer
 
-> :information_source: Run this on cli
+> :information_source: Run this on Cli
 
 ```
 DOMAIN=$(cat /etc/resolv.conf | awk '$1 ~ "^search" {print $2}')
 LB_CONF="/etc/haproxy/haproxy.cfg"
+```
 
+```
 sed -i '/^\s\{1,\}maxconn\s\{1,\}3000$/q' $LB_CONF
 
 cat >> $LB_CONF << EOF
@@ -394,7 +396,7 @@ EOF
 
 ### Start  load balancer
 
-> :information_source: Run this on cli
+> :information_source: Run this on Cli
 
 ```
 systemctl restart haproxy
@@ -408,7 +410,7 @@ RC=$(curl -I http://cli-$OCP:9000 | awk 'NR==1 {print $3}') && echo $RC
 
 ### Set install-config.yaml
 
-> :information_source: Run this on cli 
+> :information_source: Run this on Cli 
 
 ```
 DOMAIN=$(cat /etc/resolv.conf | awk '$1 ~ "^search" {print $2}') && echo $DOMAIN
@@ -436,7 +438,7 @@ sed -i "s:^sshKey\:.*$:sshKey\: '$PUB_KEY':"  install-config.yaml
 
 ### Backup install-config.yaml on web server
 
-> :information_source: Run this on cli 
+> :information_source: Run this on Cli 
 
 ```
 WEB_SERVER="web"
@@ -475,9 +477,9 @@ tar -xvzf oc-4.3.18-linux.tar.gz -C $(echo $PATH | awk -F":" 'NR==1 {print $1}')
 
 ### Create manifest and ignition files
 
-> :warning:You have to be on line to execute this step.
+> :warning: You have to be on line to execute this step.
 
-> :information_source: Run this on cli 
+> :information_source: Run this on Cli 
 
 ```
 cd $INST_DIR
@@ -490,7 +492,7 @@ sed -i 's/mastersSchedulable: true/mastersSchedulable: false/' manifests/cluster
 
 ### Make ignition files and RHCOS image available on web server
 
-> :information_source: Run this on cli 
+> :information_source: Run this on Cli 
 
 ```
 WEB_SERVER="web"
@@ -512,7 +514,7 @@ sshpass -e ssh -o StrictHostKeyChecking=no root@web "chmod -R +r /web/$OCP"
 
 #### Mount RHCOS iso in rw mode
 
-> :information_source: Run this on cli 
+> :information_source: Run this on Cli 
 
 ```
 WEB_SERVER_URL="http://web"
@@ -538,7 +540,7 @@ mount -o loop $RHCOS_ISO_FILE $ISO_PATH
 
 > :warning: Set **OCP**, **WEB_SRV_URL**, **RAW_IMG_URL**, **DNS**,  **DOMAIN**, **IF**, **MASK**, **GATEWAY**,  **ISO_PATH**, **RW_ISO_PATH** and **ISO_CFG** variables accordingly in **buildIso.sh** before proceeding.
 
-> :information_source: Run this on cli 
+> :information_source: Run this on Cli 
 
 ```
 WEB_SERVER_URL="http://web"
@@ -556,7 +558,7 @@ while [ ! -z "$(ls -A /media/iso)" ]; do umount /media/iso; sleep 2; done
 
 #### Check RHCOS isolinux.cfg
 
-> :information_source: Run this on cli 
+> :information_source: Run this on Cli 
 
 ```
 TEST_ISO_PATH="/media/test"
@@ -578,9 +580,9 @@ while [ ! -z "$(ls -A $TEST_ISO_PATH)" ]; do umount $TEST_ISO_PATH; sleep 2; don
 rmdir $TEST_ISO_PATH
 ```
 
-#### Make iso files available on ESXi server
+#### Make iso files available on ESX server
 
-> :information_source: Run this on cli
+> :information_source: Run this on Cli
 
 ```
 ESX_SERVER="ocp1"
@@ -662,7 +664,7 @@ vim-cmd vmsvc/getallvms | awk '$2 ~ "'$PATTERN'" && $1 !~ "Vmid" {print "vim-cmd
 
 > :bulb: To avoid network failure, launch installation on **locale console** or in a **screen**
 
-> :information_source: Run this on cli
+> :information_source: Run this on Cli
 
 ```
 [ ! -z $(command -v screen) ] && echo screen installed || yum install screen -y
@@ -672,7 +674,7 @@ pkill screen; screen -mdS ADM && screen -r ADM
 
 ### Launch wait-for-bootstrap-complete playbook
 
-> :information_source: Run this on cli
+> :information_source: Run this on Cli
 
 ```
 INST_DIR=~/ocpinst
@@ -692,7 +694,7 @@ cd $INST_DIR
 
 ### Launch wait-for-install-complete playbook
 
-> :information_source: Run this on cli
+> :information_source: Run this on Cli
 
 ```
 INST_DIR=~/ocpinst
