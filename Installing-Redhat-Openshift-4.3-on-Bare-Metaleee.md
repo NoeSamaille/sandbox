@@ -14,7 +14,7 @@ One Lenovo **X3550M5** or similar to host **5** virtual machines (bootstrap will
 | name                        | role                  | vcpus  | ram (GB) | storage (GB) | ethernet (10GB) |
 | --------------------------- | --------------------- | ------ | -------- | ------------ | --------------- |
 | cli-ocp1.iicparis.fr.ibm.com | load balancer + installer | 4      | 16 | 250          | 1               |
-| m1-ocp1.iicparis.fr.ibm.com | master + etcd | 4      | 16       | 250          | 1               |
+| m1-ocp1.iicparis.fr.ibm.com | master + etcd              | 4      | 16 | 250          | 1               |
 | w1-ocp1.iicparis.fr.ibm.com | worker                | 16     | 64       | 250          | 1               |
 | w2-ocp1.iicparis.fr.ibm.com | worker                | 16     | 64       | 250          | 1               |
 | w3-ocp1.iicparis.fr.ibm.com | worker                | 16     | 64       | 250          | 1               |
