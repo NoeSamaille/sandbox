@@ -678,7 +678,15 @@ pkill screen; screen -mdS ADM && screen -r ADM
 
 ```
 INST_DIR=~/ocpinst
+```
+
+```
 cd $INST_DIR
+
+> ~/.ssh/known_hosts
+eval "$(ssh-agent -s)"
+ssh-add ~/.ssh/id_rsa
+
 ./openshift-install --dir=$PWD wait-for bootstrap-complete --log-level=debug
 ```
 
@@ -712,17 +720,23 @@ cd $INST_DIR
 
 >:bulb: Come back with **screen -r ADM**
 
-> :bulb: If something went wrong have a look at **~/openshift-ansible.log** and revert to **BeforeInstallingOCP** snapshot
+> :bulb: If something went wrong have a look at **~/$INST_DIR/.openshift_install.log** and revert to **BeforeInstallingOCP** snapshot
 
 > :information_source: Run this on ESX
 
 ```
-vim-cmd vmsvc/getallvms | awk '$2 ~ "[mw][1-5]|lb|cli|nfs|ctl" && $1 !~ "Vmid" {print "vim-cmd vmsvc/power.shutdown " $1}' | sh
-
-vim-cmd vmsvc/getallvms | awk '$2 ~ "[mw][1-5]|lb|cli|nfs|ctl" && $1 !~ "Vmid" {print "vim-cmd vmsvc/power.getstate " $1}' | sh
-
+PATTERN="[mw][1-5]|cli"
 SNAPNAME="BeforeInstallingOCP"
-for vmid in $(vim-cmd vmsvc/getallvms | awk 'NR>1 && $2 ~ "[mw][1-5]||lb|cli|nfs|ctl" {print $1}'); do vim-cmd vmsvc/snapshot.get $vmid | grep -A 1 'Snapshot Name\s\{1,\}: '$SNAPNAME | awk -F' : ' 'NR>1 {print "vim-cmd vmsvc/snapshot.revert "'$vmid'" " $2 " suppressPowerOn"}' | sh; done
+```
+
+```
+vim-cmd vmsvc/getallvms | awk '$2 ~ "'$PATTERN'" && $1 !~ "Vmid" {print "vim-cmd vmsvc/power.shutdown " $1}' | sh
+
+sleep 10
+
+vim-cmd vmsvc/getallvms | awk '$2 ~ "'$PATTERN'" && $1 !~ "Vmid" {print "vim-cmd vmsvc/power.getstate " $1}' | sh
+
+for vmid in $(vim-cmd vmsvc/getallvms | awk 'NR>1 && $2 ~ "'$PATTERN'" {print $1}'); do vim-cmd vmsvc/snapshot.get $vmid | grep -A 1 'Snapshot Name\s\{1,\}: '$SNAPNAME | awk -F' : ' 'NR>1 {print "vim-cmd vmsvc/snapshot.revert "'$vmid'" " $2 " suppressPowerOn"}' | sh; done
 ```
 
 <br>
