@@ -253,7 +253,7 @@ docker pull busybox
 docker tag docker.io/busybox $REG_HOST/$(oc project -q)/busybox
 ```
 
-> :warning: Now you have to be able to push docker images from controller to OCP docker registry
+> :warning: Now you have to be able to push docker images to Openshift registry
 
 > :information_source: Run this on Cli
 
