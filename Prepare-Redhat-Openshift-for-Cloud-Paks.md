@@ -58,7 +58,7 @@ NFS_PATH="/exports"
 touch /mnt/$NFS_SERVER/SUCCESS && echo "RC="$?
 ```
 
-> :warning: Next command shoud display **SUCCESS**
+> :warning: Next commands shoud display **SUCCESS**
 
 > :information_source: Run this on Cli or any **centos/redhat linux device**
 
@@ -146,16 +146,14 @@ oc create -f deploy/test-pod.yaml
 ```
 sleep 5 && VOLUME=$(oc get pvc | awk '$1 ~ "test-claim" {print $3}') && echo $VOLUME
 
-sshpass -e ssh -o StrictHostKeyChecking=no \
-$NFS_SERVER ls /$NFS_PATH/$(oc project -q)-test-claim-$VOLUME && cd ~
+sshpass -e ssh -o StrictHostKeyChecking=no $NFS_SERVER ls /$NFS_PATH/$(oc project -q)-test-claim-$VOLUME && cd ~
 ```
 
 :checkered_flag::checkered_flag::checkered_flag:
 
-
 ## Exposing Openshift Registry
 
-> :bulb: Target is to be able to push docker images from Controller to Openshift registry in a secure way.
+> :bulb: Target is to be able to push docker images Openshift registry in a secure way.
 
 ### Install docker
 
@@ -215,25 +213,34 @@ mkdir -p /etc/docker/certs.d/$REG_HOST
 sshpass -e scp -o StrictHostKeyChecking=no m1-$OCP:/etc/origin/master/ca.crt /etc/docker/certs.d/$REG_HOST
 ```
 
+> :arrow_heading_down: [Log in Openshift registry](#log-in-openshift-registry)
+
+<br>
 
 ### Exposing Openshift 4 Registry
+
+> :information_source: Run this on **OCP 4.3** Cli
+
+```
+oc patch configs.imageregistry.operator.openshift.io/cluster --type merge -p '{"spec":{"defaultRoute":true}}'
+```
 
 #### Trust Openshift 4 registry
 
 > :information_source: Run this on **OCP 4.3** Cli
 
 ```
-REG_HOST=$(oc get route -n openshift-image-registry ) && echo $REG_HOST
+REG_HOST=$(oc registry info) && echo $REG_HOST
 
 mkdir -p /etc/docker/certs.d/$REG_HOST
-
-REG_HOST=$(oc registry info) && echo $REG_HOST
 
 oc extract secret/router-ca --keys=tls.crt -n openshift-ingress-operator
 
 cp -v tls.crt /etc/docker/certs.d/$REG_HOST/
 ```
+> :arrow_heading_down: [Log in Openshift registry](#log-in-openshift-registry)
 
+<br>
 
 ### Log in Openshift registry
 
