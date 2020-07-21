@@ -139,7 +139,7 @@ oc create -f deploy/test-claim.yaml
 oc create -f deploy/test-pod.yaml
 ```
 
-> :warning: Wait for test-pod to be deployed and check that next commands have to display **SUCCESS**
+> :warning: Wait for test-pod to be deployed and check that next commands display **SUCCESS**
 
 > :information_source: Run this on Cli
 
