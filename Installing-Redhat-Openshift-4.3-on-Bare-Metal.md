@@ -751,7 +751,7 @@ cd $INST_DIR
 > :information_source: Run this on ESX
 
 ```
-PATTERN="[mw][1-5]|cli"
+PATTERN="[mw][1-5]|cli|bs"
 SNAPNAME="BeforeInstallingOCP"
 ```
 
@@ -771,7 +771,7 @@ for vmid in $(vim-cmd vmsvc/getallvms | awk 'NR>1 && $2 ~ "'$PATTERN'" {print $1
 
 ## Post install OCP
 
-### Create an admin userwith  cluster-admin role
+### Create an admin user with  cluster-admin role
 
 > :information_source: Run this on Cli
 
@@ -785,16 +785,87 @@ oc whoami
 ```
 >:bulb: Command above should return **system:admin**
 
+```
+cd $INST_DIR
+[ -z $(command -v htpasswd) ] && yum install -y httpd-tools || echo "htpasswd already installed"
+
+htpasswd -c -B -b admin.htpasswd admin admin                     
+
+oc create secret generic admin-secret --from-file=htpasswd=$INST_DIR/admin.htpasswd  -n openshift-config
+
+oc apply -f - << EOF
+apiVersion: config.openshift.io/v1
+kind: OAuth
+metadata:
+  name: cluster
+spec:
+  identityProviders:
+  - name: htpasswd_provider 
+    mappingMethod: claim 
+    type: HTPasswd
+    htpasswd:
+      fileData:
+        name: admin-secret
+  tokenConfig:
+    accessTokenMaxAgeSeconds: 31536000         
+EOF
+
+sleep 10
+oc adm policy add-cluster-role-to-user cluster-admin admin
+```
+
 
 ### Check install
 
 #### Login to cluster
 
-> :information_source: Run this on First Master
+> :information_source: Run this on Cli
 
 ```
-oc login https://m1-$OCP:8443 -u admin -p admin --insecure-skip-tls-verify=true
+oc login https://cli-$OCP:6443 -u admin -p admin --insecure-skip-tls-verify=true
+
+oc get nodes
+
+oc get route -n openshift-console | awk 'NR>1 && $1 ~ "console" {print "Web Console is available with htpasswd_provider as admin with admin as password at https://"$2}'
 ```
+
+#### Set etcd-quorum-guard to unmanaged state
+
+> :information_source: Run this on Cli
+
+```
+oc patch clusterversion/version --type='merge' -p "$(cat <<- EOF
+spec:
+  overrides:
+    - group: apps/v1
+      kind: Deployment
+      name: etcd-quorum-guard
+      namespace: openshift-machine-config-operator
+      unmanaged: true
+EOF
+)"
+```
+
+#### Downscale etcd-quorum-guard to one
+
+> :information_source: Run this on Cli
+
+```
+oc scale --replicas=1 deployment/etcd-quorum-guard -n openshift-machine-config-operator
+```
+
+#### Setup image-registry to use ephemeral storage
+
+> :information_source: Run this on Cli
+
+```
+oc patch configs.imageregistry.operator.openshift.io cluster --type merge --patch '{"spec":{"storage":{"emptyDir":{}}}}'
+
+oc patch configs.imageregistry.operator.openshift.io cluster --type merge --patch '{"spec":{"managementState":"Managed"}}'
+```
+
+>:bulb: Wait until the image-registry operator completes the update before using the registry.
+
 
 ### Check Environment health
 
