@@ -11,7 +11,7 @@
 
 ## Prepare installing Cloud Pak for Data
 
-### Install the cpd command
+### Install the cpd command
 
 > :information_source: Run this on Cli 
  
@@ -142,4 +142,4 @@ NS=$(oc project -q)
 $INST_DIR/bin/cpd-linux preloadImages --version $VERSION --action download -a $ASSEMBLY --arch $ARCH --repo $INST_DIR/repo.yaml --accept-all-licenses
 ```
 
-> : bulb:  Images have been copied in **$INST_DIR/bin/cpd-linux-workspace/images/**
+> :bulb:  Images have been copied in **$INST_DIR/bin/cpd-linux-workspace/images/**
