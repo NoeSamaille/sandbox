@@ -949,8 +949,7 @@ PATTERN="bs"
 ```
 vim-cmd vmsvc/getallvms | awk '$2 ~ "'$PATTERN'" && $1 !~ "Vmid" {print "vim-cmd vmsvc/power.off " $1}' | sh
 
-vim-cmd vmsvc/getallvms | awk '$2 ~ "'$PATTERN'" && $1 
-!~ "Vmid" {print "vim-cmd vmsvc/destroy " $1}' | sh
+vim-cmd vmsvc/getallvms | awk '$2 ~ "'$PATTERN'" && $1 !~ "Vmid" {print "vim-cmd vmsvc/destroy " $1}' | sh
 ```
 
 ### Remove bootstrap from load balancer
