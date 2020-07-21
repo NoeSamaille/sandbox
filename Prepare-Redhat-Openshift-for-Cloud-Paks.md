@@ -157,6 +157,14 @@ $NFS_SERVER ls /$NFS_PATH/$(oc project -q)-test-claim-$VOLUME && cd ~
 
 > :bulb: Target is to be able to push docker images from Controller to Openshift registry in a secure way.
 
+### Install docker
+
+> :information_source: Run this on Cli
+
+```
+[ -z $(command -v docker) ] && { yum install docker -y; systemctl start docker; docker run hello-world; systemctl enable docker; } || echo "docker already installed"
+```
+
 ### Log in cluster default project
 
 > :information_source: Run this on **OCP 3.11** Cli
@@ -167,6 +175,7 @@ oc login https://cli-$OCP:8443 -u admin -p admin --insecure-skip-tls-verify=true
 
 > :arrow_heading_down: [Exposing Openshift 3 Registry](#exposing-openshift-3-registry)
 
+
 > :information_source: Run this on **OCP 4.3** Cli
 
 ```
@@ -175,66 +184,46 @@ oc login https://cli-$OCP:6443 -u admin -p admin --insecure-skip-tls-verify=true
 
 > :arrow_heading_down: [Exposing Openshift 4 Registry](#exposing-openshift-4-registry)
 
+
 ### Exposing Openshift 3 Registry
 
+> :information_source: Run this on **OCP 3.11** Cli
+
+```
+[ -z $(command -v jq) ] && { wget -c https://github.com/stedolan/jq/releases/download/jq-1.6/jq-linux64 && chmod +x jq-linux64 && mv jq-linux64 /usr/local/sbin/jq; } || echo jq already installed
+```
+
+#### Check Openshift 3 registry route
+
+> :warning: Termination should display **passthrough** if not proceed as describe [here](https://docs.openshift.com/container-platform/3.11/install_config/registry/securing_and_exposing_registry.html#exposing-the-registry)
+
+> :information_source: Run this on **OCP 3.11** Cli
+
+```
+oc get route/docker-registry -n default -o json | jq -r .spec.tls.termination
+```
+
+#### Trust Openshift 3 registry
+
+> :information_source: Run this on **OCP 3.11** Cli
+
+```
+mkdir -p /etc/docker/certs.d/$REG_HOST
+
+REG_HOST=$(oc get route/docker-registry -n default -o json | jq -r .spec.host) && echo $REG_HOST
+
+sshpass -e scp -o StrictHostKeyChecking=no m1-$OCP:/etc/origin/master/ca.crt /etc/docker/certs.d/$REG_HOST
+```
 
 
 ### Exposing Openshift 4 Registry
 
 
-\> :information_source: Run this on Controller
+
+```
 
 
 
-\```
-
-oc login https://cli-$OCP:6443 -u admin -p admin --insecure-skip-tls-verify=true -n default
-
-\```
-
-
-
-**##### Install jq** 
-
-
-
-\> :bulb: jq is a json parser for command line
-
-
-
-\> :information_source: Run this on Controller
-
-
-
-\```
-
-[ -z $(command -v jq) ] && { wget -c https://github.com/stedolan/jq/releases/download/jq-1.6/jq-linux64 && chmod +x jq-linux64 && mv jq-linux64 /usr/local/sbin/jq; } || echo jq installed
-
-\```
-
-
-
-**##### Check docker registry route**
-
-
-
-\> :warning: Termination should display ***\*passthrough\**** if not proceed as describe [here](https://docs.openshift.com/container-platform/3.11/install_config/registry/securing_and_exposing_registry.html#exposing-the-registry)
-
-
-
-\> :information_source: Run this on Controller
-
-
-
-\```
-
-oc get route/docker-registry -n default -o json | jq -r .spec.tls.termination
-
-\```
-
-
-
-**##### Get OCP docker registry hostname**
 
 
 
