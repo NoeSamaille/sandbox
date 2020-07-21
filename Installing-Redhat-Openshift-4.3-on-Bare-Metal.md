@@ -1,5 +1,8 @@
 # Installing Redhat Openshift 4.3 on Bare Metal
 
+This article is *read between lines* of [Installing a cluster on bare metal](https://docs.openshift.com/container-platform/4.3/installing/installing_bare_metal/installing-bare-metal.html).
+
+
 
 ## Redhat requirements
 
