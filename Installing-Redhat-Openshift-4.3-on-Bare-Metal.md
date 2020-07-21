@@ -871,7 +871,7 @@ oc get route -n openshift-console | awk 'NR>1 && $1 ~ "console" {print "\nWeb Co
 ```
 
 >:bulb: Login with htpasswd_provider
-![](img/moginwith.jpg)
+![](img/loginwith.jpg)
 
 
 ### Check Environment health
