@@ -151,6 +151,8 @@ dig @localhost +short _etcd-server-ssl._tcp.$OCP.$DOMAIN SRV
 
 ## Create Cli
 
+> :bulb: Have a look at [system requirements](https://github.com/bpshparis/sandbox/blob/master/Installing-Redhat-Openshift-4.3-on-Bare-Metal.md#system-requirements) if necessary.
+
 ### Download necessary stuff
 
 > :information_source: Run this on ESX
