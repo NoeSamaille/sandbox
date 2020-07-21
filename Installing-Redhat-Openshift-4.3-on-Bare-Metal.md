@@ -611,6 +611,7 @@ sshpass -e scp -o StrictHostKeyChecking=no *-$OCP.iso root@$ESX_SERVER:/$ESX_ISO
 
 sshpass -e ssh -o StrictHostKeyChecking=no root@$ESX_SERVER "chmod -R +r $ESX_ISO_PATH"
 ```
+:checkered_flag::checkered_flag::checkered_flag:
 
 
 ## Create Cluster
@@ -641,13 +642,7 @@ chmod +x ./createOCP4Cluster.sh
 ./createOCP4Cluster.sh
 ```
 
-> :warning: For VNC to work run this on ESX:
-
-> :information_source: Run this on ESX
-
-```
-esxcli network firewall ruleset set -e true -r gdbserver
-```
+:checkered_flag::checkered_flag::checkered_flag:
 
 
 ## Make a BeforeInstallingOCP snapshot
@@ -678,8 +673,116 @@ PATTERN="[mw][1-5]|cli|bs"
 
 ```
 vim-cmd vmsvc/getallvms | awk '$2 ~ "'$PATTERN'" && $1 !~ "Vmid" {print "vim-cmd vmsvc/snapshot.create " $1 " '$SNAPNAME' "}' | sh
+```
 
+:checkered_flag::checkered_flag::checkered_flag:
+
+## Start cluster nodes
+
+### install a vncviewer to monitor cluster nodes
+
+Download and install a  [vnc viewer](https://www.tightvnc.com/download.php) on ** your device **
+
+> :warning: **VNCPWD** have to match **RemoteDisplay.vnc.password** in **rhcos.vmx**
+
+> :information_source: Run this on your device
+
+```
+VNCPWD="spcspc"
+```
+
+```
+[ -z $(command -v vncpasswd) ] && yum install -y tigervnc-server-minimal || echo "vncpasswd already installed"
+echo $VNCPWD | vncpasswd -f > ~/.vnc/passwd
+```
+
+### Start cluster nodes
+
+#### Enable VNC on ESX
+
+> :warning: For VNC to work run this on ESX:
+
+> :information_source: Run this on ESX
+
+```
+esxcli network firewall ruleset set -e true -r gdbserver
+```
+
+#### Start cluster nodes
+
+> :information_source: Run this on ESX
+
+```
+PATTERN="[mw][1-5]|cli|bs"
+```
+
+```
 vim-cmd vmsvc/getallvms | awk '$2 ~ "'$PATTERN'" && $1 !~ "Vmid" {print "vim-cmd vmsvc/power.on " $1}' | sh
+```
+
+### Monitor cluster nodes
+
+> :warning:  Next commands will only work if you kept **BOOTSTRAP_VNC_PORT="5909"**, 
+**MASTER_1ST_VNC_PORT="5901"** and **WORKER_1ST_VNC_PORT="5904"** when you created cluster nodes with running **createOCP4Cluster.sh**.
+
+#### Monitor bootstrap
+
+> :information_source: Run this on your device
+
+```
+ESX_SERVER="ocp5"
+```
+
+```
+xtightvncviewer -compresslevel 9 -passwd ~/.vnc/passwd $ESX_SERVER:9
+```
+
+#### Monitor master
+
+> :information_source: Run this on your device
+
+```
+ESX_SERVER="ocp5"
+```
+
+```
+xtightvncviewer -compresslevel 9 -passwd ~/.vnc/passwd $ESX_SERVER:1
+```
+
+#### Monitor worker 1
+
+> :information_source: Run this on your device
+
+```
+ESX_SERVER="ocp5"
+```
+
+```
+xtightvncviewer -compresslevel 9 -passwd ~/.vnc/passwd $ESX_SERVER:4
+```
+
+#### Monitor worker 2
+
+> :information_source: Run this on your device
+
+```
+ESX_SERVER="ocp5"
+```
+
+```
+xtightvncviewer -compresslevel 9 -passwd ~/.vnc/passwd $ESX_SERVER:5
+```
+
+#### Monitor worker 3
+
+> :information_source: Run this on your device
+
+```
+ESX_SERVER="ocp5"
+```
+
+```
+xtightvncviewer -compresslevel 9 -passwd ~/.vnc/passwd $ESX_SERVER:6
 ```
 :checkered_flag::checkered_flag::checkered_flag:
 
@@ -730,6 +833,21 @@ ssh-add ~/.ssh/id_rsa
 
 ![](img/bscomplete.jpg)
 
+> :bulb: If something went wrong run a gather bootstrap
+
+```
+INST_DIR=~/ocpinst
+BS_IP="172.16.187.59"
+M1_IP="172.16.187.51"
+```
+
+```
+cd $INST_DIR
+./openshift-install gather bootstrap --bootstrap $BS_IP --key ~/.ssh/id_rsa --master "$M1_IP"
+```
+
+and revert to [BeforeInstallingOCP snapshot](#revert-to-beforeInstallingocp-snapshot)
+
 ### Launch wait-for-install-complete playbook
 
 > :information_source: Run this on Cli
@@ -758,6 +876,8 @@ cd $INST_DIR
 ![](img/installcomplete.jpg)
 
 > :bulb: If something went wrong have a look at **~/$INST_DIR/.openshift_install.log** and revert to **BeforeInstallingOCP** snapshot
+
+:checkered_flag::checkered_flag::checkered_flag:
 
 
 ## Revert to BeforeInstallingOCP snapshot
