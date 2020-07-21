@@ -717,7 +717,7 @@ ssh-add ~/.ssh/id_rsa
 
 >:bulb: bootstrap complete output
 
-[](img/bscomplete.jpg)
+![](img/bscomplete.jpg)
 
 ### Launch wait-for-install-complete playbook
 
