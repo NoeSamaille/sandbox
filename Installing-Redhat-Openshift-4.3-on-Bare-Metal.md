@@ -742,6 +742,10 @@ cd $INST_DIR
 
 >:bulb: Come back with **screen -r ADM**
 
+>:bulb: bootstrap complete output
+
+![](img/installcomplete.jpg)
+
 > :bulb: If something went wrong have a look at **~/$INST_DIR/.openshift_install.log** and revert to **BeforeInstallingOCP** snapshot
 
 > :information_source: Run this on ESX
