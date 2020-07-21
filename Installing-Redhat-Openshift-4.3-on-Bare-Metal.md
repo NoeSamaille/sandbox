@@ -467,22 +467,24 @@ sshpass -e scp -o StrictHostKeyChecking=no install-config.yaml root@$WEB_SERVER:
 sshpass -e ssh -o StrictHostKeyChecking=no root@$WEB_SERVER "chmod -R +r $WEB_SERVER_PATH"
 ```
 
-### Install oc and kubectl commands
+### Install Openshift installer, oc and kubectl commands
 
 > :information_source: Run this on Cli 
 
 ```
-WEB_SERVER_SOFT_URL="http://web"
+WEB_SERVER_SOFT_URL="http://web/soft"
+INSTALLER_FILE="openshift-install-linux-4.3.18.tar.gz"
+CLIENT_FILE="oc-4.3.18-linux.tar.gz"
 ```
 
 ```
 cd $INST_DIR
 
-wget -c $WEB_SERVER_SOFT_URL/openshift-client-linux.tar.gz
-tar xvzf openshift-client-linux.tar.gz
+wget -c $WEB_SERVER_SOFT_URL/$INSTALLER_FILE
+tar xvzf $INSTALLER_FILE
 
-wget -c $WEB_SERVER_URL/soft/openshift-client-linux.tar.gz
-tar -xvzf oc-4.3.18-linux.tar.gz -C $(echo $PATH | awk -F":" 'NR==1 {print $1}')
+wget -c $WEB_SERVER_SOFT_URL/$CLIENT_FILE
+tar -xvzf $CLIENT_FILE -C $(echo $PATH | awk -F":" 'NR==1 {print $1}')
 ```
 
 ### Create manifest and ignition files
@@ -507,7 +509,7 @@ sed -i 's/mastersSchedulable: true/mastersSchedulable: false/' manifests/cluster
 ```
 WEB_SERVER="web"
 WEB_SERVER_PATH="/web/$OCP"
-RHCOS_IMG_PATH="/img/rhcos-4.4.3-x86_64-metal.x86_64.raw.gz"
+RHCOS_IMG_PATH="/web/img/rhcos-4.4.3-x86_64-metal.x86_64.raw.gz"
 ```
 
 ```
@@ -527,15 +529,14 @@ sshpass -e ssh -o StrictHostKeyChecking=no root@web "chmod -R +r /web/$OCP"
 > :information_source: Run this on Cli 
 
 ```
-WEB_SERVER_URL="http://web"
-RHCOS_ISO_PATH="/iso"
+WEB_SERVER_ISO_URL="http://web/iso"
 RHCOS_ISO_FILE="rhcos-4.4.3-x86_64-installer.x86_64.iso"
 ISO_PATH="/media/iso"
 RW_ISO_PATH="/media/isorw"
 ```
 
 ```
-wget -c $WEB_SERVER_URL$RHCOS_ISO_PATH/$RHCOS_ISO_FILE
+wget -c $WEB_SERVER_ISO_URL/$RHCOS_ISO_FILE
 
 [ ! -d $ISO_PATH ] && mkdir $ISO_PATH 
 
@@ -543,27 +544,31 @@ while [ ! -z "$(ls -A $ISO_PATH)" ]; do umount $ISO_PATH; sleep 2; done
 
 mount -o loop $RHCOS_ISO_FILE $ISO_PATH
 
-[ ! -d RW_ISO_PATH ] && mkdir RW_ISO_PATH || rm -rf RW_ISO_PATH/*
+[ ! -d $RW_ISO_PATH ] && mkdir $RW_ISO_PATH || rm -rf $RW_ISO_PATH/*
 ```
 
 #### Customize RHCOS iso 
+
+> :information_source: Run this on Cli 
+
+```
+WEB_SERVER_SOFT_URL="http://web/soft"
+```
+
+```
+wget -c $WEB_SERVER_SOFT_URL/buildIso.sh
+chmod +x buildIso.sh
+```
 
 > :warning: Set **OCP**, **WEB_SRV_URL**, **RAW_IMG_URL**, **DNS**,  **DOMAIN**, **IF**, **MASK**, **GATEWAY**,  **ISO_PATH**, **RW_ISO_PATH** and **ISO_CFG** variables accordingly in **buildIso.sh** before proceeding.
 
 > :information_source: Run this on Cli 
 
 ```
-WEB_SERVER_URL="http://web"
-```
-
-```
-wget -c $WEB_SERVER_URL/soft/buildIso.sh
-
-chmod +x buildIso.sh
-
 ./buildIso.sh
 
-while [ ! -z "$(ls -A /media/iso)" ]; do umount /media/iso; sleep 2; done
+while [ ! -z "$(ls -A $ISO_PATH)" ]; do umount $ISO_PATH; sleep 2; done
+rmdir $ISO_PATH
 ```
 
 #### Check RHCOS isolinux.cfg
@@ -595,7 +600,7 @@ rmdir $TEST_ISO_PATH
 > :information_source: Run this on Cli
 
 ```
-ESX_SERVER="ocp1"
+ESX_SERVER="ocp5"
 ESX_ISO_PATH="/vmfs/volumes/datastore1/iso"
 ```
 
@@ -608,7 +613,6 @@ sshpass -e ssh -o StrictHostKeyChecking=no root@$ESX_SERVER "chmod -R +r $ESX_IS
 ```
 
 
-
 ## Create Cluster
 
 ### Download necessary stuff
@@ -616,13 +620,14 @@ sshpass -e ssh -o StrictHostKeyChecking=no root@$ESX_SERVER "chmod -R +r $ESX_IS
 > :information_source: Run this on ESX
 
 ```
-WEB_SERVER_URL="http://web"
+WEB_SERVER_SOFT_URL="http://web/soft"
+WEB_SERVER_VMDK_URL="http://web/vmdk"
 VMDK_PATH="/vmfs/volumes/datastore1/vmdk/"
 ```
 
 ```
-wget -c WEB_SERVER_URL/soft/createOCP4Cluster.sh
-wget -c WEB_SERVER_URL/vmdk/rhcos.vmx -P VMDK_PATH
+wget -c $WEB_SERVER_SOFT_URL/createOCP4Cluster.sh
+wget -c $WEB_SERVER_VMDK_URL/rhcos.vmx -P $VMDK_PATH
 ```
 
 ### Create cluster nodes
@@ -650,7 +655,7 @@ esxcli network firewall ruleset set -e true -r gdbserver
 > :information_source: Run this on ESX
 
 ```
-PATTERN="[mw][1-5]|cli"
+PATTERN="[mw][1-5]|cli|bs"
 SNAPNAME="BeforeInstallingOCP"
 ```
 
@@ -709,6 +714,10 @@ ssh-add ~/.ssh/id_rsa
 >:bulb: Leave screen with **Ctrl + a + d**
 
 >:bulb: Come back with **screen -r ADM**
+
+>:bulb: bootstrap complete output
+
+[](img/bscomplete.jpg)
 
 ### Launch wait-for-install-complete playbook
 
