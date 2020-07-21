@@ -165,7 +165,7 @@ $NFS_SERVER ls /$NFS_PATH/$(oc project -q)-test-claim-$VOLUME && cd ~
 oc login https://cli-$OCP:8443 -u admin -p admin --insecure-skip-tls-verify=true -n default
 ```
 
-> [Exposing Openshift 3 Registry](#exposing-openshift-3-registry)
+> :arrow_heading_down: [Exposing Openshift 3 Registry](#exposing-openshift-3-registry)
 
 > :information_source: Run this on **OCP 4.3** Cli
 
@@ -173,7 +173,7 @@ oc login https://cli-$OCP:8443 -u admin -p admin --insecure-skip-tls-verify=true
 oc login https://cli-$OCP:6443 -u admin -p admin --insecure-skip-tls-verify=true -n default
 ```
 
-> [Exposing Openshift 4 Registry](#exposing-openshift-4-registry)
+> :arrow_heading_down: [Exposing Openshift 4 Registry](#exposing-openshift-4-registry)
 
 ### Exposing Openshift 3 Registry
 
