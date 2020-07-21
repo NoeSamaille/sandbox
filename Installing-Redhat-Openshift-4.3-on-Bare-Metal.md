@@ -742,7 +742,7 @@ cd $INST_DIR
 
 >:bulb: Come back with **screen -r ADM**
 
->:bulb: bootstrap complete output
+>:bulb: install complete output
 
 ![](img/installcomplete.jpg)
 
