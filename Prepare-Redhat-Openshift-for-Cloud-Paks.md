@@ -108,13 +108,14 @@ oc login https://cli-$OCP:6443 -u admin -p admin --insecure-skip-tls-verify=true
 > :information_source: Run this on Cli
 
 ```
+WEB_SERVER_SOFT_URL="http://web/soft"
 NFS_SERVER="cli-ocp5"
 NFS_PATH="/exports"
 ```
 
 ```
 cd ~ 
-wget -c http://web/soft/nfs-client.zip
+wget -c $WEB_SERVER_SOFT_URL/nfs-client.zip
 [ -z $(command -v unzip) ] && { yum install unzip -y; } || echo "unzip already installed"
 unzip nfs-client.zip
 cd nfs-client/
