@@ -846,7 +846,7 @@ cd $INST_DIR
 ./openshift-install gather bootstrap --bootstrap $BS_IP --key ~/.ssh/id_rsa --master "$M1_IP"
 ```
 
-and revert to [BeforeInstallingOCP snapshot](#revert-to-beforeInstallingocp-snapshot)
+> and revert to [BeforeInstallingOCP snapshot](#revert-to-beforeInstallingocp-snapshot)
 
 ### Launch wait-for-install-complete playbook
 
@@ -875,7 +875,7 @@ cd $INST_DIR
 
 ![](img/installcomplete.jpg)
 
-> :bulb: If something went wrong have a look at **~/$INST_DIR/.openshift_install.log** and revert to **BeforeInstallingOCP** snapshot
+> :bulb: If something went wrong have a look at **~/$INST_DIR/.openshift_install.log** and revert to [BeforeInstallingOCP snapshot](#revert-to-beforeInstallingocp-snapshot).
 
 :checkered_flag::checkered_flag::checkered_flag:
 
