@@ -263,20 +263,9 @@ docker push $REG_HOST/$(oc project -q)/busybox
 
 <br>
 
-
-
 :checkered_flag::checkered_flag::checkered_flag:
 
-
-
 <br>
-
-
-
-[Save your work](https://github.com/bpshparis/ocp-esx/blob/master/Install-OCP.md#Make-a-snapshot)
-
-
-
 
 
 <!-- 
