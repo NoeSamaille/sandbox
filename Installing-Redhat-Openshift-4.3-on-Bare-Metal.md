@@ -680,7 +680,7 @@ vim-cmd vmsvc/getallvms | awk '$2 ~ "'$PATTERN'" && $1 !~ "Vmid" {print "vim-cmd
 
 :checkered_flag::checkered_flag::checkered_flag:
 
-## Start cluster
+## Start cluster nodes
 
 ### Install a vncviewer to monitor cluster nodes
 
@@ -699,7 +699,7 @@ VNCPWD="spcspc"
 echo $VNCPWD | vncpasswd -f > ~/.vnc/passwd
 ```
 
-### Start cluster nodes
+### Start cluster nodes
 
 #### Enable VNC on ESX
 
