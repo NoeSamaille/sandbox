@@ -522,9 +522,9 @@ sshpass -e ssh -o StrictHostKeyChecking=no root@$WEB_SERVER "ln -s $RHCOS_IMG_PA
 sshpass -e ssh -o StrictHostKeyChecking=no root@web "chmod -R +r /web/$OCP"
 ```
 
-### Customize RHCOS iso
+### Customize RHCOS boot iso
 
-#### Prepare RHCOS iso customization
+#### Prepare RHCOS boot iso customization
 
 > :information_source: Run this on Cli 
 
@@ -547,7 +547,7 @@ mount -o loop $RHCOS_ISO_FILE $ISO_PATH
 [ ! -d $RW_ISO_PATH ] && mkdir $RW_ISO_PATH || rm -rf $RW_ISO_PATH/*
 ```
 
-#### Customize RHCOS iso 
+#### Customize RHCOS boot iso 
 
 > :information_source: Run this on Cli 
 
@@ -595,7 +595,7 @@ while [ ! -z "$(ls -A $TEST_ISO_PATH)" ]; do umount $TEST_ISO_PATH; sleep 2; don
 rmdir $TEST_ISO_PATH
 ```
 
-#### Make iso files available on ESX server
+#### Make RHCOS boot iso files available on ESX server
 
 > :information_source: Run this on Cli
 
