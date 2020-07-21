@@ -175,6 +175,7 @@ oc login https://cli-$OCP:8443 -u admin -p admin --insecure-skip-tls-verify=true
 
 > :arrow_heading_down: [Exposing Openshift 3 Registry](#exposing-openshift-3-registry)
 
+<br>
 
 > :information_source: Run this on **OCP 4.3** Cli
 
@@ -184,6 +185,7 @@ oc login https://cli-$OCP:6443 -u admin -p admin --insecure-skip-tls-verify=true
 
 > :arrow_heading_down: [Exposing Openshift 4 Registry](#exposing-openshift-4-registry)
 
+<br>
 
 ### Exposing Openshift 3 Registry
 
