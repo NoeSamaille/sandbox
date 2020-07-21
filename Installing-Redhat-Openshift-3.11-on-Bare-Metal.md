@@ -1,4 +1,4 @@
-# Installing Redhat Openshift 3.11 on VMware vSphere Hypervisor
+# Installing Redhat Openshift 3.11 on Bare Metal
 
 
 ## Redhat requirements
