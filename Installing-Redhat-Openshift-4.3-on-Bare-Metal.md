@@ -42,7 +42,7 @@ One Lenovo **X3550M5** or similar to host **5** virtual machines (bootstrap will
   - [rhel.vmx](scripts/rhel.vmx)
   - [rhcos.vmx](scripts/rhcos.vmx)
   - [createCli.sh](scripts/createCli.sh)
-  - [createOCP4Cluster.sh](scripts/createOCP3Cluster.sh)
+  - [createOCP4Cluster.sh](scripts/createOCP4Cluster.sh)
   - [setHostAndIP.sh](scripts/setHostAndIP.sh)
   - [extendRootLV.sh](scripts/extendRootLV.sh)
   - [getVMAddress.sh](scripts/getVMAddress.sh)
@@ -652,11 +652,12 @@ esxcli network firewall ruleset set -e true -r gdbserver
 
 ## Make a BeforeInstallingOCP snapshot
 
+### Stop cli
+
 > :information_source: Run this on ESX
 
 ```
-PATTERN="[mw][1-5]|cli|bs"
-SNAPNAME="BeforeInstallingOCP"
+PATTERN="cli"
 ```
 
 ```
@@ -666,6 +667,14 @@ watch -n 10 vim-cmd vmsvc/getallvms | awk '$2 ~ "'$PATTERN'" && $1 !~ "Vmid" {pr
 ```
 
 > :bulb: Leave watch with **Ctrl + c** when everyone is **powered off**
+
+### Make snapshot
+
+> :information_source: Run this on ESX
+
+```
+PATTERN="[mw][1-5]|cli|bs"
+```
 
 ```
 vim-cmd vmsvc/getallvms | awk '$2 ~ "'$PATTERN'" && $1 !~ "Vmid" {print "vim-cmd vmsvc/snapshot.create " $1 " '$SNAPNAME' "}' | sh
@@ -750,20 +759,51 @@ cd $INST_DIR
 
 > :bulb: If something went wrong have a look at **~/$INST_DIR/.openshift_install.log** and revert to **BeforeInstallingOCP** snapshot
 
+
+## Revert to BeforeInstallingOCP snapshot
+
+### Stop cli
+
 > :information_source: Run this on ESX
 
 ```
-PATTERN="[mw][1-5]|cli|bs"
-SNAPNAME="BeforeInstallingOCP"
+PATTERN="cli"
 ```
 
 ```
 vim-cmd vmsvc/getallvms | awk '$2 ~ "'$PATTERN'" && $1 !~ "Vmid" {print "vim-cmd vmsvc/power.shutdown " $1}' | sh
 
-sleep 10
+watch -n 10 vim-cmd vmsvc/getallvms | awk '$2 ~ "'$PATTERN'" && $1 !~ "Vmid" {print "vim-cmd vmsvc/power.getstate " $1}' | sh
+```
 
-vim-cmd vmsvc/getallvms | awk '$2 ~ "'$PATTERN'" && $1 !~ "Vmid" {print "vim-cmd vmsvc/power.getstate " $1}' | sh
+> :bulb: Leave watch with **Ctrl + c** when everyone is **powered off**
 
+### Power off cluster
+
+> :information_source: Run this on ESX
+
+```
+PATTERN="[mw][1-5]|bs"
+```
+
+```
+vim-cmd vmsvc/getallvms | awk '$2 ~ "'$PATTERN'" && $1 !~ "Vmid" {print "vim-cmd vmsvc/power.off " $1}' | sh
+
+watch -n 10 vim-cmd vmsvc/getallvms | awk '$2 ~ "'$PATTERN'" && $1 !~ "Vmid" {print "vim-cmd vmsvc/power.getstate " $1}' | sh
+```
+
+> :bulb: Leave watch with **Ctrl + c** when everyone is **powered off**
+
+### Revert snapshot
+
+> :information_source: Run this on ESX
+
+```
+PATTERN="[mw][1-5]|bs|cli"
+SNAPNAME="BeforeInstallingOCP"
+```
+
+```
 for vmid in $(vim-cmd vmsvc/getallvms | awk 'NR>1 && $2 ~ "'$PATTERN'" {print $1}'); do vim-cmd vmsvc/snapshot.get $vmid | grep -A 1 'Snapshot Name\s\{1,\}: '$SNAPNAME | awk -F' : ' 'NR>1 {print "vim-cmd vmsvc/snapshot.revert "'$vmid'" " $2 " suppressPowerOn"}' | sh; done
 ```
 
@@ -898,13 +938,43 @@ oc get route -n openshift-console | awk 'NR>1 && $1 ~ "console" {print "\nWeb Co
 
 :checkered_flag::checkered_flag::checkered_flag:
 
-## Make a OCPInstalled snapshot
+### Remove bootstrap
 
 > :information_source: Run this on ESX
 
 ```
-PATTERN="[mw][1-5]|cli|bs"
-SNAPNAME="OCPInstalled"
+PATTERN="bs"
+```
+
+```
+vim-cmd vmsvc/getallvms | awk '$2 ~ "'$PATTERN'" && $1 !~ "Vmid" {print "vim-cmd vmsvc/power.off " $1}' | sh
+
+vim-cmd vmsvc/getallvms | awk '$2 ~ "'$PATTERN'" && $1 
+!~ "Vmid" {print "vim-cmd vmsvc/destroy " $1}' | sh
+```
+
+### Remove bootstrap from load balancer
+
+> :information_source: Run this on Cli
+
+```
+LB_CONF="/etc/haproxy/haproxy.cfg" && echo $LB_CONF
+```
+
+```
+sed -i 's/\(server bs-*\)/# \1/g' $LB_CONF
+systemctl restart haproxy
+```
+
+
+## Make a OCPInstalled snapshot
+
+### Stop workers
+
+> :information_source: Run this on ESX
+
+```
+PATTERN="[w][1-5]"
 ```
 
 ```
@@ -914,6 +984,31 @@ watch -n 10 vim-cmd vmsvc/getallvms | awk '$2 ~ "'$PATTERN'" && $1 !~ "Vmid" {pr
 ```
 
 > :bulb: Leave watch with **Ctrl + c** when everyone is **powered off**
+
+### Stop masters and cli
+
+> :information_source: Run this on ESX
+
+```
+PATTERN="[m][1-5]|cli"
+```
+
+```
+vim-cmd vmsvc/getallvms | awk '$2 ~ "'$PATTERN'" && $1 !~ "Vmid" {print "vim-cmd vmsvc/power.shutdown " $1}' | sh
+
+watch -n 10 vim-cmd vmsvc/getallvms | awk '$2 ~ "'$PATTERN'" && $1 !~ "Vmid" {print "vim-cmd vmsvc/power.getstate " $1}' | sh
+```
+
+> :bulb: Leave watch with **Ctrl + c** when everyone is **powered off**
+
+### Make snapshot
+
+> :information_source: Run this on ESX
+
+```
+PATTERN="[mw][1-5]|cli"
+SNAPNAME="OCPInstalled"
+```
 
 ```
 vim-cmd vmsvc/getallvms | awk '$2 ~ "'$PATTERN'" && $1 !~ "Vmid" {print "vim-cmd vmsvc/snapshot.create " $1 " '$SNAPNAME' "}' | sh
