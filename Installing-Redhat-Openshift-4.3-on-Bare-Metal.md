@@ -680,9 +680,9 @@ vim-cmd vmsvc/getallvms | awk '$2 ~ "'$PATTERN'" && $1 !~ "Vmid" {print "vim-cmd
 
 :checkered_flag::checkered_flag::checkered_flag:
 
-## Start cluster nodes
+## Start cluster
 
-### install a vncviewer to monitor cluster nodes
+### Install a vncviewer to monitor cluster nodes
 
 Download and install a  [vnc viewer](https://www.tightvnc.com/download.php) on ** your device **
 
