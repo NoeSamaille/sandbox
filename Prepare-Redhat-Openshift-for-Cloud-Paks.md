@@ -208,9 +208,9 @@ oc get route/docker-registry -n default -o json | jq -r .spec.tls.termination
 > :information_source: Run this on **OCP 3.11** Cli
 
 ```
-mkdir -p /etc/docker/certs.d/$REG_HOST
-
 REG_HOST=$(oc get route/docker-registry -n default -o json | jq -r .spec.host) && echo $REG_HOST
+
+mkdir -p /etc/docker/certs.d/$REG_HOST
 
 sshpass -e scp -o StrictHostKeyChecking=no m1-$OCP:/etc/origin/master/ca.crt /etc/docker/certs.d/$REG_HOST
 ```
@@ -218,118 +218,48 @@ sshpass -e scp -o StrictHostKeyChecking=no m1-$OCP:/etc/origin/master/ca.crt /et
 
 ### Exposing Openshift 4 Registry
 
+#### Trust Openshift 4 registry
 
+> :information_source: Run this on **OCP 4.3** Cli
 
 ```
-
-
-
-
-
-
-\> :information_source: Run this on Controller
-
-
-
-\```
-
-REG_HOST=$(oc get route/docker-registry -n default -o json | jq -r .spec.host) && echo $REG_HOST
-
-
-
 REG_HOST=$(oc get route -n openshift-image-registry ) && echo $REG_HOST
-
-REG_HOST=$(oc registry info) && echo $REG_HOST
-
-
-
-\```
-
-
-
-**##### Add OCP certificate authority to docker**
-
-
-
-\> :information_source: Run this on Controller
-
-
-
-\```
 
 mkdir -p /etc/docker/certs.d/$REG_HOST
 
-
-
-sshpass -e scp -o StrictHostKeyChecking=no m1-$OCP:/etc/origin/master/ca.crt /etc/docker/certs.d/$REG_HOST
-
-
+REG_HOST=$(oc registry info) && echo $REG_HOST
 
 oc extract secret/router-ca --keys=tls.crt -n openshift-ingress-operator
 
 cp -v tls.crt /etc/docker/certs.d/$REG_HOST/
+```
 
 
+### Log in Openshift registry
 
-\```
+> :information_source: Run this on Cli
 
-
-
-**##### Log to OCP docker registry**
-
-
-
-\> :information_source: Run this on Controller
-
-
-
-\```
-
-[ -z $(command -v docker) ] && { yum install docker -y; systemctl start docker; docker run hello-world; systemctl enable docker; } || echo "docker already installed"
-
-
-
+```
 docker login -u $(oc whoami) -p $(oc whoami -t) $REG_HOST
+```
+> :bulb: If login has been successfull, Docker should have added an entry in **~/.docker/config.json**.
 
-\```
+### Tag a docker image with Openshift registry hostname and push it
 
+> :information_source: Run this on Cli
 
-
-\> :bulb: If login has been successfull, Docker should have added an entry in ***\*~/.docker/config.json\****.
-
-
-
-
-
-**##### Tag a docker image with OCP docker registry hostname and push it**
-
-
-
-\> :information_source: Run this on Controller
-
-
-
-\```
-
+```
 docker pull busybox
-
-
-
 docker tag docker.io/busybox $REG_HOST/$(oc project -q)/busybox
+```
 
-\```
+> :warning: Now you have to be able to push docker images from controller to OCP docker registry
 
+> :information_source: Run this on Cli
 
-
-\> :warning: Now you have to be able to push docker images from controller to OCP docker registry
-
-\```
-
+```
 docker push $REG_HOST/$(oc project -q)/busybox
-
-\```
-
-
+```
 
 <br>
 
