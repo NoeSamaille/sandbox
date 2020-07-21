@@ -662,10 +662,12 @@ SNAPNAME="BeforeInstallingOCP"
 ```
 vim-cmd vmsvc/getallvms | awk '$2 ~ "'$PATTERN'" && $1 !~ "Vmid" {print "vim-cmd vmsvc/power.shutdown " $1}' | sh
 
-sleep 10
+watch -n 10 vim-cmd vmsvc/getallvms | awk '$2 ~ "'$PATTERN'" && $1 !~ "Vmid" {print "vim-cmd vmsvc/power.getstate " $1}' | sh
+```
 
-vim-cmd vmsvc/getallvms | awk '$2 ~ "'$PATTERN'" && $1 !~ "Vmid" {print "vim-cmd vmsvc/power.getstate " $1}' | sh
+> :bulb: Leave watch with **Ctrl + c** when everyone is **powered off**
 
+```
 vim-cmd vmsvc/getallvms | awk '$2 ~ "'$PATTERN'" && $1 !~ "Vmid" {print "vim-cmd vmsvc/snapshot.create " $1 " '$SNAPNAME' "}' | sh
 
 vim-cmd vmsvc/getallvms | awk '$2 ~ "'$PATTERN'" && $1 !~ "Vmid" {print "vim-cmd vmsvc/power.on " $1}' | sh
@@ -862,6 +864,26 @@ oc patch configs.imageregistry.operator.openshift.io cluster --type merge --patc
 
 >:bulb: Wait until the image-registry operator completes the update before using the registry.
 
+### Test Environment
+
+> :information_source: Run this on Cli
+
+```
+oc new-project validate
+
+oc new-app django-psql-example
+
+sleep 10
+
+oc logs -f bc/django-psql-example
+```
+
+>:bulb: Wait until **Successfully pushed image-registry.openshift-image-registry.svc:5000/validate/django-psql-example**
+
+```
+oc get routes | awk 'NR>1 {print "\nTo access your application, Visit url:\n"$2}'
+```
+
 ### Get web console url and login
 
 > :information_source: Run this on Cli
@@ -874,23 +896,6 @@ oc get route -n openshift-console | awk 'NR>1 && $1 ~ "console" {print "\nWeb Co
 
 ![](img/loginwith.jpg)
 
-
-### Check Environment health
-
-> :bulb: If needed to add in your browser, OCP certificate authority  can be found in your first master **/etc/origin/master/ca.crt**.
-
-#### Checking complete environment health
-
-> :information_source: Run this on First Master
-
-Proceed as describe [here](https://docs.openshift.com/container-platform/3.11/day_two_guide/environment_health_checks.html#day-two-guide-complete-deployment-health-check)
-
-#### Checking Hosts Router Registry and Network connectivity
-
-> :information_source: Run this on First Master
-
-Proceed as describe [here](https://docs.openshift.com/container-platform/3.11/day_two_guide/environment_health_checks.html#day-two-guide-host-health)
-
 :checkered_flag::checkered_flag::checkered_flag:
 
 ## Make a OCPInstalled snapshot
@@ -898,12 +903,22 @@ Proceed as describe [here](https://docs.openshift.com/container-platform/3.11/da
 > :information_source: Run this on ESX
 
 ```
-vim-cmd vmsvc/getallvms | awk '$2 ~ "[mw][1-5]|lb|cli|nfs|ctl" && $1 !~ "Vmid" {print "vim-cmd vmsvc/power.shutdown " $1}' | sh
-watch -n 5 vim-cmd vmsvc/getallvms | awk '$2 ~ "[mw][1-5]|lb|cli|nfs|ctl" && $1 !~ "Vmid" {print "vim-cmd vmsvc/power.getstate " $1}' | sh
-
+PATTERN="[mw][1-5]|cli|bs"
 SNAPNAME="OCPInstalled"
-vim-cmd vmsvc/getallvms | awk '$2 ~ "[mw][1-5]|lb|cli|nfs|ctl" && $1 !~ "Vmid" {print "vim-cmd vmsvc/snapshot.create " $1 " '$SNAPNAME' "}' | sh
-vim-cmd vmsvc/getallvms | awk '$2 ~ "[mw][1-5]|lb|cli|nfs|ctl" && $1 !~ "Vmid" {print "vim-cmd vmsvc/power.on " $1}' | sh
+```
+
+```
+vim-cmd vmsvc/getallvms | awk '$2 ~ "'$PATTERN'" && $1 !~ "Vmid" {print "vim-cmd vmsvc/power.shutdown " $1}' | sh
+
+watch -n 10 vim-cmd vmsvc/getallvms | awk '$2 ~ "'$PATTERN'" && $1 !~ "Vmid" {print "vim-cmd vmsvc/power.getstate " $1}' | sh
+```
+
+> :bulb: Leave watch with **Ctrl + c** when everyone is **powered off**
+
+```
+vim-cmd vmsvc/getallvms | awk '$2 ~ "'$PATTERN'" && $1 !~ "Vmid" {print "vim-cmd vmsvc/snapshot.create " $1 " '$SNAPNAME' "}' | sh
+
+vim-cmd vmsvc/getallvms | awk '$2 ~ "'$PATTERN'" && $1 !~ "Vmid" {print "vim-cmd vmsvc/power.on " $1}' | sh
 ```
 
 :checkered_flag::checkered_flag::checkered_flag:
