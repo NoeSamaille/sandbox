@@ -58,7 +58,7 @@ NFS_PATH="/exports"
 touch /mnt/$NFS_SERVER/SUCCESS && echo "RC="$?
 ```
 
-> :warning: Next command shoud display ***\*SUCCESS\****
+> :warning: Next command shoud display **SUCCESS**
 
 > :information_source: Run this on Cli or any **centos/redhat linux device**
 
@@ -112,110 +112,74 @@ NFS_SERVER="cli-ocp5"
 NFS_PATH="/exports"
 ```
 
-
-
+```
 cd ~ 
-
-
-
 wget -c http://web/soft/nfs-client.zip
-
-
-
+[ -z $(command -v unzip) ] && { yum install unzip -y; } || echo "unzip already installed"
 unzip nfs-client.zip
-
-
-
 cd nfs-client/
-
-
 
 oc new-project storage
 
-
-
 sed -i -e 's/namespace:.*/namespace: '$(oc project -q)'/g' ./deploy/rbac.yaml
-
-
-
 oc create -f deploy/rbac.yaml
-
-
-
 oc adm policy add-scc-to-user hostmount-anyuid system:serviceaccount:$(oc project -q):nfs-client-provisioner
 
-
-
 sed -i -e 's/<NFS_SERVER>/'$NFS_SERVER'/g' deploy/deployment.yaml
-
 sed -i -e 's:<NFS_PATH>:'$NFS_PATH':g' deploy/deployment.yaml
 
-
-
 oc create -f deploy/class.yaml
-
-
-
 oc create -f deploy/deployment.yaml
-
-
 
 sleep 10
 
-
-
 oc get pods
-
-
-
 oc logs $(oc get pods | awk 'NR>1 {print $1}')
-
-
-
 oc create -f deploy/test-claim.yaml
-
-
-
 oc create -f deploy/test-pod.yaml
+```
 
-\```
+> :warning: Wait for test-pod to be deployed and check that next commands have to display **SUCCESS**
 
+> :information_source: Run this on Cli
 
-
-\> :warning: Wait for test-pod to be deployed and check that next commands have to display ***\*SUCCESS\****
-
-
-
-\```
-
+```
 sleep 5 && VOLUME=$(oc get pvc | awk '$1 ~ "test-claim" {print $3}') && echo $VOLUME
 
-
-
 sshpass -e ssh -o StrictHostKeyChecking=no \
-
 $NFS_SERVER ls /$NFS_PATH/$(oc project -q)-test-claim-$VOLUME && cd ~
+```
 
-\```
-
-
-
+:checkered_flag::checkered_flag::checkered_flag:
 
 
-**## Exposing openshift Registry**
+## Exposing Openshift Registry
+
+> :bulb: Target is to be able to push docker images from Controller to Openshift registry in a secure way.
+
+### Log in cluster default project
+
+> :information_source: Run this on **OCP 3.11** Cli
+
+```
+oc login https://cli-$OCP:8443 -u admin -p admin --insecure-skip-tls-verify=true -n default
+```
+
+> [Exposing Openshift 3 Registry](#exposing-openshift-3-registry)
+
+> :information_source: Run this on **OCP 4.3** Cli
+
+```
+oc login https://cli-$OCP:6443 -u admin -p admin --insecure-skip-tls-verify=true -n default
+```
+
+> [Exposing Openshift 4 Registry](#exposing-openshift-4-registry)
+
+### Exposing Openshift 3 Registry
 
 
 
-\> :bulb: Target is to be able to push docker images from Controller to Openshift registry in a secure way.
-
-
-
-**### On Controller**
-
-
-
-**##### Log in cluster default project**
-
+### Exposing Openshift 4 Registry
 
 
 \> :information_source: Run this on Controller
