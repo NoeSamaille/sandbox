@@ -815,9 +815,7 @@ oc adm policy add-cluster-role-to-user cluster-admin admin
 ```
 
 
-### Check install
-
-#### Login to cluster
+### Login to cluster
 
 > :information_source: Run this on Cli
 
@@ -825,11 +823,9 @@ oc adm policy add-cluster-role-to-user cluster-admin admin
 oc login https://cli-$OCP:6443 -u admin -p admin --insecure-skip-tls-verify=true
 
 oc get nodes
-
-oc get route -n openshift-console | awk 'NR>1 && $1 ~ "console" {print "Web Console is available with htpasswd_provider as admin with admin as password at https://"$2}'
 ```
 
-#### Set etcd-quorum-guard to unmanaged state
+### Set etcd-quorum-guard to unmanaged state
 
 > :information_source: Run this on Cli
 
@@ -846,7 +842,7 @@ EOF
 )"
 ```
 
-#### Downscale etcd-quorum-guard to one
+### Downscale etcd-quorum-guard to one
 
 > :information_source: Run this on Cli
 
@@ -854,7 +850,7 @@ EOF
 oc scale --replicas=1 deployment/etcd-quorum-guard -n openshift-machine-config-operator
 ```
 
-#### Setup image-registry to use ephemeral storage
+### Setup image-registry to use ephemeral storage
 
 > :information_source: Run this on Cli
 
@@ -865,6 +861,17 @@ oc patch configs.imageregistry.operator.openshift.io cluster --type merge --patc
 ```
 
 >:bulb: Wait until the image-registry operator completes the update before using the registry.
+
+### Get web console url and login
+
+> :information_source: Run this on Cli
+
+```
+oc get route -n openshift-console | awk 'NR>1 && $1 ~ "console" {print "\nWeb Console is available with htpasswd_provider as admin with admin as password at:\nhttps://"$2}'
+```
+
+>:bulb: Login with htpasswd_provider
+![](img/moginwith.jpg)
 
 
 ### Check Environment health
