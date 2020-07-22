@@ -197,7 +197,6 @@ vim-cmd vmsvc/getallvms | awk '$2 ~ "'$PATTERN'" && $1 !~ "Vmid" {print "vim-cmd
 
 ```
 CLI_DYN_ADDR="cli-addresse"
-wget -c $WEB_SERVER_SOFT_URL/getVMAddress.sh
 ```
 
 > :warning: Set **IP_HEAD** variables accordingly in **getVMAddress.sh** before proceeding.
@@ -205,6 +204,7 @@ wget -c $WEB_SERVER_SOFT_URL/getVMAddress.sh
 > :information_source: Run this on ESX
 
 ```
+wget -c $WEB_SERVER_SOFT_URL/getVMAddress.sh
 chmod +x ./getVMAddress.sh
 watch -n 5 "./getVMAddress.sh | tee $CLI_DYN_ADDR"
 ```
