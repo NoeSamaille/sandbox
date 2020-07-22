@@ -574,6 +574,7 @@ chmod +x buildIso.sh
 
 while [ ! -z "$(ls -A $ISO_PATH)" ]; do umount $ISO_PATH; sleep 2; done
 rmdir $ISO_PATH
+rm -rf $RW_ISO_PATH
 ```
 
 #### Check RHCOS isolinux.cfg
