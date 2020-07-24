@@ -703,9 +703,9 @@ vncviewer $ESX_SERVER:W3_VNC_PORT
 
 <br>
 
-## Install OCP
+## Install OCP 4
 
-### Launch OCP installation
+### Launch OCP 4 installation
 
 > :bulb: To avoid network failure, launch installation on **locale console** or in a **screen**
 
@@ -785,8 +785,6 @@ cd $INST_DIR
 ./openshift-install gather bootstrap --bootstrap $BS_IP --key ~/.ssh/id_rsa --master "$M1_IP"
 ```
 
-:thumbsdown::thumbsdown::thumbsdown::thumbsdown::thumbsdown::thumbsdown:
-
 #### -  [Rever snapshot](https://github.com/bpshparis/sandbox/blob/master/Manage-ESX-snapshots.md#manage-esx-snapshots)
 
 
@@ -817,7 +815,9 @@ cd $INST_DIR
 
 ![](img/installcomplete.jpg)
 
-> :bulb: If something went wrong have a look at **~/$INST_DIR/.openshift_install.log** and revert to [BeforeInstallingOCP snapshot](#revert-to-beforeInstallingocp-snapshot).
+
+#### -  :thumbsup: [Next step](#post-install-ocp-4)
+#### -  :thumbsdown: [Rever snapshot](https://github.com/bpshparis/sandbox/blob/master/Manage-ESX-snapshots.md#manage-esx-snapshots)
 
 <br>
 
@@ -825,23 +825,31 @@ cd $INST_DIR
 
 <br>
 
-:checkered_flag::checkered_flag::checkered_flag:
-
-## Post install OCP
+## Post install OCP 4
 
 ### Create an admin user with  cluster-admin role
 
-> :information_source: Run this on Cli
+#### Set environment
+
+> :warning: Adapt settings to fit to your environment.
+
+> :information_source: Run this on Installer
 
 ```
 INST_DIR=~/ocpinst
 ```
+
+#### Create an admin user with  cluster-admin role
+
+> :information_source: Run this on Installer
 
 ```
 export KUBECONFIG=$INST_DIR/auth/kubeconfig
 oc whoami
 ```
 >:bulb: Command above should return **system:admin**
+
+> :information_source: Run this on Installer
 
 ```
 cd $INST_DIR
@@ -875,7 +883,7 @@ oc adm policy add-cluster-role-to-user cluster-admin admin
 
 ### Login to cluster
 
-> :information_source: Run this on Cli
+> :information_source: Run this on Installer
 
 ```
 oc login https://cli-$OCP:6443 -u admin -p admin --insecure-skip-tls-verify=true
@@ -885,7 +893,7 @@ oc get nodes
 
 ### Set etcd-quorum-guard to unmanaged state
 
-> :information_source: Run this on Cli
+> :information_source: Run this on Installer
 
 ```
 oc patch clusterversion/version --type='merge' -p "$(cat <<- EOF
@@ -920,9 +928,9 @@ oc patch configs.imageregistry.operator.openshift.io cluster --type merge --patc
 
 >:bulb: Wait until the image-registry operator completes the update before using the registry.
 
-### Test Environment
+## Test OCP 4
 
-> :information_source: Run this on Cli
+> :information_source: Run this on Installer
 
 ```
 oc new-project validate
@@ -940,7 +948,7 @@ oc logs -f bc/django-psql-example
 oc get routes | awk 'NR>1 {print "\nTo access your application, Visit url:\n"$2}'
 ```
 
-### Get web console url and login
+### Get OCP 4 web console url and login
 
 > :information_source: Run this on Cli
 
@@ -962,27 +970,42 @@ oc get route -n openshift-console | awk 'NR>1 && $1 ~ "console" {print "\nWeb Co
 
 ### Remove bootstrap VM
 
+#### Set environment
+
+> :warning: Adapt settings to fit to your environment.
+
 > :information_source: Run this on ESX
 
 ```
-PATTERN="bs"
+VM_PATTERN="bs"
 ```
+#### Remove bootstrap VM
+
+> :information_source: Run this on ESX
 
 ```
-vim-cmd vmsvc/getallvms | awk '$2 ~ "'$PATTERN'" && $1 !~ "Vmid" {print "vim-cmd vmsvc/power.off " $1}' | sh
+vim-cmd vmsvc/getallvms | awk '$2 ~ "'$VM_PATTERN'" && $1 !~ "Vmid" {print "vim-cmd vmsvc/power.off " $1}' | sh
 
-sleep 10
-
-vim-cmd vmsvc/getallvms | awk '$2 ~ "'$PATTERN'" && $1 !~ "Vmid" {print "vim-cmd vmsvc/destroy " $1}' | sh
+watch -n 10 vim-cmd vmsvc/getallvms | awk '$2 ~ "'$VM_PATTERN'" && $1 !~ "Vmid" {print "vim-cmd vmsvc/power.getstate " $1}' | sh
 ```
+
+> :bulb: Leave watch with **Ctrl + c** when everyone is **powered off**
 
 ### Remove bootstrap from load balancer
 
-> :information_source: Run this on Cli
+#### Set environment
+
+> :warning: Adapt settings to fit to your environment.
+
+> :information_source: Run this on ESX
 
 ```
 LB_CONF="/etc/haproxy/haproxy.cfg" && echo $LB_CONF
 ```
+
+#### Remove bootstrap from load balancer
+
+> :information_source: Run this on Cli
 
 ```
 sed -i 's/\(server bs-*\)/# \1/g' $LB_CONF
