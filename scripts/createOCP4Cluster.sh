@@ -36,6 +36,7 @@ BOOTSTRAP_VNC_PORT="5909"
 MASTER_1ST_VNC_PORT="5901"
 WORKER_1ST_VNC_PORT="5904"
 #WORKER_1ST_VNC_PORT="5906"
+VNC_PWD="spcspc"
 
 createWorkersVm (){
 
@@ -51,6 +52,7 @@ for VM_NAME in $WORKERS_VM; do
 		sed -i -e 's/memSize = "[^"]*"/memSize = "'$WORKER_RAM'"/' $VMS_PATH/$VM_NAME/$VM_NAME.vmx
 		sed -i -e 's!ide1:0.fileName = "[^"]*"!ide1:0.fileName = "'$ISO_PATH'/'$VM_NAME'.iso"!' $VMS_PATH/$VM_NAME/$VM_NAME.vmx
 		sed -i -e 's/RemoteDisplay.vnc.port = "[^"]*"/RemoteDisplay.vnc.port = "'$VNC_PORT'"/' $VMS_PATH/$VM_NAME/$VM_NAME.vmx
+		sed -i -e 's/RemoteDisplay.vnc.password = "[^"]*"/RemoteDisplay.vnc.password = "'$VNC_PWD'"/' $VMS_PATH/$VM_NAME/$VM_NAME.vmx
 		vim-cmd solo/registervm $VMS_PATH/$VM_NAME/$VM_NAME.vmx
 		let "VNC_PORT++"
 	fi

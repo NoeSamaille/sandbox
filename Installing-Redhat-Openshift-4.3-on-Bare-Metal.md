@@ -10,7 +10,8 @@ Download [Redhat Openshift 4 on Bare Metal material](https://cloud.redhat.com/op
 
 ## Hardware requirements
 
-One Lenovo **X3550M5** or similar to host **4** virtual machines (bootstrap will be removed after cluster install):
+-  One computer which will be called **Installer** that runs Linux or MacOS, with 500 MB of local disk space.
+-  One Lenovo **X3550M5** or similar to host **4** virtual machines (bootstrap will be removed after cluster install):
 
 | name                        | role                                              | vcpus  | ram (GB) | storage (GB) | ethernet (10GB) |
 | --------------------------- | ------------------------------------------------- | ------ | -------- | ------------ | --------------- |
@@ -38,8 +39,8 @@ One Lenovo **X3550M5** or similar to host **4** virtual machines (bootstrap will
 - One **WEB server** where following files are available in **read mode**:
 
   - [Openshift pull secret](https://cloud.redhat.com/openshift/install/pull-secret) saved as pull-secret.txt
-  - [OpenShift installer](https://mirror.openshift.com/pub/openshift-v4/clients/ocp/latest/openshift-install-linux.tar.gz)
-  - [Openshift Command line interface](https://mirror.openshift.com/pub/openshift-v4/clients/ocp/latest/openshift-client-linux.tar.gz)
+  - [Linux](https://mirror.openshift.com/pub/openshift-v4/clients/ocp/latest/openshift-install-linux.tar.gz) or [MacOS](https://mirror.openshift.com/pub/openshift-v4/clients/ocp/latest/openshift-install-mac.tar.gz) OpenShift installer
+  - [Linux](https://mirror.openshift.com/pub/openshift-v4/clients/ocp/latest/openshift-client-linux.tar.gz) or [MacOS](https://mirror.openshift.com/pub/openshift-v4/clients/ocp/latest/openshift-client-mac.tar.gz) Openshift command line interface
   - [Red Hat Enterprise Linux CoreOS raw image (*rhcos-4.X.X-x86_64-metal.x86_64.raw.gz*)](https://mirror.openshift.com/pub/openshift-v4/dependencies/rhcos/latest/latest/)
   - [Red Hat Enterprise Linux CoreOS iso image (*rhcos-4.4.3-x86_64-installer.x86_64.iso*)](https://mirror.openshift.com/pub/openshift-v4/dependencies/rhcos/latest/latest/)
   - [Openshift installation configuration file (*install-config.yaml*)](scripts/install-config.yaml)
@@ -51,9 +52,11 @@ One Lenovo **X3550M5** or similar to host **4** virtual machines (bootstrap will
 
 ## DNS
 
-> :information_source: Commands below are valid for a bind9 running on a Ubuntu 16
+> :information_source: Commands below are valid for a **bind9** running on a **Ubuntu 16**
 
 ### Set environment
+
+> :warning: Adapt settings to fit to your environment
 
 > :information_source: Run this on DNS
 
@@ -152,9 +155,11 @@ dig @localhost +short _etcd-server-ssl._tcp.$OCP.$DOMAIN SRV
 
 ## Load balancer
 
-> :information_source: Commands below are valid for a haproxy running on a Centos 7
+> :information_source: Commands below are valid for a **haproxy** running on a** Centos 7**.
 
 ### Set environment
+
+> :warning: Adapt settings to fit to your environment
 
 > :information_source: Run this on Load Balancer
 
@@ -240,7 +245,7 @@ EOF
 
 ### :bulb: Optional: Disable security
 
-> :information_source: Run this on on Load Balancer
+> :information_source: Run this on Load Balancer
 
 ```
 systemctl stop firewalld &&
@@ -251,7 +256,7 @@ sed -i -e 's/^SELINUX=\w*/SELINUX=disabled/' /etc/selinux/config
 
 ### Start  load balancer
 
-> :information_source: Run this on Cli
+> :information_source: Run this on Load Balancer
 
 ```
 systemctl restart haproxy &&
@@ -263,18 +268,27 @@ systemctl enable haproxy
 
 ## Prepare installing OCP 4
 
-> :information_source: Commands below are valid for a haproxy running on a Centos 7.
-> :warning: Some of commands below will need to be adapted to fit Linux/Debian or masOS .
+> :information_source: Commands below are valid for a **Linux/Centos 7**.
+
+> :warning: Some of commands below will need to be adapted to fit Linux/Debian or MacOS .
 
 ### Set install-config.yaml
 
-> :information_source: Run this on Linux/
+#### Set environment
+
+> :warning: Adapt settings to fit to your environment
+
+> :information_source: Run this on Installer
 
 ```
 DOMAIN=$(cat /etc/resolv.conf | awk '$1 ~ "^search" {print $2}') && echo $DOMAIN
 WEB_SERVER_SOFT_URL="http://web/soft"
 INST_DIR=~/ocpinst && echo $INST_DIR
 ```
+
+#### Set install-config.yaml
+
+> :information_source: Run this on Installer
 
 ```
 [ -d "$INST_DIR" ] && rm -rf $INST_DIR/* || mkdir $INST_DIR
@@ -296,12 +310,20 @@ sed -i "s:^sshKey\:.*$:sshKey\: '$PUB_KEY':"  install-config.yaml
 
 ### Backup install-config.yaml on web server
 
-> :information_source: Run this on Cli 
+#### Set environment
+
+> :warning: Adapt settings to fit to your environment
+
+> :information_source: Run this on Installer
 
 ```
 WEB_SERVER="web"
 WEB_SERVER_PATH="/web/$OCP"
 ```
+
+### Backup install-config.yaml on web server
+
+> :information_source: Run this on Installer
 
 ```
 [ -z $(command -v sshpass) ] && yum install -y sshpass || echo "sshpass already installed"
@@ -317,13 +339,21 @@ sshpass -e ssh -o StrictHostKeyChecking=no root@$WEB_SERVER "chmod -R +r $WEB_SE
 
 ### Install Openshift installer, oc and kubectl commands
 
-> :information_source: Run this on Cli 
+#### Set environment
+
+> :warning: Adapt settings to fit to your environment
+
+> :information_source: Run this on Installer
 
 ```
 WEB_SERVER_SOFT_URL="http://web/soft"
 INSTALLER_FILE="openshift-install-linux-4.3.18.tar.gz"
 CLIENT_FILE="oc-4.3.18-linux.tar.gz"
 ```
+
+#### Install Openshift installer, oc and kubectl commands
+
+> :information_source: Run this on Installer
 
 ```
 cd $INST_DIR
@@ -339,7 +369,7 @@ tar -xvzf $CLIENT_FILE -C $(echo $PATH | awk -F":" 'NR==1 {print $1}')
 
 > :warning: You have to be on line to execute this step.
 
-> :information_source: Run this on Cli 
+> :information_source: Run this on Installer 
 
 ```
 cd $INST_DIR
@@ -352,13 +382,21 @@ sed -i 's/mastersSchedulable: true/mastersSchedulable: false/' manifests/cluster
 
 ### Make ignition files and RHCOS image available on web server
 
-> :information_source: Run this on Cli 
+#### Set environment
+
+> :warning: Adapt settings to fit to your environment
+
+> :information_source: Run this on Installer
 
 ```
 WEB_SERVER="web"
 WEB_SERVER_PATH="/web/$OCP"
 RHCOS_IMG_PATH="/web/img/rhcos-4.4.3-x86_64-metal.x86_64.raw.gz"
 ```
+
+#### Make ignition files and RHCOS image available on web server
+
+> :information_source: Run this on Installer
 
 ```
 cd $INST_DIR
@@ -374,16 +412,26 @@ sshpass -e ssh -o StrictHostKeyChecking=no root@web "chmod -R +r /web/$OCP"
 
 :bulb: The trick is to automate what's explained [here](https://docs.openshift.com/container-platform/4.5/installing/installing_bare_metal/installing-bare-metal.html#installation-user-infra-machines-static-network_installing-bare-metal)
 
-#### Prepare RHCOS boot iso customization
+#### Set environment
 
-> :information_source: Run this on Cli 
+> :warning: Adapt settings to fit to your environment.
+
+> :information_source: Run this on Installer
 
 ```
 WEB_SERVER_ISO_URL="http://web/iso"
 RHCOS_ISO_FILE="rhcos-4.4.3-x86_64-installer.x86_64.iso"
 ISO_PATH="/media/iso"
 RW_ISO_PATH="/media/isorw"
+WEB_SERVER_SOFT_URL="http://web/soft"
+TEST_ISO_PATH="/media/test"
+ESX_SERVER="ocp5"
+ESX_ISO_PATH="/vmfs/volumes/datastore1/iso"
 ```
+
+#### Prepare RHCOS boot iso customization
+
+> :information_source: Run this on Installer
 
 ```
 wget -c $WEB_SERVER_ISO_URL/$RHCOS_ISO_FILE
@@ -399,11 +447,7 @@ mount -o loop $RHCOS_ISO_FILE $ISO_PATH
 
 #### Customize RHCOS boot iso 
 
-> :information_source: Run this on Cli 
-
-```
-WEB_SERVER_SOFT_URL="http://web/soft"
-```
+> :information_source: Run this on Installer 
 
 ```
 wget -c $WEB_SERVER_SOFT_URL/buildIso.sh
@@ -412,11 +456,11 @@ chmod +x buildIso.sh
 
 > :warning: Set **OCP**, **WEB_SRV_URL**, **RAW_IMG_URL**, **DNS**,  **DOMAIN**, **IF**, **MASK**, **GATEWAY**,  **ISO_PATH**, **RW_ISO_PATH** and **ISO_CFG** variables accordingly in **buildIso.sh** before proceeding.
 
-> :warning: [ -z $(command -v mkisofs) ] && yum install -y genisoimage || echo -e mkisofs installed
-
-> :information_source: Run this on Cli 
+> :information_source: Run this on Installer 
 
 ```
+[ -z $(command -v mkisofs) ] && yum install -y genisoimage || echo -e mkisofs installed
+
 ./buildIso.sh
 
 while [ ! -z "$(ls -A $ISO_PATH)" ]; do umount $ISO_PATH; sleep 2; done
@@ -426,11 +470,7 @@ rm -rf $RW_ISO_PATH
 
 #### Check RHCOS boot iso
 
-> :information_source: Run this on Cli 
-
-```
-TEST_ISO_PATH="/media/test"
-```
+> :information_source: Run this on Installer 
 
 ```
 [ ! -d $TEST_ISO_PATH ] && mkdir $TEST_ISO_PATH
@@ -450,12 +490,7 @@ rmdir $TEST_ISO_PATH
 
 #### Make RHCOS boot iso files available on ESX server
 
-> :information_source: Run this on Cli
-
-```
-ESX_SERVER="ocp5"
-ESX_ISO_PATH="/vmfs/volumes/datastore1/iso"
-```
+> :information_source: Run this on Installer
 
 ```
 sshpass -e ssh -o StrictHostKeyChecking=no root@$ESX_SERVER "rm -rf $ESX_ISO_PATH/*-$OCP.iso"
@@ -469,7 +504,9 @@ sshpass -e ssh -o StrictHostKeyChecking=no root@$ESX_SERVER "chmod -R +r $ESX_IS
 
 ## Create Cluster
 
-### Download necessary stuff
+### Set environment
+
+> :warning: Adapt settings to fit to your environment.
 
 > :information_source: Run this on ESX
 
@@ -479,12 +516,25 @@ WEB_SERVER_VMDK_URL="http://web/vmdk"
 VMDK_PATH="/vmfs/volumes/datastore1/vmdk/"
 ```
 
+### Download necessary stuff
+
+> :information_source: Run this on ESX
+
 ```
 wget -c $WEB_SERVER_SOFT_URL/createOCP4Cluster.sh
 wget -c $WEB_SERVER_VMDK_URL/rhcos.vmx -P $VMDK_PATH
 ```
 
 ### Create cluster nodes
+
+> :bulb: Thanks to ESX VNC integrated server, Bootstrap process will be monitor able.
+
+> Default is
+> -  BOOTSTRAP_VNC_PORT="5909"
+> -  MASTER_1ST_VNC_PORT="5901"
+> -  WORKER_1ST_VNC_PORT="5904"
+> -  VNC_PWD="spcspc"
+> :bulb: Change settings in **createOCP4Cluster.sh** if needed.  
 
 >:warning: Set **OCP**, **DATASTORE**, **VMS_PATH**, **ISO_PATH** and **VMX** variables accordingly in **createOCP4Cluster.sh** before proceeding.
 
