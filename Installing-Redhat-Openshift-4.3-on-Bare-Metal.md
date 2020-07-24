@@ -51,7 +51,7 @@ One Lenovo **X3550M5** or similar to host **4** virtual machines (bootstrap will
 
 ## Add DNS records
 
-> :information_source: DNS is a bind9 running on a Ubuntu 16
+> :information_source: Commands below are valid for a bind9 running on a Ubuntu 16
 
 ### Set environment
 
@@ -152,7 +152,7 @@ dig @localhost +short _etcd-server-ssl._tcp.$OCP.$DOMAIN SRV
 
 ## Install load balancer
 
-> :information_source: Load balancer is a haproxy running on a Centos 7
+> :information_source: Commands below are valid for a haproxy running on a Centos 7
 
 ### Set environment
 
