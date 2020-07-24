@@ -33,12 +33,12 @@ One Lenovo **X3550M5** or similar to host **5** virtual machines (bootstrap will
 - One **DHCP server**.
 - One **WEB server** where following files are available in **read mode**:
 
-  - [pull-secret.txt](https://cloud.redhat.com/openshift/install/pull-secret)
+  - [Openshift pull secret](https://cloud.redhat.com/openshift/install/pull-secret) saved as pull-secret.txt
   - [OpenShift installer](https://mirror.openshift.com/pub/openshift-v4/clients/ocp/latest/openshift-install-linux.tar.gz)
-  - [Command line interface](https://mirror.openshift.com/pub/openshift-v4/clients/ocp/latest/openshift-client-linux.tar.gz)
-  - [Red Hat Enterprise Linux CoreOS (RHCOS) *rhcos-4.X.X-x86_64-metal.x86_64.raw.gz image*](https://mirror.openshift.com/pub/openshift-v4/dependencies/rhcos/latest/latest/)
-  - [Red Hat Enterprise Linux CoreOS (RHCOS) *rhcos-4.4.3-x86_64-installer.x86_64.iso images*](https://mirror.openshift.com/pub/openshift-v4/dependencies/rhcos/latest/latest/)
-  - [install-config.yaml](scripts/install-config.yaml)
+  - [Openshift Command line interface](https://mirror.openshift.com/pub/openshift-v4/clients/ocp/latest/openshift-client-linux.tar.gz)
+  - [Red Hat Enterprise Linux CoreOS raw image (*rhcos-4.X.X-x86_64-metal.x86_64.raw.gz*)](https://mirror.openshift.com/pub/openshift-v4/dependencies/rhcos/latest/latest/)
+  - [Red Hat Enterprise Linux CoreOS iso image (*rhcos-4.4.3-x86_64-installer.x86_64.iso*)](https://mirror.openshift.com/pub/openshift-v4/dependencies/rhcos/latest/latest/)
+  - [Openshift installation configuration file (*install-config.yaml*)](scripts/install-config.yaml)
   - centos.vmdk
   - centos-flat.vmdk
   - [rhel.vmx](scripts/rhel.vmx)
