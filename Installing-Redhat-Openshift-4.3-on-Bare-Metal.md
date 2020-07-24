@@ -12,14 +12,14 @@ Download [Redhat Openshift 4 on Bare Metal material](https://cloud.redhat.com/op
 
 One Lenovo **X3550M5** or similar to host **4** virtual machines (bootstrap will be removed after cluster install):
 
-| name                        | role                  | vcpus  | ram (GB) | storage (GB) | ethernet (10GB) |
-| --------------------------- | --------------------- | ------ | -------- | ------------ | --------------- |
-| m1-ocp5.iicparis.fr.ibm.com | master + etcd              | 4      | 16 | 250          | 1               |
-| w1-ocp5.iicparis.fr.ibm.com | worker                | 16     | 64       | 250          | 1               |
-| w2-ocp5.iicparis.fr.ibm.com | worker                | 16     | 64       | 250          | 1               |
-| w3-ocp5.iicparis.fr.ibm.com | worker                | 16     | 64       | 250          | 1               |
-| bs-ocp5.iicparis.fr.ibm.com | bootstrap (will be removed after cluster install) | 4     | 16       | 120          | 1               |
-| **TOTAL**                   |                       | **52** | **208** | **1000** | **4**         |
+| name                        | role                                              | vcpus  | ram (GB) | storage (GB) | ethernet (10GB) |
+| --------------------------- | ------------------------------------------------- | ------ | -------- | ------------ | --------------- |
+| m1-ocp5.iicparis.fr.ibm.com | master + etcd                                     | 4      | 16       | 250          | 1               |
+| w1-ocp5.iicparis.fr.ibm.com | worker                                            | 16     | 64       | 250          | 1               |
+| w2-ocp5.iicparis.fr.ibm.com | worker                                            | 16     | 64       | 250          | 1               |
+| w3-ocp5.iicparis.fr.ibm.com | worker                                            | 16     | 64       | 250          | 1               |
+| bs-ocp5.iicparis.fr.ibm.com | bootstrap (will be removed after cluster install) | 4      | 16       | 120          | 1               |
+| **TOTAL**                   |                                                   | **52** | **208**  | **1000**     | **4**           |
 
 
 ## System requirements
@@ -38,15 +38,8 @@ One Lenovo **X3550M5** or similar to host **4** virtual machines (bootstrap will
   - [Red Hat Enterprise Linux CoreOS raw image (*rhcos-4.X.X-x86_64-metal.x86_64.raw.gz*)](https://mirror.openshift.com/pub/openshift-v4/dependencies/rhcos/latest/latest/)
   - [Red Hat Enterprise Linux CoreOS iso image (*rhcos-4.4.3-x86_64-installer.x86_64.iso*)](https://mirror.openshift.com/pub/openshift-v4/dependencies/rhcos/latest/latest/)
   - [Openshift installation configuration file (*install-config.yaml*)](scripts/install-config.yaml)
-  - centos.vmdk
-  - centos-flat.vmdk
-  - [rhel.vmx](scripts/rhel.vmx)
   - [rhcos.vmx](scripts/rhcos.vmx)
-  - [createCli.sh](scripts/createCli.sh)
   - [createOCP4Cluster.sh](scripts/createOCP4Cluster.sh)
-  - [setHostAndIP.sh](scripts/setHostAndIP.sh)
-  - [extendRootLV.sh](scripts/extendRootLV.sh)
-  - [getVMAddress.sh](scripts/getVMAddress.sh)
   - [buildIso.sh](scripts/buildIso.sh)
 
 :checkered_flag::checkered_flag::checkered_flag:
@@ -146,144 +139,7 @@ dig @localhost +short _etcd-server-ssl._tcp.$OCP.$DOMAIN SRV
 
 :checkered_flag::checkered_flag::checkered_flag:
 
-
-## Create Cli
-
-> :bulb: Have a look at [system requirements](https://github.com/bpshparis/sandbox/blob/master/Installing-Redhat-Openshift-4.3-on-Bare-Metal.md#system-requirements) if necessary.
-
-### Download necessary stuff
-
-> :information_source: Run this on ESX
-
-```
-WEB_SERVER_VMDK_URL="http://web/vmdk"
-WEB_SERVER_SOFT_URL="http://web/soft"
-VMDK_PATH="/vmfs/volumes/datastore1/vmdk/"
-```
-
-```
-wget -c $WEB_SERVER_VMDK_URL/centos-gui-flat.vmdk -P $VMDK_PATH
-wget -c $WEB_SERVER_VMDK_URL/centos-gui.vmdk -P $VMDK_PATH
-wget -c $WEB_SERVER_VMDK_URL/rhel.vmx -P $VMDK_PATH
-wget -c $WEB_SERVER_SOFT_URL/createCli.sh
-```
-
-### Create Cli
-
->:warning: Set **OCP**, **DATASTORE**, **VMS_PATH**, **CENTOS_VMDK** and **VMX** variables accordingly in **createCli.sh** before proceeding.
-
-> :information_source: Run this on ESX
-
-```
-chmod +x ./createCli.sh
-./createCli.sh
-```
-
-### Start Cli
-
-> :information_source: Run this on ESX
-
-```
-PATTERN="cli"
-vim-cmd vmsvc/getallvms | awk '$2 ~ "'$PATTERN'" && $1 !~ "Vmid" {print "vim-cmd vmsvc/power.on " $1}' | sh
-vim-cmd vmsvc/getallvms | awk '$2 ~ "'$PATTERN'" && $1 !~ "Vmid" {print "vim-cmd vmsvc/power.getstate " $1}' | sh
-```
-
-### Get Cli dhcp address
-
-> :information_source: Run this on ESX
-
-```
-CLI_DYN_ADDR="cli-addresse"
-```
-
-> :warning: Set **IP_HEAD** variables accordingly in **getVMAddress.sh** before proceeding.
-
-> :information_source: Run this on ESX
-
-```
-wget -c $WEB_SERVER_SOFT_URL/getVMAddress.sh
-chmod +x ./getVMAddress.sh
-watch -n 5 "./getVMAddress.sh | tee $CLI_DYN_ADDR"
-```
-
-> :bulb: Wait for Cli to be up and display its dhcp address in the **3rd column**
-
-> :bulb: Leave watch with **Ctrl + c**
-
-### Configure Cli 
-
-#### Download necessary stuff
-
-> :information_source: Run this on ESX
-
-```
-WEB_SERVER_SOFT_URL="http://web/soft"
-
-wget -c $WEB_SERVER_SOFT_URL/setHostAndIP.sh 
-chmod +x setHostAndIP.sh
-wget -c $WEB_SERVER_SOFT_URL/extendRootLV.sh
-chmod +x extendRootLV.sh
-```
-
-#### Create and copy ESX public key to Cli
-
-> :warning: To be able to ssh from ESX you need to enable sshClient rule outgoing port
-
-> :information_source: Run this on ESX
-
-```
-esxcli network firewall ruleset set -e true -r sshClient
-```
-
-> :information_source: Run this on ESX
-
-```
-[ ! -d "/.ssh" ] && mkdir /.ssh || echo /.ssh already exists
-
-/usr/lib/vmware/openssh/bin/ssh-keygen -t rsa -b 4096 -N "" -f /.ssh/id_rsa
-
-for ip in $(awk -F ";" '{print $3}' $CLI_DYN_ADDR); do cat /.ssh/id_rsa.pub | ssh -o StrictHostKeyChecking=no root@$ip '[ ! -d "/root/.ssh" ] && mkdir /root/.ssh && cat >> /root/.ssh/authorized_keys'; done
-```
-
-#### Extend Cli Root logical volume
-
->:warning: Set **DISK**, **PART**, **VG** and **LV** variables accordingly in **extendRootLV.sh** before proceeding.
-
-> :information_source: Run this on ESX
-
-```
-for ip in $(awk -F ";" '{print $3}' $CLI_DYN_ADDR); do echo "copying extendRootLV.sh to" $ip "..."; scp -o StrictHostKeyChecking=no extendRootLV.sh root@$ip:/root; done
-
-for ip in $(awk -F ";" '{print $3}' $CLI_DYN_ADDR); do ssh -o StrictHostKeyChecking=no root@$ip 'hostname -f; /root/extendRootLV.sh'; done
-```
-
-#### Set Cli static ip address and reboot Cli
-
-> :information_source: Run this on ESX
-
-```
-for ip in $(awk -F ";" '{print $3}' $CLI_DYN_ADDR); do echo "copy to" $ip; scp -o StrictHostKeyChecking=no setHostAndIP.sh root@$ip:/root; done
-
-for LINE in $(awk -F ";" '{print $0}' $CLI_DYN_ADDR); do  HOSTNAME=$(echo $LINE | cut -d ";" -f2); IPADDR=$(echo $LINE | cut -d ";" -f3); echo $HOSTNAME; echo $IPADDR; ssh -o StrictHostKeyChecking=no root@$IPADDR '/root/setHostAndIP.sh '$HOSTNAME; done
-
-for ip in $(awk -F ";" '{print $3}' $CLI_DYN_ADDR); do ssh -o StrictHostKeyChecking=no root@$ip 'reboot'; done
-```
-
-#### Check Cli static ip address
-
-> :warning: Wait for cluster nodes to be up and display it static address in the **3rd column**
-
-> :information_source: Run this on ESX
-
-```
-watch -n 5 "./getVMAddress.sh"
-```
-
-> :bulb: Leave watch with **Ctrl + c** 
-
-:checkered_flag::checkered_flag::checkered_flag:
-
+<br>
 
 ## Install load balancer
 
