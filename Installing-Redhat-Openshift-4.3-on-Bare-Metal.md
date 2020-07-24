@@ -27,12 +27,12 @@ One Lenovo **X3550M5** or similar to host **4** virtual machines (bootstrap will
 - One **VMware vSphere Hypervisor** [5.5](https://my.vmware.com/en/web/vmware/evalcenter?p=free-esxi5), [6.7](https://my.vmware.com/en/web/vmware/evalcenter?p=free-esxi6) or [7.0](https://my.vmware.com/en/web/vmware/evalcenter?p=free-esxi7) with **ESXi Shell access enabled**. VCenter is NOT required.
 - One **Load balancer**.
 
-| Port | machines                                                   | Description |
-| ---- | ---------------------------------------------------------- | ----------- |
-| 6443 | m1-ocp5.iicparis.fr.ibm.com<br>bs-ocp5.iicparis.fr.ibm.com |             |
-|      |                                                            |             |
-|      |                                                            |             |
-|      |                                                            |             |
+| Port      | machines                                                     | Description           |
+| --------- | ------------------------------------------------------------ | --------------------- |
+| 6443      | m1-ocp5.iicparis.fr.ibm.com<br>bs-ocp5.iicparis.fr.ibm.com   | Kubernetes API server |
+| **22623** | m1-ocp5.iicparis.fr.ibm.com<br/>bs-ocp5.iicparis.fr.ibm.com  | Machine Config server |
+| 443       | w1-ocp5.iicparis.fr.ibm.com<br/>w2-ocp5.iicparis.fr.ibm.com<br/>w3-ocp5.iicparis.fr.ibm.com | HTTPS traffic         |
+| 80        | w1-ocp5.iicparis.fr.ibm.com<br/>w2-ocp5.iicparis.fr.ibm.com<br/>w3-ocp5.iicparis.fr.ibm.com | HTTP traffic          |
 
 
 
