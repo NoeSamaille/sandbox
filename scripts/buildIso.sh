@@ -7,6 +7,8 @@ LBLUE="\e[34m"
 GREEN="\e[32m"
 NC="\e[0m"
 
+[ -z $(command -v mkisofs) ] && { echo -e "$RED ERROR: mkisofs not found. Exiting... $NC"; exit 1; } || echo "OK  mkisofs is installed"
+
 OCP=""
 
 [ -z "$OCP" ] && { echo -e "$RED ERROR: OCP is empty. Exiting... $NC"; exit 1; }

@@ -197,8 +197,6 @@ backend ingress-http
     server w1-$OCP $(dig +short w1-$OCP.$DOMAIN):80 check
     server w2-$OCP $(dig +short w2-$OCP.$DOMAIN):80 check
     server w3-$OCP $(dig +short w3-$OCP.$DOMAIN):80 check
-    # server w4-$OCP $(dig +short w4-$OCP.$DOMAIN):80 check
-    # server w5-$OCP $(dig +short w5-$OCP.$DOMAIN):80 check
 
 frontend ingress-https
     bind *:443
@@ -212,8 +210,6 @@ backend ingress-https
     server w1-$OCP $(dig +short w1-$OCP.$DOMAIN):443 check
     server w2-$OCP $(dig +short w2-$OCP.$DOMAIN):443 check
     server w3-$OCP $(dig +short w3-$OCP.$DOMAIN):443 check
-    # server w4-$OCP $(dig +short w4-$OCP.$DOMAIN):443 check
-    # server w5-$OCP $(dig +short w5-$OCP.$DOMAIN):443 check
 
 frontend openshift-api-server
     bind *:6443
@@ -225,8 +221,6 @@ backend openshift-api-server
     balance source
     mode tcp
     server m1-$OCP $(dig +short m1-$OCP.$DOMAIN):6443 check
-    # server m2-$OCP $(dig +short m2-$OCP.$DOMAIN):6443 check
-    # server m3-$OCP $(dig +short m3-$OCP.$DOMAIN):6443 check
     server bs-$OCP $(dig +short bs-$OCP.$DOMAIN):6443 check
 
 frontend machine-config-server
@@ -239,8 +233,6 @@ backend machine-config-server
     balance source
     mode tcp
     server m1-$OCP $(dig +short m1-$OCP.$DOMAIN):22623 check
-    # server m2-$OCP $(dig +short m2-$OCP.$DOMAIN):22623 check
-    # server m3-$OCP $(dig +short m3-$OCP.$DOMAIN):22623 check
     server bs-$OCP $(dig +short bs-$OCP.$DOMAIN):22623 check
 
 EOF
@@ -251,9 +243,9 @@ EOF
 > :information_source: Run this on on Load Balancer
 
 ```
-systemctl stop firewalld \
-systemctl disable firewalld \
-setenforce 0 \
+systemctl stop firewalld &&
+systemctl disable firewalld &&
+setenforce 0 &&
 sed -i -e 's/^SELINUX=\w*/SELINUX=disabled/' /etc/selinux/config
 ```
 
@@ -262,18 +254,21 @@ sed -i -e 's/^SELINUX=\w*/SELINUX=disabled/' /etc/selinux/config
 > :information_source: Run this on Cli
 
 ```
-systemctl restart haproxy
+systemctl restart haproxy &&
+RC=$(curl -I http://cli-$OCP:9000 | awk 'NR==1 {print $3}') && echo $RC &&
 systemctl enable haproxy
-RC=$(curl -I http://cli-$OCP:9000 | awk 'NR==1 {print $3}') && echo $RC
 ```
 :checkered_flag::checkered_flag::checkered_flag:
 
 
-## Prepare installing OCP 4.3
+## Prepare installing OCP 4
+
+> :information_source: Commands below are valid for a haproxy running on a Centos 7.
+> :warning: Some of commands below will need to be adapted to fit Linux/Debian or masOS .
 
 ### Set install-config.yaml
 
-> :information_source: Run this on Cli 
+> :information_source: Run this on Linux/
 
 ```
 DOMAIN=$(cat /etc/resolv.conf | awk '$1 ~ "^search" {print $2}') && echo $DOMAIN
@@ -377,6 +372,8 @@ sshpass -e ssh -o StrictHostKeyChecking=no root@web "chmod -R +r /web/$OCP"
 
 ### Customize RHCOS boot iso
 
+:bulb: The trick is to automate what's explained [here](https://docs.openshift.com/container-platform/4.5/installing/installing_bare_metal/installing-bare-metal.html#installation-user-infra-machines-static-network_installing-bare-metal)
+
 #### Prepare RHCOS boot iso customization
 
 > :information_source: Run this on Cli 
@@ -415,6 +412,8 @@ chmod +x buildIso.sh
 
 > :warning: Set **OCP**, **WEB_SRV_URL**, **RAW_IMG_URL**, **DNS**,  **DOMAIN**, **IF**, **MASK**, **GATEWAY**,  **ISO_PATH**, **RW_ISO_PATH** and **ISO_CFG** variables accordingly in **buildIso.sh** before proceeding.
 
+> :warning: [ -z $(command -v mkisofs) ] && yum install -y genisoimage || echo -e mkisofs installed
+
 > :information_source: Run this on Cli 
 
 ```
@@ -425,7 +424,7 @@ rmdir $ISO_PATH
 rm -rf $RW_ISO_PATH
 ```
 
-#### Check RHCOS isolinux.cfg
+#### Check RHCOS boot iso
 
 > :information_source: Run this on Cli 
 
