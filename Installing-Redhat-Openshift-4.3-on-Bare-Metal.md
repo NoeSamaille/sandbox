@@ -766,6 +766,8 @@ ssh-add ~/.ssh/id_rsa
 
 ##### Set environment
 
+>:bulb: Leave screen with **Ctrl + a + d**
+
 > :warning: Adapt settings to fit to your environment.
 
 > :information_source: Run this on Installer
@@ -783,9 +785,10 @@ cd $INST_DIR
 ./openshift-install gather bootstrap --bootstrap $BS_IP --key ~/.ssh/id_rsa --master "$M1_IP"
 ```
 
-#### -  [Rever snapshot](https://github.com/bpshparis/sandbox/blob/master/Manage-ESX-snapshot.md#manage-esx-snapshot)
-
 :thumbsdown::thumbsdown::thumbsdown::thumbsdown::thumbsdown::thumbsdown:
+
+#### -  [Rever snapshot](https://github.com/bpshparis/sandbox/blob/master/Manage-ESX-snapshots.md#manage-esx-snapshots)
+
 
 ### Launch wait-for-install-complete
 
