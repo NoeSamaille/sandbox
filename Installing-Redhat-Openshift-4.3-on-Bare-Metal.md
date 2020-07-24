@@ -367,7 +367,7 @@ tar -xvzf $CLIENT_FILE -C $(echo $PATH | awk -F":" 'NR==1 {print $1}')
 
 ### Create manifest and ignition files
 
-> :warning: You have to be on line to execute this step.
+> :warning: You have to be on line to execute this steps.
 
 > :information_source: Run this on Installer 
 
@@ -527,7 +527,7 @@ WEB_SERVER_VMDK_URL="http://web/vmdk"
 VMDK_PATH="/vmfs/volumes/datastore1/vmdk/"
 ```
 
-### Download necessary stuff
+### Download material
 
 > :information_source: Run this on ESX
 
@@ -566,38 +566,39 @@ chmod +x ./createOCP4Cluster.sh
 
 <br>
 
-## [Make a BeforeInstallingOCP snapshot](https://github.com/bpshparis/sandbox/blob/master/Manage-ESX-snapshots.md)
+## [Make a BeforeInstallingOCP snapshot](https://github.com/bpshparis/sandbox/blob/master/Manage-ESX-snapshots.md#manage-esx-snapshots)
 
 <br>
 
-## Start cluster nodes
+## VNC Viewer
+
+### Set environment
+
+> :warning: **VNC_PWD** have to match **VNC_PWD** set in **createOCP4Cluster.sh**.
+
+> :information_source: Run this on Installer
+
+```
+VNC_PWD="password"
+```
 
 ### Install a vncviewer to monitor cluster nodes
 
-Download and install a  [vnc viewer](https://www.tightvnc.com/download.php) on ** your device **
-
-> :information_source: Run this on your device
+> :information_source: Run this on Installer
 
 ```
-yum install -y tigervnc
-```
-
-> :warning: **VNCPWD** have to match **RemoteDisplay.vnc.password** in **rhcos.vmx**
-
-> :information_source: Run this on your device
-
-```
-VNCPWD="spcspc"
-```
-
-```
+[ -z $(command -v vncviewer) ] && yum install -y tigervnc || echo "vncviewer already installed"
 [ -z $(command -v vncpasswd) ] && yum install -y tigervnc-server-minimal || echo "vncpasswd already installed"
-echo $VNCPWD | vncpasswd -f > ~/.vnc/passwd
+echo $VNC_PWD | vncpasswd -f > ~/.vnc/passwd
 ```
 
-### Start cluster nodes
+<br>
 
-#### Enable VNC on ESX
+:checkered_flag::checkered_flag::checkered_flag:
+
+## Start cluster nodes
+
+### Enable VNC on ESX
 
 > :warning: For VNC to work run this on ESX:
 
@@ -607,84 +608,94 @@ echo $VNCPWD | vncpasswd -f > ~/.vnc/passwd
 esxcli network firewall ruleset set -e true -r gdbserver
 ```
 
+### Start cluster nodes
+
+#### Set environment
+
+> :warning: Adapt settings to fit to your environment.
+
+> :information_source: Run this on ESX
+
+```
+VM_PATTERN="[mw][1-5]|bs|cli"
+```
+
 #### Start cluster nodes
 
 > :information_source: Run this on ESX
 
 ```
-PATTERN="[mw][1-5]|cli|bs"
+vim-cmd vmsvc/getallvms | awk '$2 ~ "'$VM_PATTERN'" && $1 !~ "Vmid" {print "vim-cmd vmsvc/power.on " $1}' | sh
+
+watch -n 5 vim-cmd vmsvc/getallvms | awk '$2 ~ "'$VM_PATTERN'" && $1 !~ "Vmid" {print "vim-cmd vmsvc/power.getstate " $1}' | sh
 ```
 
-```
-vim-cmd vmsvc/getallvms | awk '$2 ~ "'$PATTERN'" && $1 !~ "Vmid" {print "vim-cmd vmsvc/power.on " $1}' | sh
-```
+> :bulb: Leave watch with **Ctrl + c** when everyone is **powered on**
 
-### Monitor cluster nodes
+## Monitor cluster nodes
 
-> :warning:  Next commands will only work if you kept **BOOTSTRAP_VNC_PORT="5909"**, 
-**MASTER_1ST_VNC_PORT="5901"** and **WORKER_1ST_VNC_PORT="5904"** when you created cluster nodes with running **createOCP4Cluster.sh**.
+### Set environment
 
-#### Monitor bootstrap
+> :warning: Adapt settings to fit to your environment.
 
-> :information_source: Run this on your device
+> :warning: **VNC_PORT** have to match **VNC_PORT** set in **createOCP4Cluster.sh**.
+
+> :information_source: Run this on Installer
 
 ```
 ESX_SERVER="ocp5"
+BS_VNC_PORT=9
+M1_VNC_PORT=1
+W1_VNC_PORT=4
+W2_VNC_PORT=5
+W3_VNC_PORT=6
 ```
 
+### Monitor bootstrap
+
+> :information_source: Run this on Installer
+
 ```
-xtightvncviewer -compresslevel 9 -passwd ~/.vnc/passwd $ESX_SERVER:9
+vncviewer $ESX_SERVER:BS_VNC_PORT
 ```
 
 #### Monitor master
 
-> :information_source: Run this on your device
+> :information_source: Run this on Installer
 
 ```
-ESX_SERVER="ocp5"
-```
-
-```
-xtightvncviewer -compresslevel 9 -passwd ~/.vnc/passwd $ESX_SERVER:1
+vncviewer $ESX_SERVER:M1_VNC_PORT
 ```
 
 #### Monitor worker 1
 
-> :information_source: Run this on your device
+> :information_source: Run this on Installer
 
 ```
-ESX_SERVER="ocp5"
-```
-
-```
-xtightvncviewer -compresslevel 9 -passwd ~/.vnc/passwd $ESX_SERVER:4
+vncviewer $ESX_SERVER:W1_VNC_PORT
 ```
 
 #### Monitor worker 2
 
-> :information_source: Run this on your device
+> :information_source: Run this on Installer
 
 ```
-ESX_SERVER="ocp5"
-```
-
-```
-xtightvncviewer -compresslevel 9 -passwd ~/.vnc/passwd $ESX_SERVER:5
+vncviewer $ESX_SERVER:W2_VNC_PORT
 ```
 
 #### Monitor worker 3
 
-> :information_source: Run this on your device
+> :information_source: Run this on Installer
 
 ```
-ESX_SERVER="ocp5"
+vncviewer $ESX_SERVER:W3_VNC_PORT
 ```
 
-```
-xtightvncviewer -compresslevel 9 -passwd ~/.vnc/passwd $ESX_SERVER:6
-```
+<br>
+
 :checkered_flag::checkered_flag::checkered_flag:
 
+<br>
 
 ## Install OCP
 
@@ -692,7 +703,7 @@ xtightvncviewer -compresslevel 9 -passwd ~/.vnc/passwd $ESX_SERVER:6
 
 > :bulb: To avoid network failure, launch installation on **locale console** or in a **screen**
 
-> :information_source: Run this on Cli
+> :information_source: Run this on Installer
 
 ```
 [ ! -z $(command -v screen) ] && echo screen installed || yum install screen -y
@@ -700,13 +711,21 @@ xtightvncviewer -compresslevel 9 -passwd ~/.vnc/passwd $ESX_SERVER:6
 pkill screen; screen -mdS ADM && screen -r ADM
 ```
 
-### Launch wait-for-bootstrap-complete playbook
+### Launch wait-for-bootstrap-complete
 
-> :information_source: Run this on Cli
+#### Set environment
+
+> :warning: Adapt settings to fit to your environment.
+
+> :information_source: Run this on Installer
 
 ```
 INST_DIR=~/ocpinst
 ```
+
+#### Launch wait-for-bootstrap-complete
+
+> :information_source: Run this on Installer
 
 ```
 cd $INST_DIR
@@ -732,7 +751,18 @@ ssh-add ~/.ssh/id_rsa
 
 ![](img/bscomplete.jpg)
 
-> :bulb: If something went wrong run a gather bootstrap
+#### -  [Next step](#launch-wait-for-install-complete)
+#### -  [Troubleshoot wait-for-bootstrap-complete](#troubleshoot-wait-for-bootstrap-complete)
+#### -  [Rever snapshot](https://github.com/bpshparis/sandbox/blob/master/Manage-ESX-snapshot.md#manage-esx-snapshot)
+
+
+#### Troubleshoot wait-for-bootstrap-complete
+
+##### Set environment
+
+> :warning: Adapt settings to fit to your environment.
+
+> :information_source: Run this on Installer
 
 ```
 INST_DIR=~/ocpinst
@@ -740,14 +770,18 @@ BS_IP="172.16.187.59"
 M1_IP="172.16.187.51"
 ```
 
+##### Troubleshoot wait-for-bootstrap-complete
+
 ```
 cd $INST_DIR
 ./openshift-install gather bootstrap --bootstrap $BS_IP --key ~/.ssh/id_rsa --master "$M1_IP"
 ```
 
-> and revert to [BeforeInstallingOCP snapshot](#revert-to-beforeInstallingocp-snapshot)
+#### -  [Rever snapshot](https://github.com/bpshparis/sandbox/blob/master/Manage-ESX-snapshot.md#manage-esx-snapshot)
 
-### Launch wait-for-install-complete playbook
+:thumbsdown::thumbsdown::thumbsdown::thumbsdown::thumbsdown::thumbsdown:
+
+### Launch wait-for-install-complete
 
 > :information_source: Run this on Cli
 
@@ -776,55 +810,9 @@ cd $INST_DIR
 
 > :bulb: If something went wrong have a look at **~/$INST_DIR/.openshift_install.log** and revert to [BeforeInstallingOCP snapshot](#revert-to-beforeInstallingocp-snapshot).
 
+<br>
+
 :checkered_flag::checkered_flag::checkered_flag:
-
-
-## Revert to BeforeInstallingOCP snapshot
-
-### Stop cli
-
-> :information_source: Run this on ESX
-
-```
-PATTERN="cli"
-```
-
-```
-vim-cmd vmsvc/getallvms | awk '$2 ~ "'$PATTERN'" && $1 !~ "Vmid" {print "vim-cmd vmsvc/power.shutdown " $1}' | sh
-
-watch -n 10 vim-cmd vmsvc/getallvms | awk '$2 ~ "'$PATTERN'" && $1 !~ "Vmid" {print "vim-cmd vmsvc/power.getstate " $1}' | sh
-```
-
-> :bulb: Leave watch with **Ctrl + c** when everyone is **powered off**
-
-### Power off cluster
-
-> :information_source: Run this on ESX
-
-```
-PATTERN="[mw][1-5]|bs"
-```
-
-```
-vim-cmd vmsvc/getallvms | awk '$2 ~ "'$PATTERN'" && $1 !~ "Vmid" {print "vim-cmd vmsvc/power.off " $1}' | sh
-
-watch -n 10 vim-cmd vmsvc/getallvms | awk '$2 ~ "'$PATTERN'" && $1 !~ "Vmid" {print "vim-cmd vmsvc/power.getstate " $1}' | sh
-```
-
-> :bulb: Leave watch with **Ctrl + c** when everyone is **powered off**
-
-### Revert snapshot
-
-> :information_source: Run this on ESX
-
-```
-PATTERN="[mw][1-5]|bs|cli"
-SNAPNAME="BeforeInstallingOCP"
-```
-
-```
-for vmid in $(vim-cmd vmsvc/getallvms | awk 'NR>1 && $2 ~ "'$PATTERN'" {print $1}'); do vim-cmd vmsvc/snapshot.get $vmid | grep -A 1 'Snapshot Name\s\{1,\}: '$SNAPNAME | awk -F' : ' 'NR>1 {print "vim-cmd vmsvc/snapshot.revert "'$vmid'" " $2 " suppressPowerOn"}' | sh; done
-```
 
 <br>
 
@@ -955,9 +943,15 @@ oc get route -n openshift-console | awk 'NR>1 && $1 ~ "console" {print "\nWeb Co
 
 ![](img/loginwith.jpg)
 
+<br>
+
 :checkered_flag::checkered_flag::checkered_flag:
 
-### Remove bootstrap
+<br>
+
+## Remove bootstrap
+
+### Remove bootstrap VM
 
 > :information_source: Run this on ESX
 
@@ -986,54 +980,6 @@ sed -i 's/\(server bs-*\)/# \1/g' $LB_CONF
 systemctl restart haproxy
 ```
 
-
-## Make a OCPInstalled snapshot
-
-### Stop workers
-
-> :information_source: Run this on ESX
-
-```
-PATTERN="[w][1-5]"
-```
-
-```
-vim-cmd vmsvc/getallvms | awk '$2 ~ "'$PATTERN'" && $1 !~ "Vmid" {print "vim-cmd vmsvc/power.shutdown " $1}' | sh
-
-watch -n 10 vim-cmd vmsvc/getallvms | awk '$2 ~ "'$PATTERN'" && $1 !~ "Vmid" {print "vim-cmd vmsvc/power.getstate " $1}' | sh
-```
-
-> :bulb: Leave watch with **Ctrl + c** when everyone is **powered off**
-
-### Stop masters and cli
-
-> :information_source: Run this on ESX
-
-```
-PATTERN="[m][1-5]|cli"
-```
-
-```
-vim-cmd vmsvc/getallvms | awk '$2 ~ "'$PATTERN'" && $1 !~ "Vmid" {print "vim-cmd vmsvc/power.shutdown " $1}' | sh
-
-watch -n 10 vim-cmd vmsvc/getallvms | awk '$2 ~ "'$PATTERN'" && $1 !~ "Vmid" {print "vim-cmd vmsvc/power.getstate " $1}' | sh
-```
-
-> :bulb: Leave watch with **Ctrl + c** when everyone is **powered off**
-
-### Make snapshot
-
-> :information_source: Run this on ESX
-
-```
-PATTERN="[mw][1-5]|cli"
-SNAPNAME="OCPInstalled"
-```
-
-```
-vim-cmd vmsvc/getallvms | awk '$2 ~ "'$PATTERN'" && $1 !~ "Vmid" {print "vim-cmd vmsvc/snapshot.create " $1 " '$SNAPNAME' "}' | sh
-
-vim-cmd vmsvc/getallvms | awk '$2 ~ "'$PATTERN'" && $1 !~ "Vmid" {print "vim-cmd vmsvc/power.on " $1}' | sh
-```
+<br>
 
 :checkered_flag::checkered_flag::checkered_flag:
