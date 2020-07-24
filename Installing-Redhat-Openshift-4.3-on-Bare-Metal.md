@@ -49,7 +49,7 @@ One Lenovo **X3550M5** or similar to host **4** virtual machines (bootstrap will
 
 :checkered_flag::checkered_flag::checkered_flag:
 
-## Add DNS records
+## DNS
 
 > :information_source: Commands below are valid for a bind9 running on a Ubuntu 16
 
@@ -184,7 +184,7 @@ sed -i -e 's/^SELINUX=\w*/SELINUX=disabled/' /etc/selinux/config
 sed -i '/^\s\{1,\}maxconn\s\{1,\}3000$/q' $LB_CONF
 ```
 
-### Configure load balancer
+### Load balancer
 
 > :information_source: Run this on Load Balancer
 
