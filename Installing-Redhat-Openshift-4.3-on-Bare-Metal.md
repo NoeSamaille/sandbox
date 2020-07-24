@@ -25,11 +25,18 @@ One Lenovo **X3550M5** or similar to host **4** virtual machines (bootstrap will
 ## System requirements
 
 - One **VMware vSphere Hypervisor** [5.5](https://my.vmware.com/en/web/vmware/evalcenter?p=free-esxi5), [6.7](https://my.vmware.com/en/web/vmware/evalcenter?p=free-esxi6) or [7.0](https://my.vmware.com/en/web/vmware/evalcenter?p=free-esxi7) with **ESXi Shell access enabled**. VCenter is NOT required.
+- One **Load balancer**.
 
-- Two **vmdk (centos.vmdk and centos-flat.vmdk)** file who host  a [minimal Centos 7](https://docs.centos.org/en-US/centos/install-guide/Simple_Installation/) **booting in dhcp**, **running VMware Tools** with **localhost.localdomain** as hostname. 
+| Port | machines                                                   | Description |
+| ---- | ---------------------------------------------------------- | ----------- |
+| 6443 | m1-ocp5.iicparis.fr.ibm.com<br>bs-ocp5.iicparis.fr.ibm.com |             |
+|      |                                                            |             |
+|      |                                                            |             |
+|      |                                                            |             |
+
+
 
 - One **DNS server**.
-- One **DHCP server**.
 - One **WEB server** where following files are available in **read mode**:
 
   - [Openshift pull secret](https://cloud.redhat.com/openshift/install/pull-secret) saved as pull-secret.txt
@@ -542,6 +549,12 @@ vim-cmd vmsvc/getallvms | awk '$2 ~ "'$PATTERN'" && $1 !~ "Vmid" {print "vim-cmd
 ### Install a vncviewer to monitor cluster nodes
 
 Download and install a  [vnc viewer](https://www.tightvnc.com/download.php) on ** your device **
+
+> :information_source: Run this on your device
+
+```
+yum install -y tigervnc
+```
 
 > :warning: **VNCPWD** have to match **RemoteDisplay.vnc.password** in **rhcos.vmx**
 
