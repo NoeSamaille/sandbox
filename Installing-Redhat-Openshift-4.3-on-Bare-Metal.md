@@ -25,18 +25,16 @@ One Lenovo **X3550M5** or similar to host **4** virtual machines (bootstrap will
 ## System requirements
 
 - One **VMware vSphere Hypervisor** [5.5](https://my.vmware.com/en/web/vmware/evalcenter?p=free-esxi5), [6.7](https://my.vmware.com/en/web/vmware/evalcenter?p=free-esxi6) or [7.0](https://my.vmware.com/en/web/vmware/evalcenter?p=free-esxi7) with **ESXi Shell access enabled**. VCenter is NOT required.
+- One **DNS server**.
 - One **Load balancer**.
 
 | Port      | machines                                                     | Description           |
 | --------- | ------------------------------------------------------------ | --------------------- |
 | 6443      | m1-ocp5.iicparis.fr.ibm.com<br>bs-ocp5.iicparis.fr.ibm.com   | Kubernetes API server |
-| **22623** | m1-ocp5.iicparis.fr.ibm.com<br/>bs-ocp5.iicparis.fr.ibm.com  | Machine Config server |
+| 22623 | m1-ocp5.iicparis.fr.ibm.com<br/>bs-ocp5.iicparis.fr.ibm.com  | Machine Config server |
 | 443       | w1-ocp5.iicparis.fr.ibm.com<br/>w2-ocp5.iicparis.fr.ibm.com<br/>w3-ocp5.iicparis.fr.ibm.com | HTTPS traffic         |
 | 80        | w1-ocp5.iicparis.fr.ibm.com<br/>w2-ocp5.iicparis.fr.ibm.com<br/>w3-ocp5.iicparis.fr.ibm.com | HTTP traffic          |
 
-
-
-- One **DNS server**.
 - One **WEB server** where following files are available in **read mode**:
 
   - [Openshift pull secret](https://cloud.redhat.com/openshift/install/pull-secret) saved as pull-secret.txt
@@ -52,6 +50,10 @@ One Lenovo **X3550M5** or similar to host **4** virtual machines (bootstrap will
 :checkered_flag::checkered_flag::checkered_flag:
 
 ## Add DNS records
+
+> :information_source: DNS is a bind9 running on a Ubuntu 16
+
+### Set environment
 
 > :information_source: Run this on DNS
 
@@ -150,29 +152,20 @@ dig @localhost +short _etcd-server-ssl._tcp.$OCP.$DOMAIN SRV
 
 ## Install load balancer
 
-### Set env variables
+> :information_source: Load balancer is a haproxy running on a Centos 7
 
-> :information_source: Run this on Cli
+### Set environment
+
+> :information_source: Run this on Load Balancer
 
 ```
 OCP="ocp5"
+DOMAIN=$(cat /etc/resolv.conf | awk '$1 ~ "^search" {print $2}') && echo $DOMAIN
+LB_CONF="/etc/haproxy/haproxy.cfg" && echo $LB_CONF
 ```
-
-```
-cat >> ~/.bashrc << EOF
-
-export OCP=$OCP
-export SSHPASS=spcspc
-alias l='ls -Alhtr'
-
-EOF
-
-source ~/.bashrc
-```
-
 ### Disable security
 
-> :information_source: Run this on Cli
+> :information_source: Run this on on Load Balancer
 
 ```
 systemctl stop firewalld
@@ -181,26 +174,17 @@ setenforce 0
 sed -i -e 's/^SELINUX=\w*/SELINUX=disabled/' /etc/selinux/config
 ```
 
-### Install load balancer
-
-> :information_source: Run this on Cli
-
-```
-yum install haproxy -y
-```
-
 ### Configure load balancer
 
-> :information_source: Run this on Cli
+:bulb: **Optional**: Remove existing config
 
-```
-DOMAIN=$(cat /etc/resolv.conf | awk '$1 ~ "^search" {print $2}') && echo $DOMAIN
-LB_CONF="/etc/haproxy/haproxy.cfg" && echo $LB_CONF
-```
+> :information_source: Run this on Load Balancer
 
 ```
 sed -i '/^\s\{1,\}maxconn\s\{1,\}3000$/q' $LB_CONF
+```
 
+```
 cat >> $LB_CONF << EOF
 
 listen stats
