@@ -544,7 +544,7 @@ wget -c $WEB_SERVER_VMDK_URL/rhcos.vmx -P $VMDK_PATH
 > -  BOOTSTRAP_VNC_PORT="**5909**"
 > -  MASTER_1ST_VNC_PORT="**5901**"
 > -  WORKER_1ST_VNC_PORT="**5904**"
-> -  VNC_PWD="**spcspc**"
+> -  VNC_PWD="**password**"
 
 >:warning:  Before proceeding, adapt settings in **createOCP4Cluster.sh** to fit to your environment.
 >
