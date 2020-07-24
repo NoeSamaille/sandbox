@@ -928,6 +928,12 @@ oc patch configs.imageregistry.operator.openshift.io cluster --type merge --patc
 
 >:bulb: Wait until the image-registry operator completes the update before using the registry.
 
+<br>
+
+:checkered_flag::checkered_flag::checkered_flag:
+
+<br>
+
 ## Test OCP 4
 
 > :information_source: Run this on Installer
@@ -1015,3 +1021,5 @@ systemctl restart haproxy
 <br>
 
 :checkered_flag::checkered_flag::checkered_flag:
+
+<br>
