@@ -632,6 +632,12 @@ watch -n 5 vim-cmd vmsvc/getallvms | awk '$2 ~ "'$VM_PATTERN'" && $1 !~ "Vmid" {
 
 > :bulb: Leave watch with **Ctrl + c** when everyone is **powered on**
 
+<br>
+
+:checkered_flag::checkered_flag::checkered_flag:
+
+<br>
+
 ## Monitor cluster nodes
 
 ### Set environment
