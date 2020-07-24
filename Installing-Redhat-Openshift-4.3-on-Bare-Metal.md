@@ -36,7 +36,7 @@ One Lenovo **X3550M5** or similar to host **5** virtual machines (bootstrap will
 - One **WEB server** where following files are available in **read mode**:
 
   - [pull-secret.txt](https://cloud.redhat.com/openshift/install/pull-secret) more info [here](https://cloud.redhat.com/openshift/install/metal/user-provisioned)
-  - [OpenShift installer](https://mirror.openshift.com/pub/openshift-v4/clients/ocp/latest/openshift-install-linux.tar.gz target="_blank")
+  - [OpenShift installer](https://mirror.openshift.com/pub/openshift-v4/clients/ocp/latest/openshift-install-linux.tar.gz?target=_blank)
   - [Command line interface](https://mirror.openshift.com/pub/openshift-v4/clients/ocp/latest/openshift-client-linux.tar.gz)
   - [Red Hat Enterprise Linux CoreOS (RHCOS) image](https://mirror.openshift.com/pub/openshift-v4/dependencies/rhcos/latest/latest/)
   - [install-config.yaml](scripts/install-config.yaml)
