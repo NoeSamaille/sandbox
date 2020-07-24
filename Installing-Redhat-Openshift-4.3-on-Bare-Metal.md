@@ -582,7 +582,7 @@ chmod +x ./createOCP4Cluster.sh
 VNC_PWD="password"
 ```
 
-### Install a vncviewer to monitor cluster nodes
+### Install a vncviewer to monitor bootstrap process
 
 > :information_source: Run this on Installer
 
