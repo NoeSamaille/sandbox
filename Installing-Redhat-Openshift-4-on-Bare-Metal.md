@@ -155,7 +155,7 @@ dig @localhost +short _etcd-server-ssl._tcp.$OCP.$DOMAIN SRV
 
 ## Load balancer
 
-> :information_source: Commands below are valid for a **haproxy** running on a** Centos 7**.
+> :information_source: Commands below are valid for a **haproxy** running on a **Centos 7**.
 
 ### Set environment
 
@@ -321,7 +321,7 @@ WEB_SERVER="web"
 WEB_SERVER_PATH="/web/$OCP"
 ```
 
-### Backup install-config.yaml on web server
+#### Backup install-config.yaml on web server
 
 > :information_source: Run this on Installer
 
@@ -665,7 +665,7 @@ W3_VNC_PORT=6
 vncviewer $ESX_SERVER:BS_VNC_PORT
 ```
 
-#### Monitor master
+### Monitor master
 
 > :information_source: Run this on Installer
 
@@ -673,7 +673,7 @@ vncviewer $ESX_SERVER:BS_VNC_PORT
 vncviewer $ESX_SERVER:M1_VNC_PORT
 ```
 
-#### Monitor worker 1
+### Monitor worker 1
 
 > :information_source: Run this on Installer
 
@@ -681,7 +681,7 @@ vncviewer $ESX_SERVER:M1_VNC_PORT
 vncviewer $ESX_SERVER:W1_VNC_PORT
 ```
 
-#### Monitor worker 2
+### Monitor worker 2
 
 > :information_source: Run this on Installer
 
@@ -689,7 +689,7 @@ vncviewer $ESX_SERVER:W1_VNC_PORT
 vncviewer $ESX_SERVER:W2_VNC_PORT
 ```
 
-#### Monitor worker 3
+### Monitor worker 3
 
 > :information_source: Run this on Installer
 
@@ -712,7 +712,7 @@ vncviewer $ESX_SERVER:W3_VNC_PORT
 > :information_source: Run this on Installer
 
 ```
-[ ! -z $(command -v screen) ] && echo screen installed || yum install screen -y
+[ ! -z $(command -v screen) ] && echo screen already installed || yum install screen -y
 
 pkill screen; screen -mdS ADM && screen -r ADM
 ```
