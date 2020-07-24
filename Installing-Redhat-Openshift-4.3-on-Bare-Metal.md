@@ -150,7 +150,7 @@ dig @localhost +short _etcd-server-ssl._tcp.$OCP.$DOMAIN SRV
 
 <br>
 
-## Install load balancer
+## Load balancer
 
 > :information_source: Commands below are valid for a haproxy running on a Centos 7
 
@@ -163,20 +163,8 @@ OCP="ocp5"
 DOMAIN=$(cat /etc/resolv.conf | awk '$1 ~ "^search" {print $2}') && echo $DOMAIN
 LB_CONF="/etc/haproxy/haproxy.cfg" && echo $LB_CONF
 ```
-### Disable security
 
-> :information_source: Run this on on Load Balancer
-
-```
-systemctl stop firewalld
-systemctl disable firewalld
-setenforce 0
-sed -i -e 's/^SELINUX=\w*/SELINUX=disabled/' /etc/selinux/config
-```
-
-### Configure load balancer
-
-#### :bulb: **Optional**: Remove existing config
+### :bulb: **Optional**: Remove existing config
 
 > :information_source: Run this on Load Balancer
 
@@ -184,7 +172,7 @@ sed -i -e 's/^SELINUX=\w*/SELINUX=disabled/' /etc/selinux/config
 sed -i '/^\s\{1,\}maxconn\s\{1,\}3000$/q' $LB_CONF
 ```
 
-### Load balancer
+### Configure load balancer
 
 > :information_source: Run this on Load Balancer
 
@@ -256,6 +244,17 @@ backend machine-config-server
     server bs-$OCP $(dig +short bs-$OCP.$DOMAIN):22623 check
 
 EOF
+```
+
+### :bulb: Optional: Disable security
+
+> :information_source: Run this on on Load Balancer
+
+```
+systemctl stop firewalld \
+systemctl disable firewalld \
+setenforce 0 \
+sed -i -e 's/^SELINUX=\w*/SELINUX=disabled/' /etc/selinux/config
 ```
 
 ### Start  load balancer
