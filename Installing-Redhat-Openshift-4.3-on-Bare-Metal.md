@@ -450,17 +450,28 @@ mount -o loop $RHCOS_ISO_FILE $ISO_PATH
 > :information_source: Run this on Installer 
 
 ```
+[ -z $(command -v mkisofs) ] && yum install -y genisoimage || echo -e mkisofs installed
 wget -c $WEB_SERVER_SOFT_URL/buildIso.sh
-chmod +x buildIso.sh
 ```
 
-> :warning: Set **OCP**, **WEB_SRV_URL**, **RAW_IMG_URL**, **DNS**,  **DOMAIN**, **IF**, **MASK**, **GATEWAY**,  **ISO_PATH**, **RW_ISO_PATH** and **ISO_CFG** variables accordingly in **buildIso.sh** before proceeding.
+> :warning:  Before proceeding, adapt settings in **buildIso.sh**  to fit to your environment.
+>
+> - **OCP**
+> - **WEB_SRV_URL**
+> - **RAW_IMG_URL**
+> - **DNS**
+> -  **DOMAIN**
+> -  **IF**
+> - **MASK**
+> - **GATEWAY**
+> -  **ISO_PATH**
+> - **RW_ISO_PATH** 
+> - **ISO_CFG**
 
 > :information_source: Run this on Installer 
 
 ```
-[ -z $(command -v mkisofs) ] && yum install -y genisoimage || echo -e mkisofs installed
-
+chmod +x buildIso.sh
 ./buildIso.sh
 
 while [ ! -z "$(ls -A $ISO_PATH)" ]; do umount $ISO_PATH; sleep 2; done
@@ -527,7 +538,7 @@ wget -c $WEB_SERVER_VMDK_URL/rhcos.vmx -P $VMDK_PATH
 
 ### Create cluster nodes
 
-> :bulb: Thanks to ESX VNC integrated server, Bootstrap process will be monitor able.<br>
+> :bulb: Thanks to ESX VNC integrated server, bootstrap process will be monitor able.<br>
 > Change default settings in **createOCP4Cluster.sh** if needed.
 >
 > -  BOOTSTRAP_VNC_PORT="**5909**"
@@ -535,7 +546,7 @@ wget -c $WEB_SERVER_VMDK_URL/rhcos.vmx -P $VMDK_PATH
 > -  WORKER_1ST_VNC_PORT="**5904**"
 > -  VNC_PWD="**spcspc**"
 
->:warning:  Before proceeding with **createOCP4Cluster.sh**, adapt settings to fit to your environment.
+>:warning:  Before proceeding, adapt settings in **createOCP4Cluster.sh** to fit to your environment.
 >
 >- **OCP**
 >- **DATASTORE**
