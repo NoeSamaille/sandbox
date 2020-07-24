@@ -50,7 +50,7 @@ One Lenovo **X3550M5** or similar to host **5** virtual machines (bootstrap will
   - [extendRootLV.sh](scripts/extendRootLV.sh)
   - [getVMAddress.sh](scripts/getVMAddress.sh)
   - [buildIso.sh](scripts/buildIso.sh)
-  - <a href="https://mirror.openshift.com/pub/openshift-v4/dependencies/rhcos/latest/latest/" target="about_blank">test</a>
+  - <a href="https://mirror.openshift.com/pub/openshift-v4/dependencies/rhcos/latest/latest/" target="_blank">test</a>
 
 :checkered_flag::checkered_flag::checkered_flag:
 
