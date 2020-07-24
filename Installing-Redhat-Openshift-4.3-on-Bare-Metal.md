@@ -38,7 +38,7 @@ One Lenovo **X3550M5** or similar to host **5** virtual machines (bootstrap will
   - [pull-secret.txt](https://cloud.redhat.com/openshift/install/pull-secret) more info [here](https://cloud.redhat.com/openshift/install/metal/user-provisioned)
   - [OpenShift installer](https://mirror.openshift.com/pub/openshift-v4/clients/ocp/latest/openshift-install-linux.tar.gz)
   - [Command line interface](https://mirror.openshift.com/pub/openshift-v4/clients/ocp/latest/openshift-client-linux.tar.gz)
-  - [Red Hat Enterprise Linux CoreOS (RHCOS)](https://mirror.openshift.com/pub/openshift-v4/dependencies/rhcos/latest/latest/)
+  - [Red Hat Enterprise Linux CoreOS (RHCOS) image](https://mirror.openshift.com/pub/openshift-v4/dependencies/rhcos/latest/latest/)
   - [install-config.yaml](scripts/install-config.yaml)
   - centos.vmdk
   - centos-flat.vmdk
@@ -50,6 +50,7 @@ One Lenovo **X3550M5** or similar to host **5** virtual machines (bootstrap will
   - [extendRootLV.sh](scripts/extendRootLV.sh)
   - [getVMAddress.sh](scripts/getVMAddress.sh)
   - [buildIso.sh](scripts/buildIso.sh)
+  - <a href="https://mirror.openshift.com/pub/openshift-v4/dependencies/rhcos/latest/latest/" target="about_blank">test</a>
 
 :checkered_flag::checkered_flag::checkered_flag:
 

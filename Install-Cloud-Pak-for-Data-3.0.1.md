@@ -121,7 +121,7 @@ $INST_DIR/bin/cpd-linux adm --repo $INST_DIR/repo.yaml --assembly $ASSEMBLY --ar
 
 > :warning: To avoid network failure, launch installation on locale console or in a screen
 
-> :information_source: Run this on Controller
+> :information_source: Run this on Cli
 
 ```
 [ ! -z $(command -v screen) ] && echo screen installed || yum install screen -y
