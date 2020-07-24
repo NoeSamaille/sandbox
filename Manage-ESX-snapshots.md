@@ -79,7 +79,7 @@ vim-cmd vmsvc/getallvms | awk '$2 ~ "'$ALL_PATTERN'" && $1 !~ "Vmid" {print "vim
 watch -n 10 vim-cmd vmsvc/getallvms | awk '$2 ~ "'$OTHERS_PATTERN'" && $1 !~ "Vmid" {print "vim-cmd vmsvc/power.getstate " $1}' | sh
 ```
 
-> :bulb: Leave watch with **Ctrl + c** when everyone is **powered off**
+> :bulb: Leave watch with **Ctrl + c** when everyone is **powered on**
 
 <br>
 
