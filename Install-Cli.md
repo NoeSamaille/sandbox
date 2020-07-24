@@ -21,7 +21,7 @@ One Lenovo **X3550M5** or similar to host **1** virtual machine:
 - One **WEB server** where following files are available in **read mode**:
   - centos.vmdk
   - centos-flat.vmdk
-  - [rhel.vmx](scripts/rhel.vmx)
+  - [centos.vmx](scripts/centos.vmx)
   - [createCli.sh](scripts/createCli.sh)
   - [setHostAndIP.sh](scripts/setHostAndIP.sh)
   - [extendRootLV.sh](scripts/extendRootLV.sh)
