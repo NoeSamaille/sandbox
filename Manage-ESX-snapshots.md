@@ -1,4 +1,4 @@
-# Manage ESX snapshot
+# Manage ESX snapshots
 
 ### Set environment
 

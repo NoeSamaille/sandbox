@@ -560,41 +560,15 @@ wget -c $WEB_SERVER_VMDK_URL/rhcos.vmx -P $VMDK_PATH
 chmod +x ./createOCP4Cluster.sh
 ./createOCP4Cluster.sh
 ```
+<br>
 
 :checkered_flag::checkered_flag::checkered_flag:
 
+<br>
 
-## Make a BeforeInstallingOCP snapshot
+## [Make a BeforeInstallingOCP snapshot](https://github.com/bpshparis/sandbox/blob/master/Manage-ESX-snapshots.md)
 
-### Stop cli
-
-> :information_source: Run this on ESX
-
-```
-PATTERN="cli"
-```
-
-```
-vim-cmd vmsvc/getallvms | awk '$2 ~ "'$PATTERN'" && $1 !~ "Vmid" {print "vim-cmd vmsvc/power.shutdown " $1}' | sh
-
-watch -n 10 vim-cmd vmsvc/getallvms | awk '$2 ~ "'$PATTERN'" && $1 !~ "Vmid" {print "vim-cmd vmsvc/power.getstate " $1}' | sh
-```
-
-> :bulb: Leave watch with **Ctrl + c** when everyone is **powered off**
-
-### Make snapshot
-
-> :information_source: Run this on ESX
-
-```
-PATTERN="[mw][1-5]|cli|bs"
-```
-
-```
-vim-cmd vmsvc/getallvms | awk '$2 ~ "'$PATTERN'" && $1 !~ "Vmid" {print "vim-cmd vmsvc/snapshot.create " $1 " '$SNAPNAME' "}' | sh
-```
-
-:checkered_flag::checkered_flag::checkered_flag:
+<br>
 
 ## Start cluster nodes
 
