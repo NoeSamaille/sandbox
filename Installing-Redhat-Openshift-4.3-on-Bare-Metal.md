@@ -757,9 +757,9 @@ ssh-add ~/.ssh/id_rsa
 
 ![](img/bscomplete.jpg)
 
-#### -  [Next step](#launch-wait-for-install-complete)
-#### -  [Troubleshoot wait-for-bootstrap-complete](#troubleshoot-wait-for-bootstrap-complete)
-#### -  [Rever snapshot](https://github.com/bpshparis/sandbox/blob/master/Manage-ESX-snapshots.md#manage-esx-snapshots)
+#### -  :thumbsup: [Next step](#launch-wait-for-install-complete)
+#### -  :thumbsdown: [Troubleshoot wait-for-bootstrap-complete](#troubleshoot-wait-for-bootstrap-complete)
+#### -  :thumbsdown: [Rever snapshot](https://github.com/bpshparis/sandbox/blob/master/Manage-ESX-snapshots.md#manage-esx-snapshots)
 
 
 #### Troubleshoot wait-for-bootstrap-complete
