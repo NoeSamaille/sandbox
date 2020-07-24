@@ -1,4 +1,4 @@
-# Installing Redhat Openshift 4.3 on Bare Metal
+# Installing Redhat Openshift 4 on Bare Metal
 
 This article is *read between lines* of [Installing a cluster on bare metal](https://docs.openshift.com/container-platform/4.3/installing/installing_bare_metal/installing-bare-metal.html).
 
@@ -6,21 +6,20 @@ This article is *read between lines* of [Installing a cluster on bare metal](htt
 
 Be a [Redhat partner](https://partnercenter.redhat.com/Dashboard_page).
 
-Download [Redhat Openshift 4.3 on Bare Metal material](https://cloud.redhat.com/openshift/install/metal/user-provisioned)
+Download [Redhat Openshift 4 on Bare Metal material](https://cloud.redhat.com/openshift/install/metal/user-provisioned)
 
 ## Hardware requirements
 
-One Lenovo **X3550M5** or similar to host **5** virtual machines (bootstrap will be removed after cluster install):
+One Lenovo **X3550M5** or similar to host **4** virtual machines (bootstrap will be removed after cluster install):
 
 | name                        | role                  | vcpus  | ram (GB) | storage (GB) | ethernet (10GB) |
 | --------------------------- | --------------------- | ------ | -------- | ------------ | --------------- |
-| cli-ocp5.iicparis.fr.ibm.com | load balancer + installer | 4      | 16 | 250          | 1               |
 | m1-ocp5.iicparis.fr.ibm.com | master + etcd              | 4      | 16 | 250          | 1               |
 | w1-ocp5.iicparis.fr.ibm.com | worker                | 16     | 64       | 250          | 1               |
 | w2-ocp5.iicparis.fr.ibm.com | worker                | 16     | 64       | 250          | 1               |
 | w3-ocp5.iicparis.fr.ibm.com | worker                | 16     | 64       | 250          | 1               |
 | bs-ocp5.iicparis.fr.ibm.com | bootstrap (will be removed after cluster install) | 4     | 16       | 120          | 1               |
-| **TOTAL**                   |                       | **56** | **224** | **1250**   | **5**          |
+| **TOTAL**                   |                       | **52** | **208** | **1000** | **4**         |
 
 
 ## System requirements
