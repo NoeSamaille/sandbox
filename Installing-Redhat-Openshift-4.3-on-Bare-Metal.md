@@ -176,13 +176,17 @@ sed -i -e 's/^SELINUX=\w*/SELINUX=disabled/' /etc/selinux/config
 
 ### Configure load balancer
 
-:bulb: **Optional**: Remove existing config
+#### :bulb: **Optional**: Remove existing config
 
 > :information_source: Run this on Load Balancer
 
 ```
 sed -i '/^\s\{1,\}maxconn\s\{1,\}3000$/q' $LB_CONF
 ```
+
+### Configure load balancer
+
+> :information_source: Run this on Load Balancer
 
 ```
 cat >> $LB_CONF << EOF
