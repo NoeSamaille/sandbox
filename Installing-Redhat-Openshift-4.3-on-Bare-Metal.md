@@ -2,13 +2,11 @@
 
 This article is *read between lines* of [Installing a cluster on bare metal](https://docs.openshift.com/container-platform/4.3/installing/installing_bare_metal/installing-bare-metal.html).
 
-
-
 ## Redhat requirements
 
 Be a [Redhat partner](https://partnercenter.redhat.com/Dashboard_page).
 
-
+Download [Redhat Openshift 4.3 on Bare Metal material](https://cloud.redhat.com/openshift/install/metal/user-provisioned)
 
 ## Hardware requirements
 
@@ -35,10 +33,11 @@ One Lenovo **X3550M5** or similar to host **5** virtual machines (bootstrap will
 - One **DHCP server**.
 - One **WEB server** where following files are available in **read mode**:
 
-  - [pull-secret.txt](https://cloud.redhat.com/openshift/install/pull-secret) more info [here](https://cloud.redhat.com/openshift/install/metal/user-provisioned)
+  - [pull-secret.txt](https://cloud.redhat.com/openshift/install/pull-secret)
   - [OpenShift installer](https://mirror.openshift.com/pub/openshift-v4/clients/ocp/latest/openshift-install-linux.tar.gz)
   - [Command line interface](https://mirror.openshift.com/pub/openshift-v4/clients/ocp/latest/openshift-client-linux.tar.gz)
-  - [Red Hat Enterprise Linux CoreOS (RHCOS) image](https://mirror.openshift.com/pub/openshift-v4/dependencies/rhcos/latest/latest/?target=_blank)
+  - [Red Hat Enterprise Linux CoreOS (RHCOS) *rhcos-4.X.X-x86_64-metal.x86_64.raw.gz image*](https://mirror.openshift.com/pub/openshift-v4/dependencies/rhcos/latest/latest/)
+  - [Red Hat Enterprise Linux CoreOS (RHCOS) *rhcos-4.4.3-x86_64-installer.x86_64.iso images*](https://mirror.openshift.com/pub/openshift-v4/dependencies/rhcos/latest/latest/)
   - [install-config.yaml](scripts/install-config.yaml)
   - centos.vmdk
   - centos-flat.vmdk
@@ -50,7 +49,6 @@ One Lenovo **X3550M5** or similar to host **5** virtual machines (bootstrap will
   - [extendRootLV.sh](scripts/extendRootLV.sh)
   - [getVMAddress.sh](scripts/getVMAddress.sh)
   - [buildIso.sh](scripts/buildIso.sh)
-  - <a href="https://mirror.openshift.com/pub/openshift-v4/dependencies/rhcos/latest/latest/" target="_blank">test</a>
 
 :checkered_flag::checkered_flag::checkered_flag:
 
