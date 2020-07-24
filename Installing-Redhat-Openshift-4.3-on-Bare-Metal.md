@@ -529,12 +529,11 @@ wget -c $WEB_SERVER_VMDK_URL/rhcos.vmx -P $VMDK_PATH
 
 > :bulb: Thanks to ESX VNC integrated server, Bootstrap process will be monitor able.
 
-> Default is
-> -  BOOTSTRAP_VNC_PORT="5909"
-> -  MASTER_1ST_VNC_PORT="5901"
-> -  WORKER_1ST_VNC_PORT="5904"
-> -  VNC_PWD="spcspc"
-> :bulb: Change settings in **createOCP4Cluster.sh** if needed.  
+> Change default settings in **createOCP4Cluster.sh** if needed
+> -  BOOTSTRAP_VNC_PORT="**5909**"
+> -  MASTER_1ST_VNC_PORT="**5901**"
+> -  WORKER_1ST_VNC_PORT="**5904**"
+> -  VNC_PWD="**spcspc**"
 
 >:warning: Set **OCP**, **DATASTORE**, **VMS_PATH**, **ISO_PATH** and **VMX** variables accordingly in **createOCP4Cluster.sh** before proceeding.
 
