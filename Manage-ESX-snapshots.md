@@ -7,7 +7,7 @@
 > :information_source: Run this on ESX
 
 ```
-SNAPNAME="OCPInstalled"
+SNAPNAME="CPDInstalled"
 
 WORKERS_PATTERN="[w][1-5]"
 OTHERS_PATTERN="[m][1-5]|bs|cli"
@@ -87,7 +87,7 @@ done
 ```
 vim-cmd vmsvc/getallvms | awk '$2 ~ "'$ALL_PATTERN'" && $1 !~ "Vmid" {print "vim-cmd vmsvc/power.on " $1}' | sh
 
-watch -n 10 vim-cmd vmsvc/getallvms | awk '$2 ~ "'$OTHERS_PATTERN'" && $1 !~ "Vmid" {print "vim-cmd vmsvc/power.getstate " $1}' | sh
+watch -n 10 vim-cmd vmsvc/getallvms | awk '$2 ~ "'$ALL_PATTERN'" && $1 !~ "Vmid" {print "vim-cmd vmsvc/power.getstate " $1}' | sh
 ```
 
 > :bulb: Leave watch with **Ctrl + c** when everyone is **powered on**
