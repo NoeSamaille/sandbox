@@ -998,7 +998,7 @@ watch -n 10 vim-cmd vmsvc/getallvms | awk '$2 ~ "'$VM_PATTERN'" && $1 !~ "Vmid" 
 > :bulb: Leave watch with **Ctrl + c** when everyone is **powered off**
  
 ```
-watch -n 10 vim-cmd vmsvc/getallvms | awk '$2 ~ "'$VM_PATTERN'" && $1 !~ "Vmid" {print "vim-cmd vmsvc/destroy " $1}' | sh
+vim-cmd vmsvc/getallvms | awk '$2 ~ "'$VM_PATTERN'" && $1 !~ "Vmid" {print "vim-cmd vmsvc/destroy " $1}' | sh
 ```
 
 ### Remove bootstrap from load balancer
@@ -1011,6 +1011,7 @@ watch -n 10 vim-cmd vmsvc/getallvms | awk '$2 ~ "'$VM_PATTERN'" && $1 !~ "Vmid" 
 
 ```
 LB_CONF="/etc/haproxy/haproxy.cfg" && echo $LB_CONF
+BS_PATTERN="server bs-"
 ```
 
 #### Remove bootstrap from load balancer
@@ -1018,7 +1019,7 @@ LB_CONF="/etc/haproxy/haproxy.cfg" && echo $LB_CONF
 > :information_source: Run this on Cli
 
 ```
-sed -i 's/\(server bs-*\)/# \1/g' $LB_CONF
+sed -i 's/\('$BS_PATTERN'*\)/# \1/g' $LB_CONF
 systemctl restart haproxy
 ```
 
