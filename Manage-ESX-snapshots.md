@@ -43,9 +43,20 @@ watch -n 10 vim-cmd vmsvc/getallvms | awk '$2 ~ "'$OTHERS_PATTERN'" && $1 !~ "Vm
 
 <br>
 
+### -  [List snaphot](#make-snapshot)
 ### -  [Make snaphot](#make-snapshot)
 ### -  [Revert snaphot](#revert-snapshot)
 ### -  [Start all](#start-all)
+
+<br>
+
+### List snapshot
+
+> :information_source: Run this on ESX
+
+```
+vim-cmd vmsvc/getallvms | awk '$2 ~ "'$ALL_PATTERN'" && $1 !~ "Vmid" {print "vim-cmd vmsvc/snapshot.get " $1 " '$SNAPNAME' "}' | sh
+```
 
 <br>
 

@@ -759,7 +759,7 @@ ssh-add ~/.ssh/id_rsa
 
 #### -  :thumbsup: [Next step](#launch-wait-for-install-complete)
 #### -  :thumbsdown: [Troubleshoot wait-for-bootstrap-complete](#troubleshoot-wait-for-bootstrap-complete)
-#### -  :thumbsdown: [Rever snapshot](https://github.com/bpshparis/sandbox/blob/master/Manage-ESX-snapshots.md#manage-esx-snapshots)
+#### -  :thumbsdown: [Revert snapshot](https://github.com/bpshparis/sandbox/blob/master/Manage-ESX-snapshots.md#manage-esx-snapshots)
 
 
 #### Troubleshoot wait-for-bootstrap-complete
@@ -996,6 +996,10 @@ watch -n 10 vim-cmd vmsvc/getallvms | awk '$2 ~ "'$VM_PATTERN'" && $1 !~ "Vmid" 
 ```
 
 > :bulb: Leave watch with **Ctrl + c** when everyone is **powered off**
+ 
+```
+watch -n 10 vim-cmd vmsvc/getallvms | awk '$2 ~ "'$VM_PATTERN'" && $1 !~ "Vmid" {print "vim-cmd vmsvc/destroy " $1}' | sh
+```
 
 ### Remove bootstrap from load balancer
 
