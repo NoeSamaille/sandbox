@@ -1,0 +1,42 @@
+# SOURCE: https://install.portworx.com/?mc=false&kbver=1.16.2&oem=esse&user=c51fb826-ce5f-11ea-a2c5-c24e499c7467&b=true&c=px-cluster-b7411e75-d1d0-4d70-800e-2901473368f1&osft=true&operator=true&stork=true&lh=true&st=k8s&rsec=default-dockercfg-jl9xb
+kind: StorageCluster
+apiVersion: core.libopenstorage.org/v1alpha1
+metadata:
+  name: px-cluster-b7411e75-d1d0-4d70-800e-2901473368f1
+  namespace: kube-system
+  annotations:
+    portworx.io/install-source: "https://install.portworx.com/?mc=false&kbver=1.16.2&oem=esse&user=c51fb826-ce5f-11ea-a2c5-c24e499c7467&b=true&c=px-cluster-b7411e75-d1d0-4d70-800e-2901473368f1&osft=true&operator=true&stork=true&lh=true&st=k8s&rsec=default-dockercfg-jl9xb"
+    portworx.io/is-openshift: "true"
+    portworx.io/misc-args: "--oem esse"
+spec:
+  image: portworx/oci-monitor:2.5.3
+  imagePullPolicy: Always
+  imagePullSecret: default-dockercfg-jl9xb
+  kvdb:
+    internal: true
+  storage:
+    useAll: true
+  secretsProvider: k8s
+  stork:
+    enabled: true
+    image: openstorage/stork:2.4.2.1
+  userInterface:
+    enabled: true
+    image: portworx/px-lighthouse:2.0.7
+  autopilot:
+    enabled: true
+    image: portworx/autopilot:1.2.1
+    providers:
+    - name: default
+      type: prometheus
+      params:
+        url: http://prometheus:9090
+---
+apiVersion: v1
+kind: Secret
+metadata:
+  name: px-essential
+  namespace: kube-system
+data:
+  px-essen-user-id: YzUxZmI4MjYtY2U1Zi0xMWVhLWEyYzUtYzI0ZTQ5OWM3NDY3
+  px-osb-endpoint: aHR0cHM6Ly9weGVzc2VudGlhbHMucG9ydHdvcnguY29tL29zYi9iaWxsaW5nL3YxL3JlZ2lzdGVy

@@ -156,12 +156,16 @@ sshpass -e ssh -o StrictHostKeyChecking=no $NFS_SERVER ls /$NFS_PATH/$(oc projec
 
 > :bulb: Target is to be able to push docker images Openshift registry in a secure way.
 
-### Install docker
+### Install docker and podman
 
 > :information_source: Run this on Cli
 
 ```
 [ -z $(command -v docker) ] && { yum install docker -y; systemctl start docker; docker run hello-world; systemctl enable docker; } || echo "docker already installed"
+```
+
+```
+[ -z $(command -v podman) ] && { yum install podman crictl runc buildah skopeo -y; } || echo "podman already installed"
 ```
 
 ### Log in cluster default project
@@ -234,10 +238,12 @@ oc patch configs.imageregistry.operator.openshift.io/cluster --type merge -p '{"
 REG_HOST=$(oc registry info) && echo $REG_HOST
 
 mkdir -p /etc/docker/certs.d/$REG_HOST
+mkdir -p /etc/containers/certs.d/$REG_HOST
 
 oc extract secret/router-ca --keys=tls.crt -n openshift-ingress-operator
 
 cp -v tls.crt /etc/docker/certs.d/$REG_HOST/
+cp -v tls.crt /etc/containers/certs.d/$REG_HOST/
 ```
 > :arrow_heading_down: [Log in Openshift registry](#log-in-openshift-registry)
 
@@ -249,6 +255,7 @@ cp -v tls.crt /etc/docker/certs.d/$REG_HOST/
 
 ```
 docker login -u $(oc whoami) -p $(oc whoami -t) $REG_HOST
+podman login -u $(oc whoami) -p $(oc whoami -t) $REG_HOST
 ```
 > :bulb: If login has been successfull, Docker should have added an entry in **~/.docker/config.json**.
 
@@ -259,6 +266,8 @@ docker login -u $(oc whoami) -p $(oc whoami -t) $REG_HOST
 ```
 docker pull busybox
 docker tag docker.io/busybox $REG_HOST/$(oc project -q)/busybox
+podman pull busybox
+podman tag docker.io/busybox $REG_HOST/$(oc project -q)/busybox
 ```
 
 > :warning: Now you have to be able to push docker images to Openshift registry
@@ -267,6 +276,7 @@ docker tag docker.io/busybox $REG_HOST/$(oc project -q)/busybox
 
 ```
 docker push $REG_HOST/$(oc project -q)/busybox
+podman push $REG_HOST/$(oc project -q)/busybox
 ```
 
 <br>

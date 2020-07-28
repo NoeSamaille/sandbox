@@ -15,10 +15,10 @@ Download [Redhat Openshift 4 on Bare Metal material](https://cloud.redhat.com/op
 
 | name                        | role                                              | vcpus  | ram (GB) | storage (GB) | ethernet (10GB) |
 | --------------------------- | ------------------------------------------------- | ------ | -------- | ------------ | --------------- |
-| m1-ocp5.iicparis.fr.ibm.com | master + etcd                                     | 4      | 16       | 250          | 1               |
-| w1-ocp5.iicparis.fr.ibm.com | worker                                            | 16     | 64       | 250          | 1               |
-| w2-ocp5.iicparis.fr.ibm.com | worker                                            | 16     | 64       | 250          | 1               |
-| w3-ocp5.iicparis.fr.ibm.com | worker                                            | 16     | 64       | 250          | 1               |
+| m1-ocp5.iicparis.fr.ibm.com | master + etcd                                     | 4      | 16       | 120          | 1               |
+| w1-ocp5.iicparis.fr.ibm.com | worker                                            | 16     | 64       | 120          | 1               |
+| w2-ocp5.iicparis.fr.ibm.com | worker                                            | 16     | 64       | 120          | 1               |
+| w3-ocp5.iicparis.fr.ibm.com | worker                                            | 16     | 64       | 120          | 1               |
 | bs-ocp5.iicparis.fr.ibm.com | bootstrap (will be removed after cluster install) | 4      | 16       | 120          | 1               |
 | **TOTAL**                   |                                                   | **52** | **208**  | **1000**     | **4**           |
 
@@ -785,7 +785,7 @@ cd $INST_DIR
 ./openshift-install gather bootstrap --bootstrap $BS_IP --key ~/.ssh/id_rsa --master "$M1_IP"
 ```
 
-#### -  [Rever snapshot](https://github.com/bpshparis/sandbox/blob/master/Manage-ESX-snapshots.md#manage-esx-snapshots)
+#### -  [Revert snapshot](https://github.com/bpshparis/sandbox/blob/master/Manage-ESX-snapshots.md#manage-esx-snapshots)
 
 
 ### Launch wait-for-install-complete
@@ -817,7 +817,7 @@ cd $INST_DIR
 
 
 #### -  :thumbsup: [Next step](#post-install-ocp-4)
-#### -  :thumbsdown: [Rever snapshot](https://github.com/bpshparis/sandbox/blob/master/Manage-ESX-snapshots.md#manage-esx-snapshots)
+#### -  :thumbsdown: [Revert snapshot](https://github.com/bpshparis/sandbox/blob/master/Manage-ESX-snapshots.md#manage-esx-snapshots)
 
 <br>
 
@@ -996,7 +996,7 @@ watch -n 10 vim-cmd vmsvc/getallvms | awk '$2 ~ "'$VM_PATTERN'" && $1 !~ "Vmid" 
 ```
 
 > :bulb: Leave watch with **Ctrl + c** when everyone is **powered off**
- 
+
 ```
 vim-cmd vmsvc/getallvms | awk '$2 ~ "'$VM_PATTERN'" && $1 !~ "Vmid" {print "vim-cmd vmsvc/destroy " $1}' | sh
 ```
@@ -1028,3 +1028,7 @@ systemctl restart haproxy
 :checkered_flag::checkered_flag::checkered_flag:
 
 <br>
+
+> :warning: Wait for at least **24** hours before taking a valid snapshot
+
+#### -  [Take snapshot](https://github.com/bpshparis/sandbox/blob/master/Manage-ESX-snapshots.md#manage-esx-snapshots)
