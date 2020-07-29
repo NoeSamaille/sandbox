@@ -221,4 +221,21 @@ watch -n 5 "./getVMAddress.sh"
 
 > :bulb: Leave watch with **Ctrl + c** 
 
+### Set Cli enrironment
+
+> :information_source: Run this on Cli
+
+```
+cat >> ~/.bashrc << EOF
+
+export OCP=ocp7
+export SSHPASS=spcspc
+alias l='ls -Alhtr'
+
+EOF
+
+source ~/.bashrc
+```
+
+
 :checkered_flag::checkered_flag::checkered_flag:

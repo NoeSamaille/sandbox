@@ -419,13 +419,17 @@ sshpass -e ssh -o StrictHostKeyChecking=no root@web "chmod -R +r /web/$OCP"
 > :information_source: Run this on Installer
 
 ```
+ESX_SERVER="ocp5"
+```
+
+
+```
 WEB_SERVER_ISO_URL="http://web/iso"
 RHCOS_ISO_FILE="rhcos-4.4.3-x86_64-installer.x86_64.iso"
 ISO_PATH="/media/iso"
 RW_ISO_PATH="/media/isorw"
 WEB_SERVER_SOFT_URL="http://web/soft"
 TEST_ISO_PATH="/media/test"
-ESX_SERVER="ocp5"
 ESX_ISO_PATH="/vmfs/volumes/datastore1/iso"
 ```
 
@@ -649,7 +653,7 @@ watch -n 5 vim-cmd vmsvc/getallvms | awk '$2 ~ "'$VM_PATTERN'" && $1 !~ "Vmid" {
 > :information_source: Run this on Installer
 
 ```
-ESX_SERVER="ocp5"
+ESX_SERVER="ocp7"
 BS_VNC_PORT=9
 M1_VNC_PORT=1
 W1_VNC_PORT=4
@@ -662,7 +666,7 @@ W3_VNC_PORT=6
 > :information_source: Run this on Installer
 
 ```
-vncviewer $ESX_SERVER:BS_VNC_PORT
+vncviewer $ESX_SERVER:$BS_VNC_PORT
 ```
 
 ### Monitor master
@@ -670,7 +674,7 @@ vncviewer $ESX_SERVER:BS_VNC_PORT
 > :information_source: Run this on Installer
 
 ```
-vncviewer $ESX_SERVER:M1_VNC_PORT
+vncviewer $ESX_SERVER:$M1_VNC_PORT
 ```
 
 ### Monitor worker 1
@@ -678,7 +682,7 @@ vncviewer $ESX_SERVER:M1_VNC_PORT
 > :information_source: Run this on Installer
 
 ```
-vncviewer $ESX_SERVER:W1_VNC_PORT
+vncviewer $ESX_SERVER:$W1_VNC_PORT
 ```
 
 ### Monitor worker 2
@@ -686,7 +690,7 @@ vncviewer $ESX_SERVER:W1_VNC_PORT
 > :information_source: Run this on Installer
 
 ```
-vncviewer $ESX_SERVER:W2_VNC_PORT
+vncviewer $ESX_SERVER:$W2_VNC_PORT
 ```
 
 ### Monitor worker 3
@@ -694,7 +698,7 @@ vncviewer $ESX_SERVER:W2_VNC_PORT
 > :information_source: Run this on Installer
 
 ```
-vncviewer $ESX_SERVER:W3_VNC_PORT
+vncviewer $ESX_SERVER:$W3_VNC_PORT
 ```
 
 <br>
@@ -1019,7 +1023,7 @@ BS_PATTERN="server bs-"
 > :information_source: Run this on Cli
 
 ```
-sed -i 's/\('$BS_PATTERN'*\)/# \1/g' $LB_CONF
+sed -i -e 's/\('"$BS_PATTERN"'*\)/# \1/g' $LB_CONF
 systemctl restart haproxy
 ```
 
