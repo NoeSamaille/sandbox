@@ -365,9 +365,9 @@ for node in $WORKERS_NODES; do   ssh -o StrictHostKeyChecking=no -l core $node "
 
 ![](img/lsblk.jpg)
 
-> :warning: Metadata volume should be **>= 64GB**
+> :warning: Metadata volume (e.g. /dev/sdc) should be **>= 64GB**
 
-> :bulb: Application volume will install succesfully if **>= 250 GB**
+> :bulb: Application volume (e.g. /dev/sdb) will install succesfully if **>= 250 GB**
 
 
 ### Install Portworx
