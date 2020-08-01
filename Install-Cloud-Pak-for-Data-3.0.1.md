@@ -2,7 +2,7 @@
 
 ## System requirements
 
-- Have completed  [Prepare Redhat Openshift for Cloud Paks](https://github.com/bpshparis/sandbox/blob/master/Prepare-Redhat-Openshift-for-Cloud-Paks.md)
+- Have completed  [Prepare Redhat Openshift for Cloud Paks](https://github.com/bpshparis/sandbox/blob/master/Install-Cloud-Pak-for-Data-3.0.1.md#install-cloud-pak-for-data-301)
 - One **WEB server** where following files are available in **read mode**:
   - [cloudpak4data-ee-3.0.1.tgz](https://github.com/IBM/cpd-cli/releases/download/cpd-3.0.1/cloudpak4data-ee-3.0.1.tgz)
   - [IBM® Cloud Pak for Data entitlement license API key](https://myibm.ibm.com/products-services/containerlibrary) saved in apikey file.
@@ -14,7 +14,7 @@
 ### Install the cpd command
 
 > :information_source: Run this on Cli 
- 
+
 ```
 WEB_SERVER_CP_URL="http://web/cloud-pak"
 INST_FILE="cloudpak4data-ee-3.0.1.tgz"

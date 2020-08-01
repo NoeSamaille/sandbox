@@ -484,7 +484,7 @@ watch -n5 "oc get pvc | grep test && oc get po | grep test"
 ```
 
 
-#### Add storage class for Cloud Pak
+#### Add storage classes for Cloud Pak
 
 > :information_source: Run this on Installer
 
