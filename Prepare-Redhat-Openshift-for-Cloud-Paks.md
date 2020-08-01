@@ -422,7 +422,7 @@ podman login -u $(oc whoami) -p $(oc whoami -t) $REG_HOST
 > :bulb: Check PX images are loadd in Openshift registry
 
 ```
-oc get images | grep kube-system
+oc get images | grep $NS
 ```
 
 #### Install PX operator
@@ -436,7 +436,7 @@ oc get images | grep kube-system
 > :warning: Wait for operator pod to be running
 
 ```
-watch "oc get po -n kube-system | grep portworx-operator"
+watch "oc get po -n $NS | grep portworx-operator"
 ```
 
 > :bulb: Leave watch with **Ctrl + c** when pod is **Running**
@@ -452,7 +452,7 @@ watch "oc get po -n kube-system | grep portworx-operator"
 > :bulb: Monitor cluster installation and wait for all pods to be ** 1/1 Running**
 
 ```
-watch -n5 "oc get po -n kube-system | grep 'portworx-' && oc get po -n kube-system | grep 'px-'"
+watch -n5 "oc get po -n $NS | grep 'portworx-' && oc get po -n kube-system | grep 'px-'"
 ```
 
 #### Check PX cluster installation
@@ -460,9 +460,9 @@ watch -n5 "oc get po -n kube-system | grep 'portworx-' && oc get po -n kube-syst
 > :information_source: Run this on Installer
 
 ```
-PX_POD=$(kubectl get pods -l name=portworx -n kube-system -o jsonpath='{.items[0].metadata.name}')
+PX_POD=$(kubectl get pods -l name=portworx -n $NS -o jsonpath='{.items[0].metadata.name}')
 
-oc exec $PX_POD -n kube-system -- /opt/pwx/bin/pxctl status | grep '^Status'
+oc exec $PX_POD -n $NS -- /opt/pwx/bin/pxctl status | grep '^Status'
 ```
 
 > :bulb: PX should be **operational** 
@@ -475,15 +475,29 @@ oc exec $PX_POD -n kube-system -- /opt/pwx/bin/pxctl status | grep '^Status'
 ~/cpd-portworx/px-install-4.3/px-install.sh install-sample-pvc
 
 oc create -f ~/cpd-portworx/px-install-4.3/px-test.yaml
+```
 
+> :bulb: Check pvc is **Bound** and pod is **1/1 Running** 
+
+```
 watch -n5 "oc get pvc | grep test && oc get po | grep test"
 ```
 
+
 #### Add storage class for Cloud Pak
+
+> :information_source: Run this on Installer
 
 ```
 ~/cpd-portworx/px-install-4.3/px-sc.sh
 ```
+
+> :bulb: Check you have at least **30 storage class available**
+
+```
+oc get sc
+```
+
 <br>
 
 :checkered_flag::checkered_flag::checkered_flag:
