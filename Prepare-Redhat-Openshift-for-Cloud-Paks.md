@@ -285,7 +285,7 @@ watch -n5 "oc get clusteroperators | grep registry"
 
 >:bulb:  **3rd column should display true**
 
-#### Trust Openshift registry
+### Trust Openshift registry
 
 > :information_source: Run this on Installer
 
