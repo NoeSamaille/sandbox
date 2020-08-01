@@ -841,11 +841,17 @@ cd $INST_DIR
 
 ```
 INST_DIR=~/ocpinst
+WEB_SERVER_OC_URL="http://web/soft/openshift-client-linux-4.3.1.tar.gz"
+OC_FILE="openshift-client-linux-4.3.1.tar.gz"
 ```
 
 #### Create an admin user with  cluster-admin role
 
 > :information_source: Run this on Installer
+
+```
+[ -z $(command -v oc) ] && { wget -c $WEB_SERVER_OC_URL; tar xvzf $OC_FILE -C $(echo $PATH | awk -F':' '{print $1}'); } || echo oc installed
+```
 
 ```
 export KUBECONFIG=$INST_DIR/auth/kubeconfig

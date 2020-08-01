@@ -175,6 +175,21 @@ sshpass -e ssh -o StrictHostKeyChecking=no $NFS_SERVER ls /$NFS_PATH/$(oc projec
 
 > :warning: Some of commands below will need to be adapted to fit Linux/Debian or MacOS .
 
+### Install oc and kubectl commands
+
+> :warning: Adapt settings to fit to your environment.
+
+> :information_source: Run this on Installer
+
+```
+WEB_SERVER_OC_URL="http://web/soft/openshift-client-linux-4.3.1.tar.gz"
+OC_FILE="openshift-client-linux-4.3.1.tar.gz"
+```
+
+```
+[ -z $(command -v oc) ] && { wget -c $WEB_SERVER_OC_URL; tar xvzf $OC_FILE -C $(echo $PATH | awk -F':' '{print $1}'); } || echo oc installed
+```
+
 ### Install podman
 
 > :information_source: Run this on Installer

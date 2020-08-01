@@ -50,7 +50,7 @@ ide1:0.fileName = "/vmfs/volumes/5bed6d05-cbea3ac4-0a0b-a0369f739e64/iso/RHEL-7.
 ide1:0.present = "TRUE"
 RemoteDisplay.vnc.enabled = "True"
 RemoteDisplay.vnc.port = "5901"  	 
-RemoteDisplay.vnc.password = "spcspc"
+RemoteDisplay.vnc.password = "password"
 RemoteDisplay.vnc.keymap = "fr"
 
 
