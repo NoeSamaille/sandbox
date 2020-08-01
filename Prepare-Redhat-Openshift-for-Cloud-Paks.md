@@ -1,15 +1,28 @@
 # Prepare Redhat Openshift for Cloud Paks
 
+## Hardware requirements
+
+-  One computer which will be called **Installer** that runs Linux or MacOS, with 500 MB of local disk space.
+
 ## System requirements
 
-
+<!--
 - One [OCP 3.11](https://github.com/bpshparis/sandbox/blob/master/Installing-Redhat-Openshift-3.11-on-Bare-Metal.md#installing-redhat-openshift-311-on-bare-metal) or [OCP 4](https://github.com/bpshparis/sandbox/blob/master/Installing-Redhat-Openshift-4-on-Bare-Metal.md#installing-redhat-openshift-4-on-bare-metal)
 - One [centos/redhat Cli](https://github.com/bpshparis/sandbox/blob/master/Installing-Redhat-Openshift-4.3-on-Bare-Metal.md#create-cli) with **oc** and **kubectl** commands installed
 - One **WEB server** where following files are available in **read mode**:
   - [nfs-client.zip](scripts/nfs-client.zip)
+-->
+
+- One  [OCP 4](https://github.com/bpshparis/sandbox/blob/master/Installing-Redhat-Openshift-4-on-Bare-Metal.md#installing-redhat-openshift-4-on-bare-metal)
+
+- One **WEB server** where following files are available in **read mode**:
+  - [Linux](https://mirror.openshift.com/pub/openshift-v4/clients/ocp/latest/openshift-client-linux.tar.gz) or [MacOS](https://mirror.openshift.com/pub/openshift-v4/clients/ocp/latest/openshift-client-mac.tar.gz) Openshift command line interface
+  - Portworx Enterprise Edition (Part number **CC648EN**) downloaded either from [IBM Passport Advantage](https://www.ibm.com/software/passportadvantage/pao_customer.html) or from [XL](https://w3-03.ibm.com/software/xl/download/ticket.wss).
+
 
 :checkered_flag::checkered_flag::checkered_flag:
 
+<!--
 ## Install managed-nfs-storage Storage Class
 
 ### Install NFS server
@@ -151,18 +164,20 @@ sshpass -e ssh -o StrictHostKeyChecking=no $NFS_SERVER ls /$NFS_PATH/$(oc projec
 ```
 
 :checkered_flag::checkered_flag::checkered_flag:
+-->
+
 
 ## Exposing Openshift Registry
 
 > :bulb: Target is to be able to push docker images Openshift registry in a secure way.
 
-### Install docker and podman
+> :information_source: Commands below are valid for a **Linux/Centos 7**.
 
-> :information_source: Run this on Cli
+> :warning: Some of commands below will need to be adapted to fit Linux/Debian or MacOS .
 
-```
-[ -z $(command -v docker) ] && { yum install docker -y; systemctl start docker; docker run hello-world; systemctl enable docker; } || echo "docker already installed"
-```
+### Install podman
+
+> :information_source: Run this on Installer
 
 ```
 [ -z $(command -v podman) ] && { yum install podman crictl runc buildah skopeo -y; } || echo "podman already installed"
@@ -170,6 +185,7 @@ sshpass -e ssh -o StrictHostKeyChecking=no $NFS_SERVER ls /$NFS_PATH/$(oc projec
 
 ### Log in cluster default project
 
+<!--
 > :information_source: Run this on **OCP 3.11** Cli
 
 ```
@@ -180,10 +196,22 @@ oc login https://cli-$OCP:8443 -u admin -p admin --insecure-skip-tls-verify=true
 <br>
 
 > :information_source: Run this on **OCP 4.3** Cli
+-->
+
+> :warning: Adapt settings to fit to your environment.
+
+> :information_source: Run this on Installer
 
 ```
-oc login https://cli-$OCP:6443 -u admin -p admin --insecure-skip-tls-verify=true -n default
+LB_HOSTNAME="cli-ocp7"
 ```
+
+
+```
+oc login https://$LB_HOSTNAME:6443 -u admin -p admin --insecure-skip-tls-verify=true -n default
+```
+
+<!--
 > :arrow_heading_down: [Exposing Openshift 4 Registry](#exposing-openshift-4-registry)
 
 <br>
@@ -221,10 +249,11 @@ sshpass -e scp -o StrictHostKeyChecking=no m1-$OCP:/etc/origin/master/ca.crt /et
 > :arrow_heading_down: [Log in Openshift registry](#log-in-openshift-registry)
 
 <br>
+-->
 
-### Exposing Openshift 4 Registry
+### Exposing Openshift Registry
 
-> :information_source: Run this on **OCP 4.3** Cli
+> :information_source: Run this on Installer
 
 ```
 oc patch configs.imageregistry.operator.openshift.io/cluster --type merge -p '{"spec":{"defaultRoute":true}}'

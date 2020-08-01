@@ -887,10 +887,16 @@ oc adm policy add-cluster-role-to-user cluster-admin admin
 
 ### Login to cluster
 
+> :warning: Adapt settings to fit to your environment.
+
 > :information_source: Run this on Installer
 
 ```
-oc login https://cli-$OCP:6443 -u admin -p admin --insecure-skip-tls-verify=true
+LB_HOSTNAME="cli-ocp7"
+```
+
+```
+oc login https://$LB_HOSTNAME:6443 -u admin -p admin --insecure-skip-tls-verify=true
 
 oc get nodes
 ```
@@ -914,7 +920,7 @@ EOF
 
 ### Downscale etcd-quorum-guard to one
 
-> :information_source: Run this on Cli
+> :information_source: Run this on Installer
 
 ```
 oc scale --replicas=1 deployment/etcd-quorum-guard -n openshift-machine-config-operator
@@ -922,7 +928,7 @@ oc scale --replicas=1 deployment/etcd-quorum-guard -n openshift-machine-config-o
 
 ### Setup image-registry to use ephemeral storage
 
-> :information_source: Run this on Cli
+> :information_source: Run this on Installer
 
 ```
 oc patch configs.imageregistry.operator.openshift.io cluster --type merge --patch '{"spec":{"storage":{"emptyDir":{}}}}'
@@ -931,6 +937,12 @@ oc patch configs.imageregistry.operator.openshift.io cluster --type merge --patc
 ```
 
 >:bulb: Wait until the image-registry operator completes the update before using the registry.
+
+>:bulb:  **3rd column should be == true**
+
+```
+watch -n5 "oc get clusteroperators | grep registry"
+```
 
 <br>
 
@@ -947,7 +959,7 @@ oc new-project validate
 
 oc new-app django-psql-example
 
-sleep 10
+sleep 20
 
 oc logs -f bc/django-psql-example
 ```
@@ -960,7 +972,7 @@ oc get routes | awk 'NR>1 {print "\nTo access your application, Visit url:\n"$2}
 
 ### Get OCP 4 web console url and login
 
-> :information_source: Run this on Cli
+> :information_source: Run this on Installer
 
 ```
 oc get route -n openshift-console | awk 'NR>1 && $1 ~ "console" {print "\nWeb Console is available with htpasswd_provider as admin with admin as password at:\nhttps://"$2}'
@@ -1020,7 +1032,7 @@ BS_PATTERN="server bs-"
 
 #### Remove bootstrap from load balancer
 
-> :information_source: Run this on Cli
+> :information_source: Run this on Load Balancer
 
 ```
 sed -i -e 's/\('"$BS_PATTERN"'*\)/# \1/g' $LB_CONF
