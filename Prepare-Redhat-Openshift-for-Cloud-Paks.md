@@ -171,7 +171,7 @@ sshpass -e ssh -o StrictHostKeyChecking=no $NFS_SERVER ls /$NFS_PATH/$(oc projec
 
 ## Exposing Openshift Registry
 
-> :bulb: Target is to be able to push docker images Openshift registry in a secure way.
+> :bulb: Target is to be able to push images Openshift registry in a secure way.
 
 > :information_source: Commands below are valid for a **Linux/Centos 7**.
 
@@ -279,11 +279,11 @@ oc patch configs.imageregistry.operator.openshift.io/cluster --type merge -p '{"
 
 >:bulb: Wait until the image-registry operator completes the update before using the registry.
 
->:bulb:  **3rd column should be == true**
-
 ```
 watch -n5 "oc get clusteroperators | grep registry"
 ```
+
+>:bulb:  **3rd column should display == true**
 
 #### Trust Openshift registry
 
@@ -361,7 +361,7 @@ WORKERS_NODES="w1-ocp7 w2-ocp7 w3-ocp7"
 for node in $WORKERS_NODES; do   ssh -o StrictHostKeyChecking=no -l core $node "hostname; echo '- - -' > /sys/class/scsi_host/host0/scan; lsblk"; done
 ```
 
->:bulb: You should have **2 raw unformatted disks** 
+>:bulb: All workers should have **2 raw unformatted disks** each.
 
 ![](img/lsblk.jpg)
 
