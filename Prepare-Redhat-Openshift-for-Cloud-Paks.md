@@ -221,7 +221,6 @@ oc login https://cli-$OCP:8443 -u admin -p admin --insecure-skip-tls-verify=true
 LB_HOSTNAME="cli-ocp7"
 ```
 
-
 ```
 oc login https://$LB_HOSTNAME:6443 -u admin -p admin --insecure-skip-tls-verify=true -n default
 ```
@@ -274,52 +273,44 @@ sshpass -e scp -o StrictHostKeyChecking=no m1-$OCP:/etc/origin/master/ca.crt /et
 oc patch configs.imageregistry.operator.openshift.io/cluster --type merge -p '{"spec":{"defaultRoute":true}}'
 ```
 
-#### Trust Openshift 4 registry
+#### Trust Openshift registry
 
-> :information_source: Run this on **OCP 4.3** Cli
+> :information_source: Run this on Installer
 
 ```
 REG_HOST=$(oc registry info) && echo $REG_HOST
 
-mkdir -p /etc/docker/certs.d/$REG_HOST
 mkdir -p /etc/containers/certs.d/$REG_HOST
 
 oc extract secret/router-ca --keys=tls.crt -n openshift-ingress-operator
 
-cp -v tls.crt /etc/docker/certs.d/$REG_HOST/
 cp -v tls.crt /etc/containers/certs.d/$REG_HOST/
 ```
-> :arrow_heading_down: [Log in Openshift registry](#log-in-openshift-registry)
 
 <br>
 
 ### Log in Openshift registry
 
-> :information_source: Run this on Cli
+> :information_source: Run this on Installer
 
 ```
-docker login -u $(oc whoami) -p $(oc whoami -t) $REG_HOST
 podman login -u $(oc whoami) -p $(oc whoami -t) $REG_HOST
 ```
-> :bulb: If login has been successfull, Docker should have added an entry in **~/.docker/config.json**.
 
-### Tag a docker image with Openshift registry hostname and push it
+### Tag an image with Openshift registry hostname and push it
 
-> :information_source: Run this on Cli
+> :information_source: Run this on Installer
 
 ```
-docker pull busybox
-docker tag docker.io/busybox $REG_HOST/$(oc project -q)/busybox
 podman pull busybox
 podman tag docker.io/busybox $REG_HOST/$(oc project -q)/busybox
 ```
 
-> :warning: Now you have to be able to push docker images to Openshift registry
+> :warning: Now you have to be able to push images to Openshift registry
 
-> :information_source: Run this on Cli
+> :information_source: Run this on Installer
 
 ```
-docker push $REG_HOST/$(oc project -q)/busybox
 podman push $REG_HOST/$(oc project -q)/busybox
 ```
 
