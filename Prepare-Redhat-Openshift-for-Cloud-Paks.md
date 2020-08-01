@@ -283,7 +283,7 @@ oc patch configs.imageregistry.operator.openshift.io/cluster --type merge -p '{"
 watch -n5 "oc get clusteroperators | grep registry"
 ```
 
->:bulb:  **3rd column should display == true**
+>:bulb:  **3rd column should display true**
 
 #### Trust Openshift registry
 
