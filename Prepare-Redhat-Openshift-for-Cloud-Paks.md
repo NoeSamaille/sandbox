@@ -365,9 +365,9 @@ for node in $WORKERS_NODES; do   ssh -o StrictHostKeyChecking=no -l core $node "
 
 ![](img/lsblk.jpg)
 
-> :warning: Metadata volume (e.g. /dev/sdc) should be **>= 64GB**
+> :warning: Metadata volume (e.g. sdc) should be **>= 64GB**
 
-> :bulb: Application volume (e.g. /dev/sdb) will install succesfully if **>= 250 GB**
+> :bulb: Application volume (e.g. sdb) will install succesfully if **>= 250 GB**
 
 ### Install Portworx
 
@@ -449,7 +449,7 @@ watch "oc get po -n $NS | grep portworx-operator"
 ~/cpd-portworx/px-install-4.3/px-install.sh install-storage $APP_DEV $MD_DEV
 ```
 
-> :bulb: Monitor cluster installation and wait for all pods to be ** 1/1 Running**
+> :bulb: Monitor cluster installation and wait for all pods to be **1/1 Running**
 
 ```
 watch -n5 "oc get po -n $NS | grep 'portworx-' && oc get po -n kube-system | grep 'px-'"
