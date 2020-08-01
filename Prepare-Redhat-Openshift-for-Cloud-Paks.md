@@ -22,6 +22,8 @@
 
 :checkered_flag::checkered_flag::checkered_flag:
 
+<br>
+
 <!--
 ## Install managed-nfs-storage Storage Class
 
@@ -273,6 +275,16 @@ sshpass -e scp -o StrictHostKeyChecking=no m1-$OCP:/etc/origin/master/ca.crt /et
 oc patch configs.imageregistry.operator.openshift.io/cluster --type merge -p '{"spec":{"defaultRoute":true}}'
 ```
 
+>:bulb: You will be logged out from api server for few seconds.
+
+>:bulb: Wait until the image-registry operator completes the update before using the registry.
+
+>:bulb:  **3rd column should be == true**
+
+```
+watch -n5 "oc get clusteroperators | grep registry"
+```
+
 #### Trust Openshift registry
 
 > :information_source: Run this on Installer
@@ -312,6 +324,8 @@ podman tag docker.io/busybox $REG_HOST/$(oc project -q)/busybox
 
 ```
 podman push $REG_HOST/$(oc project -q)/busybox
+
+oc get images | grep busybox
 ```
 
 <br>
@@ -330,3 +344,147 @@ podman login default-route-openshift-image-registry.apps.$OCP.iicparis.fr.ibm.co
 podman push default-route-openshift-image-registry.apps.$OCP.iicparis.fr.ibm.com/validate/busybox --tls-verify=false
 
 -->
+
+## Installing Portworx
+
+### Check worker devices availability
+
+> :warning: Adapt settings to fit to your environment.
+
+> :information_source: Run this on Installer
+
+```
+WORKERS_NODES="w1-ocp7 w2-ocp7 w3-ocp7"
+```
+
+```
+for node in $WORKERS_NODES; do   ssh -o StrictHostKeyChecking=no -l core $node "hostname; echo '- - -' > /sys/class/scsi_host/host0/scan; lsblk"; done
+```
+
+>:bulb: You should have **2 raw unformatted disks** 
+
+![](img/lsblk.jpg)
+
+> :warning: Metadata volume should be **>= 64GB**
+
+> :bulb: Application volume will install succesfully if **>= 250 GB**
+
+
+### Install Portworx
+
+> :bulb: To avoid network failure, launch installation on **locale console** or in a **screen**
+
+> :information_source: Run this on Installer
+
+```
+[ ! -z $(command -v screen) ] && echo screen already installed || yum install screen -y
+
+pkill screen; screen -mdS ADM && screen -r ADM
+```
+
+#### Set environment
+
+> :warning: Adapt settings to fit to your environment.
+
+> :information_source: Run this on Installer
+
+```
+LB_HOSTNAME="cli-ocp7"
+NS="kube-system"
+WEB_SERVER_PX_URL="http://web/cloud-pak/cpdv3.0.1_portworx.tgz"
+PX_FILE="cpdv3.0.1_portworx.tgz"
+APP_DEV="/dev/sdb"
+MD_DEV="/dev/sdc"
+```
+
+#### Extract files
+
+> :information_source: Run this on Installer
+
+```
+cd ~
+wget -c $WEB_SERVER_PX_URL
+tar xvzf $PX_FILE
+```
+
+#### Load PX images in Openshift registry
+
+> :information_source: Run this on Installer
+
+```
+oc login https://$LB_HOSTNAME:6443 -u admin -p admin --insecure-skip-tls-verify=true -n $NS
+
+REG_HOST=$(oc registry info) && echo $REG_HOST
+podman login -u $(oc whoami) -p $(oc whoami -t) $REG_HOST
+
+~/cpd-portworx/px-images/process-px-images.sh -r $REG_HOST -u $(oc whoami) -p $(oc whoami -t) -s $(oc project -q) -c podman -t ~/cpd-portworx/px-images/px_2.5.0.1-dist.tgz
+```
+
+> :bulb: Check PX images are loadd in Openshift registry
+
+```
+oc get images | grep kube-system
+```
+
+#### Install PX operator
+
+> :information_source: Run this on Installer
+
+```
+~/cpd-portworx/px-install-4.3/px-install.sh install-operator
+```
+
+> :warning: Wait for operator pod to be running
+
+```
+watch "oc get po -n kube-system | grep portworx-operator"
+```
+
+> :bulb: Leave watch with **Ctrl + c** when pod is **Running**
+
+#### Install PX cluster
+
+> :information_source: Run this on Installer
+
+```
+~/cpd-portworx/px-install-4.3/px-install.sh install-storage $APP_DEV $MD_DEV
+```
+
+> :bulb: Monitor cluster installation and wait for all pods to be ** 1/1 Running**
+
+```
+watch -n5 "oc get po -n kube-system | grep 'portworx-' && oc get po -n kube-system | grep 'px-'"
+```
+
+#### Check PX cluster installation
+
+> :information_source: Run this on Installer
+
+```
+PX_POD=$(kubectl get pods -l name=portworx -n kube-system -o jsonpath='{.items[0].metadata.name}')
+
+oc exec $PX_POD -n kube-system -- /opt/pwx/bin/pxctl status | grep '^Status'
+```
+
+> :bulb: PX should be **operational** 
+
+#### Test PX PVC
+
+> :information_source: Run this on Installer
+
+```
+~/cpd-portworx/px-install-4.3/px-install.sh install-sample-pvc
+
+oc create -f ~/cpd-portworx/px-install-4.3/px-test.yaml
+
+watch -n5 "oc get pvc | grep test && oc get po | grep test"
+```
+
+#### Add storage class for Cloud Pak
+
+```
+~/cpd-portworx/px-install-4.3/px-sc.sh
+```
+<br>
+
+:checkered_flag::checkered_flag::checkered_flag:
