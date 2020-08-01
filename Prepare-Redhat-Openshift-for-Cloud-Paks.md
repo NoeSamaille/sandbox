@@ -452,7 +452,7 @@ watch "oc get po -n $NS | grep portworx-operator"
 > :bulb: Monitor cluster installation and wait for all pods to be **1/1 Running**
 
 ```
-watch -n5 "oc get po -n $NS | grep 'portworx-' && oc get po -n kube-system | grep 'px-'"
+watch -n5 "oc get po -n $NS | grep 'portworx-' && oc get po -n $NS | grep 'px-'"
 ```
 
 #### Check PX cluster installation
