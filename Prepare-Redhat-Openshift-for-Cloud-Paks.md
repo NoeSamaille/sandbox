@@ -439,7 +439,7 @@ oc get images | grep $NS
 watch "oc get po -n $NS | grep portworx-operator"
 ```
 
-> :bulb: Leave watch with **Ctrl + c** when pod is **Running**
+> :bulb: Leave watch with **Ctrl + c** when pod is **1/1 Running**
 
 #### Install PX cluster
 
@@ -465,7 +465,7 @@ PX_POD=$(kubectl get pods -l name=portworx -n $NS -o jsonpath='{.items[0].metada
 oc exec $PX_POD -n $NS -- /opt/pwx/bin/pxctl status | grep '^Status'
 ```
 
-> :bulb: PX should be **operational** 
+> :bulb: PX status should be **operational** 
 
 #### Test PX PVC
 
@@ -492,7 +492,7 @@ watch -n5 "oc get pvc | grep test && oc get po | grep test"
 ~/cpd-portworx/px-install-4.3/px-sc.sh
 ```
 
-> :bulb: Check you have at least **30 storage class available**
+> :bulb: Check you have at least **30 storage classes available**
 
 ```
 oc get sc
