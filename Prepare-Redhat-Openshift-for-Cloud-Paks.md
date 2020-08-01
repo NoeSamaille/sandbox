@@ -369,8 +369,7 @@ for node in $WORKERS_NODES; do   ssh -o StrictHostKeyChecking=no -l core $node "
 
 > :bulb: Application volume (e.g. /dev/sdb) will install succesfully if **>= 250 GB**
 
-
-### Install Portworx
+### Install Portworx
 
 > :bulb: To avoid network failure, launch installation on **locale console** or in a **screen**
 
