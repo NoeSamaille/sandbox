@@ -15,7 +15,7 @@
 :checkered_flag::checkered_flag::checkered_flag:
 <br>
 
-## Prepare Cloud Pak for Data
+## Prepare for Cloud Pak for Data 3.0.1
 
 > :information_source: Commands below are valid for a **Linux/Centos 7**.
 
@@ -205,3 +205,4 @@ sshpass -e ssh -o StrictHostKeyChecking=no $WEB_SERVER_USER@$WEB_SERVER "chmod -
 <br>
 :checkered_flag::checkered_flag::checkered_flag:
 <br>
+
