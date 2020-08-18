@@ -20,7 +20,7 @@ Download [Redhat Openshift 4 on Bare Metal material](https://cloud.redhat.com/op
 | w2-ocp5.iicparis.fr.ibm.com | worker                                            | 16     | 64       | 120          | 1               |
 | w3-ocp5.iicparis.fr.ibm.com | worker                                            | 16     | 64       | 120          | 1               |
 | bs-ocp5.iicparis.fr.ibm.com | bootstrap (will be removed after cluster install) | 4      | 16       | 120          | 1               |
-| **TOTAL**                   |                                                   | **52** | **208**  | **1000**     | **4**           |
+| **TOTAL**                   |                                                   | **52** | **208**  | **480**      | **4**           |
 
 
 ## System requirements
