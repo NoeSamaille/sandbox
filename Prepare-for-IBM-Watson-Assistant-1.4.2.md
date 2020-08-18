@@ -110,7 +110,6 @@ sed -i -e 's/\(^\s\{4\}apikey:\).*$/\1 '$APIKEY'/' repo.yaml
 ```
 INST_DIR=~/cpd
 ASSEMBLY="ibm-watson-assistant"
-VERSION="1.4.2"
 ARCH="x86_64"
 ```
 
