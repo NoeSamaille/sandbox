@@ -197,7 +197,7 @@ OC_FILE="openshift-client-linux-4.3.1.tar.gz"
 > :information_source: Run this on Installer
 
 ```
-[ -z $(command -v podman) ] && { yum install podman crictl runc buildah skopeo -y; } || echo "podman already installed"
+[ -z $(command -v podman) ] && { yum install podman runc buildah skopeo -y; } || echo "podman already installed"
 ```
 
 ### Log in cluster default project
@@ -221,10 +221,11 @@ oc login https://cli-$OCP:8443 -u admin -p admin --insecure-skip-tls-verify=true
 
 ```
 LB_HOSTNAME="cli-ocp7"
+NS="default"
 ```
 
 ```
-oc login https://$LB_HOSTNAME:6443 -u admin -p admin --insecure-skip-tls-verify=true -n default
+oc login https://$LB_HOSTNAME:6443 -u admin -p admin --insecure-skip-tls-verify=true -n $NS
 ```
 
 <!--
@@ -294,7 +295,7 @@ REG_HOST=$(oc registry info) && echo $REG_HOST
 
 mkdir -p /etc/containers/certs.d/$REG_HOST
 
-oc extract secret/router-ca --keys=tls.crt -n openshift-ingress-operator
+oc extract secret/router-ca --keys=tls.crt -n openshift-ingress-operator --confirm
 
 cp -v tls.crt /etc/containers/certs.d/$REG_HOST/
 ```
@@ -325,7 +326,7 @@ podman tag docker.io/busybox $REG_HOST/$(oc project -q)/busybox
 ```
 podman push $REG_HOST/$(oc project -q)/busybox
 
-oc get images | grep busybox
+oc get is | grep busybox
 ```
 
 <br>
@@ -452,7 +453,7 @@ watch "oc get po -n $NS | grep portworx-operator"
 > :bulb: Monitor cluster installation and wait for all pods to be **1/1 Running**
 
 ```
-watch -n5 "oc get po -n $NS | grep 'portworx-' && oc get po -n $NS | grep 'px-'"
+watch -n5 "oc get po -n $NS | egrep -w 'portworx|px'"
 ```
 
 #### Check PX cluster installation

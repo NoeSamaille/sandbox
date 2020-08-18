@@ -75,10 +75,7 @@ vim-cmd vmsvc/getallvms | awk '$2 ~ "'$ALL_PATTERN'" && $1 !~ "Vmid" {print "vim
 > :information_source: Run this on ESX
 
 ```
-for vmid in $(vim-cmd vmsvc/getallvms | awk 'NR>1 && $2 ~ "'$ALL_PATTERN'" {print $1}'); \
-do \
-vim-cmd vmsvc/snapshot.get $vmid | grep -A 1 'Snapshot Name\s\{1,\}: '$SNAPNAME | awk -F' : ' 'NR>1 {print "vim-cmd vmsvc/snapshot.revert "'$vmid'" " $2 " suppressPowerOn"}' | sh; \
-done
+for vmid in $(vim-cmd vmsvc/getallvms | awk 'NR>1 && $2 ~ "'$ALL_PATTERN'" {print $1}'); do vim-cmd vmsvc/snapshot.get $vmid | grep -A 1 'Snapshot Name\s\{1,\}: '$SNAPNAME | awk -F' : ' 'NR>1 {print "vim-cmd vmsvc/snapshot.revert "'$vmid'" " $2 " suppressPowerOn"}' | sh; done
 ```
 <br>
 
