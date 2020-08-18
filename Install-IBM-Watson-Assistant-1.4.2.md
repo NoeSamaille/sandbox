@@ -176,7 +176,7 @@ $INST_DIR/bin/cpd-linux \
 > :bulb: Check installation progress
 
 ```
-watch -n5 "oc get pvc | grep 'watson-assistant' && oc get po | grep 'watson-assistant'"
+watch -n5 "oc get pvc | grep 'watson-ass' && oc get po | grep 'watson-ass'"
 ```
 
 ### Check IBM Watson Assistant 1.4.2 status
