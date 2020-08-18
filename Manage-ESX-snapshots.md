@@ -10,8 +10,8 @@
 SNAPNAME="CPDInstalled"
 
 WORKERS_PATTERN="[w][1-5]"
-OTHERS_PATTERN="[m][1-5]|bs|cli"
-ALL_PATTERN="[mw][1-5]|bs|cli"
+OTHERS_PATTERN="[m][1-5]"
+ALL_PATTERN="[mw][1-5]"
 ```
 <br>
 
