@@ -423,7 +423,7 @@ podman login -u $(oc whoami) -p $(oc whoami -t) $REG_HOST
 > :bulb: Check PX images are loadd in Openshift registry
 
 ```
-oc get images | grep $NS
+oc get is | grep $NS
 ```
 
 #### Install PX operator
