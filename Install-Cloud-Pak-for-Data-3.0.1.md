@@ -172,7 +172,7 @@ $INST_DIR/bin/cpd-linux \
 watch -n5 "oc get pvc && oc get po"
 ```
 
-### Install Cloud Pak for Data
+### Check Cloud Pak for Data status
 
 > :information_source: Run this on Installer
 
