@@ -1,4 +1,4 @@
-# Prepare for Cloud Pak for Data 3.0.1
+# Prepare for IBM Watson Assistant 1.4.2
 
 ## Hardware requirements
 
@@ -6,7 +6,7 @@
 
 ## System requirements
 
-- Have completed  [Prepare Redhat Openshift for Cloud Paks](https://github.com/bpshparis/sandbox/blob/master/Prepare-Redhat-Openshift-for-Cloud-Paks.md#prepare-redhat-openshift-for-cloud-paks)
+- Have completed  [Install Cloud Pak for Data 3.0.1](https://github.com/bpshparis/sandbox/blob/master/Install-Cloud-Pak-for-Data-3.0.1.md#install-cloud-pak-for-data-301)
 - One **WEB server** where following files are available in **read mode**:
   - [cloudpak4data-ee-3.0.1.tgz](https://github.com/IBM/cpd-cli/releases/download/cpd-3.0.1/cloudpak4data-ee-3.0.1.tgz)
   - [IBM® Cloud Pak for Data entitlement license API key](https://myibm.ibm.com/products-services/containerlibrary) saved in apikey file.
@@ -15,7 +15,7 @@
 :checkered_flag::checkered_flag::checkered_flag:
 <br>
 
-## Prepare for Cloud Pak for Data 3.0.1
+## Prepare for IBM Watson Assistant 1.4.2
 
 > :information_source: Commands below are valid for a **Linux/Centos 7**.
 
@@ -65,18 +65,33 @@ APIKEY=$(cat $APIKEY_FILE) && echo $APIKEY
 > :information_source: Run this on Installer 
 
 ```
-REG="cp.icr.io"
+REG="cp.icr.io/cp/watson-assistant"
 ```
 
 ```
-[ -z $(command -v podman) ] && { yum install podman crictl runc buildah skopeo -y; } || echo "podman already installed"
+[ -z $(command -v podman) ] && { yum install podman runc buildah skopeo -y; } || echo "podman already installed"
 
 podman login -u $USERNAME -p $APIKEY $REG
 ```
 
+#### Add wa-registry to repo.yaml
+
+> :information_source: Run this on Installer
+
+```
+cat > wa-reg.yaml << EOF
+  - url: cp.icr.io/cp/watson-assistant
+    username: cp
+    apikey:
+    name: wa-registry
+EOF
+
+sed -i -e '/^\s\{4\}name: base-registry/r wa-reg.yaml' repo.yaml
+```
+
 #### Add username and apikey to repo.yaml
 
-> :information_source: Run this on Cli
+> :information_source: Run this on Installer
 
 ```
 sed -i -e 's/\(^\s\{4\}username:\).*$/\1 '$USERNAME'/' repo.yaml
@@ -84,7 +99,7 @@ sed -i -e 's/\(^\s\{4\}username:\).*$/\1 '$USERNAME'/' repo.yaml
 sed -i -e 's/\(^\s\{4\}apikey:\).*$/\1 '$APIKEY'/' repo.yaml
 ```
 
-### Download  Cloud Pak for Data resources definitions
+### Download  IBM Watson Assistant 1.4.2 resources definitions
 
 > :warning: You have to be on line to execute this step.
 
@@ -94,8 +109,8 @@ sed -i -e 's/\(^\s\{4\}apikey:\).*$/\1 '$APIKEY'/' repo.yaml
 
 ```
 INST_DIR=~/cpd
-ASSEMBLY="lite"
-VERSION="3.0.1"
+ASSEMBLY="ibm-watson-assistant"
+VERSION="1.4.2"
 ARCH="x86_64"
 ```
 
@@ -105,7 +120,7 @@ $INST_DIR/bin/cpd-linux adm --repo $INST_DIR/repo.yaml --assembly $ASSEMBLY --ar
 
 > : bulb:  **$INST_DIR/cpd-linux-workspace** have been created and populated with yaml files.
 
-### Download  Cloud Pak for Data images
+### Download  IBM Watson Assistant 1.4.2 images
 
 > :warning: You have to be on line to execute this step.
 
@@ -125,8 +140,8 @@ pkill screen; screen -mdS ADM && screen -r ADM
 
 ```
 INST_DIR=~/cpd
-ASSEMBLY="lite"
-VERSION="3.0.1"
+ASSEMBLY="ibm-watson-assistant"
+VERSION="1.4.2"
 ARCH="x86_64"
 ```
 
@@ -136,7 +151,7 @@ $INST_DIR/bin/cpd-linux preloadImages --version $VERSION --action download -a $A
 
 > :bulb:  Images have been copied in **$INST_DIR/bin/cpd-linux-workspace/images/**
 
-### Save Cloud Pak for Data Downloads to web server
+### Save IBM Watson Assistant 1.4.2 downloads to web server
 
 > :warning: Adapt settings to fit to your environment.
 
@@ -144,8 +159,8 @@ $INST_DIR/bin/cpd-linux preloadImages --version $VERSION --action download -a $A
 
 ```
 INST_DIR=~/cpd
-ASSEMBLY="lite"
-VERSION="3.0.1"
+ASSEMBLY="ibm-watson-assistant"
+VERSION="1.4.2"
 ARCH="x86_64"
 CPD_BIN="cpd-linux"
 CPD_WKS="cpd-linux-workspace/"
