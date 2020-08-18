@@ -69,7 +69,7 @@ REG="cp.icr.io"
 ```
 
 ```
-[ -z $(command -v podman) ] && { yum install podman crictl runc buildah skopeo -y; } || echo "podman already installed"
+[ -z $(command -v podman) ] && { yum install podman runc buildah skopeo -y; } || echo "podman already installed"
 
 podman login -u $USERNAME -p $APIKEY $REG
 ```
