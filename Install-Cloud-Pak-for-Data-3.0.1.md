@@ -172,6 +172,30 @@ $INST_DIR/bin/cpd-linux \
 watch -n5 "oc get pvc && oc get po"
 ```
 
+### Install Cloud Pak for Data
+
+> :information_source: Run this on Installer
+
+```
+$INST_DIR/bin/cpd-linux status \
+--namespace $(oc project -q) \
+--assembly $ASSEMBLY \
+--arch $ARCH
+```
+
+![](img/lite-ready.jpg)
+
+
+### Access Cloud Pak for Data web console
+
+> :information_source: Run this on Installer
+
+```
+oc get routes | awk 'NR==2 {print "Access the web console at https://" $2}'
+```
+
+> :bulb: Login as **admin** using **password** for password 
+
 <br>
 :checkered_flag::checkered_flag::checkered_flag:
 <br>
