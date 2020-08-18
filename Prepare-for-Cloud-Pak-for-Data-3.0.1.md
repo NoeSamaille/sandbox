@@ -176,7 +176,6 @@ $INST_DIR/bin/cpd-linux preloadImages --version $VERSION --action download -a $A
 
 ```
 INST_DIR=~/cpd
-INST_DIR=~/cpd
 ASSEMBLY="lite"
 VERSION="3.0.1"
 ARCH="x86_64"
@@ -191,7 +190,7 @@ WEB_SERVER_PASS="password"
 
 ```
 cd $INST_DIR/bin
-tar cvz $TAR_FILE $CPD_BIN $CPD_WKS
+tar cvf $TAR_FILE $CPD_BIN $CPD_WKS
 
 [ -z $(command -v sshpass) ] && yum install -y sshpass || echo "sshpass already installed"
 

@@ -14,74 +14,11 @@
 :checkered_flag::checkered_flag::checkered_flag:
 <br>
 
-## Prepare for Cloud Pak for Data 3.0.1
+## Install Cloud Pak for Data 3.0.1
 
 > :information_source: Commands below are valid for a **Linux/Centos 7**.
 
 > :warning: Some of commands below will need to be adapted to fit Linux/Debian or MacOS .
-
-### Install the cpd command
-
-> :warning: Adapt settings to fit to your environment.
-
-> :information_source: Run this on Installer
-
-```
-WEB_SERVER_CP_URL="http://web/cloud-pak"
-INST_FILE="cloudpak4data-ee-3.0.1.tgz"
-INST_DIR=~/cpd && echo $INST_DIR
-```
-
-```
-[ -d "$INST_DIR" ] && rm -rf $INST_DIR/* || mkdir $INST_DIR
-cd $INST_DIR
-
-wget -c $WEB_SERVER_CP_URL/$INST_FILE
-tar xvzf $INST_FILE
-rm $INST_FILE -f
-```
-
-### Set repo.yaml
-
-> :warning: Adapt settings to fit to your environment.
-
-> :information_source: Run this on Installer 
-
-```
-WEB_SERVER_CP_URL="http://web/cloud-pak"
-APIKEY_FILE="apikey"
-```
-
-```
-wget -c $WEB_SERVER_CP_URL/$APIKEY_FILE
-USERNAME="cp" && echo $USERNAME
-APIKEY=$(cat $APIKEY_FILE) && echo $APIKEY
-
-```
-
-#### Test your entitlement key against Cloud Pak registry
-
-> :information_source: Run this on Installer 
-
-```
-REG="cp.icr.io"
-```
-
-```
-[ -z $(command -v podman) ] && { yum install podman crictl runc buildah skopeo -y; } || echo "podman already installed"
-
-podman login -u $USERNAME -p $APIKEY $REG
-```
-
-#### Add username and apikey to repo.yaml
-
-> :information_source: Run this on Cli
-
-```
-sed -i -e 's/\(^\s\{4\}username:\).*$/\1 '$USERNAME'/' repo.yaml
-
-sed -i -e 's/\(^\s\{4\}apikey:\).*$/\1 '$APIKEY'/' repo.yaml
-```
 
 ### Log in OCP
 
@@ -94,30 +31,26 @@ LB_HOSTNAME="cli-ocp7"
 ```
 
 ```
-oc login https://$LB_HOSTNAME:6443 -u admin -p admin --insecure-skip-tls-verify=true -n default
+oc login https://$LB_HOSTNAME:6443 -u admin -p admin --insecure-skip-tls-verify=true
 ```
-<!--
+
 ### Create Cloud Pak for Data project
 
 > :warning: Adapt settings to fit to your environment.
 
-> :information_source: Run this on Installer 
+> :information_source: Run this on Installer
 
 ```
-PROJECT_NAME="cpd"
-PROJECT_ADMIN="admin"
+PRJ="cpd"
+PRJ_ADMIN="admin"
+```
+```
+oc new-project $PRJ
+
+oc adm policy add-role-to-user cpd-admin-role $PRJ_ADMIN --role-namespace=$(oc project -q) -n $(oc project -q)
 ```
 
-```
-oc new-project $PROJECT_NAME
-
-oc adm policy add-role-to-user cpd-admin-role $PROJECT_ADMIN --role-namespace=$(oc project -q) -n $(oc project -q)
-```
--->
-
-### Download  Cloud Pak for Data resources definitions
-
-> :warning: You have to be on line to execute this step.
+### Copy Cloud Pak for Data Downloads from web server
 
 > :warning: Adapt settings to fit to your environment.
 
@@ -128,17 +61,21 @@ INST_DIR=~/cpd
 ASSEMBLY="lite"
 VERSION="3.0.1"
 ARCH="x86_64"
+TAR_FILE="$ASSEMBLY-$VERSION-$ARCH.tar"
+WEB_SERVER_CP_URL="http://web/cloud-pak/assemblies"
 ```
 
 ```
-$INST_DIR/bin/cpd-linux adm --repo $INST_DIR/repo.yaml --assembly $ASSEMBLY --arch $ARCH --accept-all-licenses 
+[ -d "$INST_DIR" ] && rm -rf $INST_DIR/* || mkdir $INST_DIR
+cd $INST_DIR
+
+mkdir bin && cd bin
+wget -c $WEB_SERVER_CP_URL/$TAR_FILE
+tar xvf $TAR_FILE
+rm -f $TAR_FILE
 ```
 
-> : bulb:  **$INST_DIR/cpd-linux-workspace** have been created and populated with yaml files.
-
-### Download  Cloud Pak for Data images
-
-> :warning: You have to be on line to execute this step.
+### Push Cloud Pak for Data images to Openshift registry
 
 > :warning: To avoid network failure, launch installation on locale console or in a screen
 
@@ -162,45 +99,79 @@ ARCH="x86_64"
 ```
 
 ```
-$INST_DIR/bin/cpd-linux preloadImages --version $VERSION --action download -a $ASSEMBLY --arch $ARCH --repo $INST_DIR/repo.yaml --accept-all-licenses
+podman login -u $(oc whoami) -p $(oc whoami -t) $(oc registry info)
+
+$INST_DIR/bin/cpd-linux preloadImages \
+--assembly $ASSEMBLY \
+--version $VERSION \
+--arch $ARCH \
+--action push \
+--transfer-image-to $(oc registry info)/$(oc project -q) \
+--target-registry-password $(oc whoami -t) \
+--target-registry-username $(oc whoami) \
+--load-from $INST_DIR/bin/cpd-linux-workspace \
+--accept-all-licenses
 ```
 
-> :bulb:  Images have been copied in **$INST_DIR/bin/cpd-linux-workspace/images/**
 
-### Save Cloud Pak for Data Downloads to web server
+### Create Cloud Pak for Data resources on cluster
+
+> :information_source: Run this on Installer
+
+```
+$INST_DIR/bin/cpd-linux adm \
+--namespace $(oc project -q) \
+--assembly $ASSEMBLY \
+--version $VERSION \
+--arch $ARCH \
+--load-from $INST_DIR/bin/cpd-linux-workspace \
+--apply \
+--accept-all-licenses
+```
+
+> :bulb: Check **cpd-admin-sa, cpd-editor-sa and cpd-viewer-sa** services account have been created
+
+```
+oc get sa
+```
+
+### Install Cloud Pak for Data
 
 > :warning: Adapt settings to fit to your environment.
 
 > :information_source: Run this on Installer
 
 ```
-INST_DIR=~/cpd
-INST_DIR=~/cpd
-ASSEMBLY="lite"
-VERSION="3.0.1"
-ARCH="x86_64"
-CPD_BIN="cpd-linux"
-CPD_WKS="cpd-linux-workspace/"
-TAR_FILE="$ASSEMBLY-$VERSION-$ARCH.tar"
-WEB_SERVER="web"
-WEB_SERVER_PATH="/web/cloud-pak/assemblies"
-WEB_SERVER_USER="root"
-WEB_SERVER_PASS="password"
+SC="portworx-shared-gp3"
+INT_REG=$(oc describe pod $(oc get pod -n openshift-image-registry | awk '$1 ~ "image-registry-" {print $1}') -n openshift-image-registry | awk '$1 ~ "REGISTRY_OPENSHIFT_SERVER_ADDR:" {print $2}') && echo $INT_REG
+OVERRIDE=$INST_DIR/lite-override.yaml
 ```
 
 ```
-cd $INST_DIR/bin
-tar cvz $TAR_FILE $CPD_BIN $CPD_WKS
+cat > $OVERRIDE << EOF
+zenCoreMetaDb:
+  storageClass: portworx-metastoredb-sc
+EOF
 
-[ -z $(command -v sshpass) ] && yum install -y sshpass || echo "sshpass already installed"
-
-[ -z $(echo $SSHPASS) ] && export SSHPASS="WEB_SERVER_PASS" || echo "SSHPASS  already set"
-
-sshpass -e scp -o StrictHostKeyChecking=no $TAR_FILE $WEB_SERVER_USER@$WEB_SERVER:$WEB_SERVER_PATH
-
-sshpass -e ssh -o StrictHostKeyChecking=no $WEB_SERVER_USER@$WEB_SERVER "chmod -R +r $WEB_SERVER_PATH"
+$INST_DIR/bin/cpd-linux \
+--namespace $(oc project -q) \
+--assembly $ASSEMBLY \
+--version $VERSION \
+--arch $ARCH \
+--storageclass $SC \
+--cluster-pull-prefix $INT_REG/$(oc project -q) \
+--load-from $INST_DIR/bin/cpd-linux-workspace \
+--override $OVERRIDE \
+--accept-all-licenses
 
 ```
+
+> :bulb: Check installation progress
+
+```
+watch -n5 "oc get pvc && oc get po"
+```
+
 <br>
 :checkered_flag::checkered_flag::checkered_flag:
 <br>
