@@ -347,8 +347,8 @@ sshpass -e ssh -o StrictHostKeyChecking=no root@$WEB_SERVER "chmod -R +r $WEB_SE
 
 ```
 WEB_SERVER_SOFT_URL="http://web/soft"
-INSTALLER_FILE="openshift-install-linux-4.4.17.tar.gz"
-CLIENT_FILE="openshift-client-linux-4.4.17.tar.gz"
+INSTALLER_FILE="openshift-install-linux-4.3.33.tar.gz"
+CLIENT_FILE="openshift-client-linux-4.3.33.tar.gz"
 ```
 
 #### Install Openshift installer, oc and kubectl commands
@@ -391,7 +391,7 @@ sed -i 's/mastersSchedulable: true/mastersSchedulable: false/' manifests/cluster
 ```
 WEB_SERVER="web"
 WEB_SERVER_PATH="/web/$OCP"
-RHCOS_IMG_PATH="/web/img/rhcos-4.4.17-x86_64-metal.x86_64.raw.gz"
+RHCOS_IMG_PATH="/web/img/rhcos-4.3.8-x86_64-metal.x86_64.raw.gz"
 ```
 
 #### Make ignition files and RHCOS image available on web server
@@ -425,7 +425,7 @@ ESX_SERVER="ocp5"
 
 ```
 WEB_SERVER_ISO_URL="http://web/iso"
-RHCOS_ISO_FILE="rhcos-4.4.17-x86_64-installer.x86_64.iso"
+RHCOS_ISO_FILE="rhcos-4.3.8-x86_64-installer.x86_64.iso"
 ISO_PATH="/media/iso"
 RW_ISO_PATH="/media/isorw"
 WEB_SERVER_SOFT_URL="http://web/soft"
