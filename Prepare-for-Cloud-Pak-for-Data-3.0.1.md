@@ -65,7 +65,7 @@ APIKEY=$(cat $APIKEY_FILE) && echo $APIKEY
 > :information_source: Run this on Installer 
 
 ```
-REG="cp.icr.io"
+REG="cp.icr.io/cp/cpd"
 ```
 
 ```
@@ -95,7 +95,6 @@ sed -i -e 's/\(^\s\{4\}apikey:\).*$/\1 '$APIKEY'/' repo.yaml
 ```
 INST_DIR=~/cpd
 ASSEMBLY="lite"
-VERSION="3.0.1"
 ARCH="x86_64"
 ```
 
@@ -126,12 +125,11 @@ pkill screen; screen -mdS ADM && screen -r ADM
 ```
 INST_DIR=~/cpd
 ASSEMBLY="lite"
-VERSION="3.0.1"
 ARCH="x86_64"
 ```
 
 ```
-$INST_DIR/bin/cpd-linux preloadImages --version $VERSION --action download -a $ASSEMBLY --arch $ARCH --repo $INST_DIR/repo.yaml --accept-all-licenses
+$INST_DIR/bin/cpd-linux preloadImages --action download -a $ASSEMBLY --arch $ARCH --repo $INST_DIR/repo.yaml --accept-all-licenses
 ```
 
 > :bulb:  Images have been copied in **$INST_DIR/bin/cpd-linux-workspace/images/**
@@ -145,7 +143,6 @@ $INST_DIR/bin/cpd-linux preloadImages --version $VERSION --action download -a $A
 ```
 INST_DIR=~/cpd
 ASSEMBLY="lite"
-VERSION="3.0.1"
 ARCH="x86_64"
 CPD_BIN="cpd-linux"
 CPD_WKS="cpd-linux-workspace/"
@@ -154,6 +151,9 @@ WEB_SERVER="web"
 WEB_SERVER_PATH="/web/cloud-pak/assemblies"
 WEB_SERVER_USER="root"
 WEB_SERVER_PASS="password"
+VERSION=$(find $INST_DIR/bin/cpd-linux-workspace/assembly/$ASSEMBLY/$ARCH/* -type d | awk -F'/' '{print $NF}') && echo $VERSION
+
+[ ! -z "$VERSION" ] && echo $VERSION "-> OK" || echo "ERROR: VERSION is not set."
 ```
 
 ```

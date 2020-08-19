@@ -1,4 +1,4 @@
-# Prepare for IBM Watson Assistant 1.4.2
+# Prepare for Watson Discovery
 
 ## Hardware requirements
 
@@ -15,7 +15,7 @@
 :checkered_flag::checkered_flag::checkered_flag:
 <br>
 
-## Prepare for IBM Watson Assistant 1.4.2
+## Prepare for Watson Discovery
 
 > :information_source: Commands below are valid for a **Linux/Centos 7**.
 
@@ -34,6 +34,7 @@ INST_DIR=~/cpd && echo $INST_DIR
 ```
 
 ```
+cd ~
 [ -d "$INST_DIR" ] && rm -rf $INST_DIR/* || mkdir $INST_DIR
 cd $INST_DIR
 
@@ -65,7 +66,7 @@ APIKEY=$(cat $APIKEY_FILE) && echo $APIKEY
 > :information_source: Run this on Installer 
 
 ```
-REG="cp.icr.io/cp/watson-assistant"
+REG="cp.icr.io/cp/watson-discovery"
 ```
 
 ```
@@ -79,14 +80,14 @@ podman login -u $USERNAME -p $APIKEY $REG
 > :information_source: Run this on Installer
 
 ```
-cat > wa-reg.yaml << EOF
-  - url: cp.icr.io/cp/watson-assistant
+cat > wd-reg.yaml << EOF
+  - url: cp.icr.io/cp/watson-discovery
     username: cp
     apikey:
-    name: wa-registry
+    name: watson-discovery-registry
 EOF
 
-sed -i -e '/^\s\{4\}name: base-registry/r wa-reg.yaml' repo.yaml
+sed -i -e '/^\s\{4\}name: base-registry/r wd-reg.yaml' repo.yaml
 ```
 
 #### Add username and apikey to repo.yaml
@@ -99,7 +100,7 @@ sed -i -e 's/\(^\s\{4\}username:\).*$/\1 '$USERNAME'/' repo.yaml
 sed -i -e 's/\(^\s\{4\}apikey:\).*$/\1 '$APIKEY'/' repo.yaml
 ```
 
-### Download  IBM Watson Assistant 1.4.2 resources definitions
+### Download  Watson Discovery resources definitions
 
 > :warning: You have to be on line to execute this step.
 
@@ -109,7 +110,7 @@ sed -i -e 's/\(^\s\{4\}apikey:\).*$/\1 '$APIKEY'/' repo.yaml
 
 ```
 INST_DIR=~/cpd
-ASSEMBLY="ibm-watson-assistant"
+ASSEMBLY="watson-discovery"
 ARCH="x86_64"
 ```
 
@@ -119,7 +120,7 @@ $INST_DIR/bin/cpd-linux adm --repo $INST_DIR/repo.yaml --assembly $ASSEMBLY --ar
 
 > : bulb:  **$INST_DIR/cpd-linux-workspace** have been created and populated with yaml files.
 
-### Download  IBM Watson Assistant 1.4.2 images
+### Download  Watson Discovery images
 
 > :warning: You have to be on line to execute this step.
 
@@ -139,7 +140,7 @@ pkill screen; screen -mdS ADM && screen -r ADM
 
 ```
 INST_DIR=~/cpd
-ASSEMBLY="ibm-watson-assistant"
+ASSEMBLY="watson-discovery"
 ARCH="x86_64"
 ```
 
@@ -149,7 +150,7 @@ $INST_DIR/bin/cpd-linux preloadImages --action download -a $ASSEMBLY --arch $ARC
 
 > :bulb:  Images have been copied in **$INST_DIR/bin/cpd-linux-workspace/images/**
 
-### Save IBM Watson Assistant 1.4.2 downloads to web server
+### Save Watson Discovery downloads to web server
 
 > :warning: Adapt settings to fit to your environment.
 
@@ -157,8 +158,7 @@ $INST_DIR/bin/cpd-linux preloadImages --action download -a $ASSEMBLY --arch $ARC
 
 ```
 INST_DIR=~/cpd
-ASSEMBLY="ibm-watson-assistant"
-VERSION="1.4.2"
+ASSEMBLY="watson-discovery"
 ARCH="x86_64"
 CPD_BIN="cpd-linux"
 CPD_WKS="cpd-linux-workspace/"
@@ -167,6 +167,9 @@ WEB_SERVER="web"
 WEB_SERVER_PATH="/web/cloud-pak/assemblies"
 WEB_SERVER_USER="root"
 WEB_SERVER_PASS="password"
+VERSION=$(find $INST_DIR/bin/cpd-linux-workspace/assembly/$ASSEMBLY/$ARCH/* -type d | awk -F'/' '{print $NF}') && echo $VERSION
+
+[ ! -z "$VERSION" ] && echo $VERSION "-> OK" || echo "ERROR: VERSION is not set."
 ```
 
 ```
@@ -175,7 +178,7 @@ tar cvf $TAR_FILE $CPD_BIN $CPD_WKS
 
 [ -z $(command -v sshpass) ] && yum install -y sshpass || echo "sshpass already installed"
 
-[ -z $(echo $SSHPASS) ] && export SSHPASS="WEB_SERVER_PASS" || echo "SSHPASS  already set"
+[ -z $(echo $SSHPASS) ] && export SSHPASS="WEB_SERVER_PASS" || echo "SSHPASS already set"
 
 sshpass -e scp -o StrictHostKeyChecking=no $TAR_FILE $WEB_SERVER_USER@$WEB_SERVER:$WEB_SERVER_PATH
 

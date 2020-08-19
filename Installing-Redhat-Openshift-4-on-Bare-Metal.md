@@ -39,10 +39,10 @@ Download [Redhat Openshift 4 on Bare Metal material](https://cloud.redhat.com/op
 - One **WEB server** where following files are available in **read mode**:
 
   - [Openshift pull secret](https://cloud.redhat.com/openshift/install/pull-secret) saved as pull-secret.txt
-  - [Linux](https://mirror.openshift.com/pub/openshift-v4/clients/ocp/latest/openshift-install-linux.tar.gz) or [MacOS](https://mirror.openshift.com/pub/openshift-v4/clients/ocp/latest/openshift-install-mac.tar.gz) OpenShift installer
-  - [Linux](https://mirror.openshift.com/pub/openshift-v4/clients/ocp/latest/openshift-client-linux.tar.gz) or [MacOS](https://mirror.openshift.com/pub/openshift-v4/clients/ocp/latest/openshift-client-mac.tar.gz) Openshift command line interface
-  - [Red Hat Enterprise Linux CoreOS raw image (*rhcos-4.X.X-x86_64-metal.x86_64.raw.gz*)](https://mirror.openshift.com/pub/openshift-v4/dependencies/rhcos/latest/latest/)
-  - [Red Hat Enterprise Linux CoreOS iso image (*rhcos-4.4.3-x86_64-installer.x86_64.iso*)](https://mirror.openshift.com/pub/openshift-v4/dependencies/rhcos/latest/latest/)
+  - [Linux](https://mirror.openshift.com/pub/openshift-v4/clients/ocp/4.3.33/openshift-install-linux-4.3.33.tar.gz) or [MacOS](https://mirror.openshift.com/pub/openshift-v4/clients/ocp/4.3.33/openshift-install-mac-4.3.33.tar.gz) OpenShift installer
+  - [Linux](https://mirror.openshift.com/pub/openshift-v4/clients/ocp/4.3.33/openshift-client-linux-4.3.33.tar.gz) or [MacOS](https://mirror.openshift.com/pub/openshift-v4/clients/ocp/4.3.33/openshift-client-mac-4.3.33.tar.gz) Openshift command line interface
+  - [Red Hat Enterprise Linux CoreOS raw image (*rhcos-4.X.X-x86_64-metal.x86_64.raw.gz*)](https://mirror.openshift.com/pub/openshift-v4/dependencies/rhcos/4.3/latest/rhcos-4.3.8-x86_64-metal.x86_64.raw.gz)
+  - [Red Hat Enterprise Linux CoreOS iso image (*rhcos-4.X.X-x86_64-installer.x86_64.iso*)](https://mirror.openshift.com/pub/openshift-v4/dependencies/rhcos/4.3/latest/rhcos-4.3.8-x86_64-installer.x86_64.iso)
   - [Openshift installation configuration file (*install-config.yaml*)](scripts/install-config.yaml)
   - [rhcos.vmx](scripts/rhcos.vmx)
   - [createOCP4Cluster.sh](scripts/createOCP4Cluster.sh)
@@ -347,8 +347,8 @@ sshpass -e ssh -o StrictHostKeyChecking=no root@$WEB_SERVER "chmod -R +r $WEB_SE
 
 ```
 WEB_SERVER_SOFT_URL="http://web/soft"
-INSTALLER_FILE="openshift-install-linux-4.3.18.tar.gz"
-CLIENT_FILE="oc-4.3.18-linux.tar.gz"
+INSTALLER_FILE="openshift-install-linux-4.4.17.tar.gz"
+CLIENT_FILE="openshift-client-linux-4.4.17.tar.gz"
 ```
 
 #### Install Openshift installer, oc and kubectl commands
@@ -391,7 +391,7 @@ sed -i 's/mastersSchedulable: true/mastersSchedulable: false/' manifests/cluster
 ```
 WEB_SERVER="web"
 WEB_SERVER_PATH="/web/$OCP"
-RHCOS_IMG_PATH="/web/img/rhcos-4.4.3-x86_64-metal.x86_64.raw.gz"
+RHCOS_IMG_PATH="/web/img/rhcos-4.4.17-x86_64-metal.x86_64.raw.gz"
 ```
 
 #### Make ignition files and RHCOS image available on web server
@@ -425,7 +425,7 @@ ESX_SERVER="ocp5"
 
 ```
 WEB_SERVER_ISO_URL="http://web/iso"
-RHCOS_ISO_FILE="rhcos-4.4.3-x86_64-installer.x86_64.iso"
+RHCOS_ISO_FILE="rhcos-4.4.17-x86_64-installer.x86_64.iso"
 ISO_PATH="/media/iso"
 RW_ISO_PATH="/media/isorw"
 WEB_SERVER_SOFT_URL="http://web/soft"
@@ -802,7 +802,7 @@ INST_DIR=~/ocpinst
 
 ```
 cd $INST_DIR
-./openshift-install --dir=$PWD wait-for install-complete
+./openshift-install --dir=$PWD wait-for install-complete --log-level=debug
 ```
 
 <br>
