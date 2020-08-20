@@ -836,7 +836,7 @@ oc whoami
 >:bulb: Last command above should return **system:admin**
 
 
-### Approve CSRs for your nodes
+### Approve CSRs for nodes
 
 > :warning: Confirm that the cluster recognizes all nodes.
 
@@ -862,7 +862,7 @@ oc get nodes
 watch -n5 oc get clusteroperators
 ```
 
-> :warning: Wait for **AVAILABLE** column to be set to true for all operator.
+> :warning: Wait for **AVAILABLE** column to be set to true for all operators
 
 <br>
 
@@ -883,10 +883,6 @@ INST_DIR=~/ocpinst
 cd $INST_DIR
 ./openshift-install --dir=$PWD wait-for install-complete --log-level=debug
 ```
-
->:bulb: Leave screen with **Ctrl + a + d**
-
->:bulb: Come back with **screen -r ADM**
 
 >:bulb: install complete output
 
