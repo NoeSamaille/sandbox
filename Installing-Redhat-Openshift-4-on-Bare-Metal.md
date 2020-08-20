@@ -835,7 +835,8 @@ oc whoami
 
 >:bulb: Last command above should return **system:admin**
 
-### Approving the CSRs for your machines
+
+### Approve CSRs for your nodes
 
 > :warning: Confirm that the cluster recognizes all nodes.
 
