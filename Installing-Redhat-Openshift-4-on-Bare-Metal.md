@@ -818,7 +818,7 @@ BS_PATTERN="server bs-"
 sed -i -e 's/\('"$BS_PATTERN"'*\)/# \1/g' $LB_CONF
 systemctl restart haproxy
 ```
-### Logging in to the cluster
+### Login to cluster as system:admin
 
 > :warning: Adapt settings to fit to your environment.
 
@@ -964,7 +964,7 @@ oc adm policy add-cluster-role-to-user cluster-admin admin
 ```
 
 
-### Login to cluster
+### Login to cluster as admin
 
 > :warning: Adapt settings to fit to your environment.
 
