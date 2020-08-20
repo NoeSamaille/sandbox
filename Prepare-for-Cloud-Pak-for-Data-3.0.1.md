@@ -151,7 +151,7 @@ WEB_SERVER="web"
 WEB_SERVER_PATH="/web/cloud-pak/assemblies"
 WEB_SERVER_USER="root"
 WEB_SERVER_PASS="password"
-VERSION=$(find $INST_DIR/bin/cpd-linux-workspace/assembly/$ASSEMBLY/$ARCH/* -type d | awk -F'/' '{print $NF}') && echo $VERSION
+VERSION=$(find $INST_DIR/bin/cpd-linux-workspace/assembly/$ASSEMBLY/$ARCH/* -type d | awk -F'/' '{print $NF}')
 
 [ ! -z "$VERSION" ] && echo $VERSION "-> OK" || echo "ERROR: VERSION is not set."
 ```

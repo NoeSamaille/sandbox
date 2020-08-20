@@ -763,7 +763,7 @@ ssh-add ~/.ssh/id_rsa
 
 ![](img/bscomplete.jpg)
 
-#### -  :thumbsup: [Next step](#launch-wait-for-install-complete)
+#### -  :thumbsup: [Next step](#remove-bootstrap-from-load-balancer)
 #### -  :thumbsdown: [Troubleshoot wait-for-bootstrap-complete](#troubleshoot-wait-for-bootstrap-complete)
 #### -  :thumbsdown: [Revert snapshot](https://github.com/bpshparis/sandbox/blob/master/Manage-ESX-snapshots.md#manage-esx-snapshots)
 
@@ -793,10 +793,78 @@ cd $INST_DIR
 
 #### -  [Revert snapshot](https://github.com/bpshparis/sandbox/blob/master/Manage-ESX-snapshots.md#manage-esx-snapshots)
 
+<br>
+
+### Remove bootstrap from load balancer
+
+#### Set environment
+
+> :warning: Adapt settings to fit to your environment.
+
+> :information_source: Run this on ESX
+
+```
+LB_CONF="/etc/haproxy/haproxy.cfg" && echo $LB_CONF
+BS_PATTERN="server bs-"
+```
+
+#### Remove bootstrap from load balancer
+
+> :information_source: Run this on Load Balancer
+
+```
+sed -i -e 's/\('"$BS_PATTERN"'*\)/# \1/g' $LB_CONF
+systemctl restart haproxy
+```
+### Logging in to the cluster
+
+> :warning: Adapt settings to fit to your environment.
+
+> :information_source: Run this on Load Balancer
+
+```
+INST_DIR=~/ocpinst
+```
+
+```
+export KUBECONFIG=$INST_DIR/auth/kubeconfig
+oc whoami
+```
+
+>:bulb: Last command above should return **system:admin**
+
+### Approving the CSRs for your machines
+
+> :warning: Confirm that the cluster recognizes all nodes.
+
+> :information_source: Run this on Installer
+
+```
+oc get nodes
+```
+
+> :warning: If nodes are missing then approve csrs until all nodes are displayed
+
+```
+oc get csr -o go-template='{{range .items}}{{if not .status}}{{.metadata.name}}{{"\n"}}{{end}}{{end}}' | xargs oc adm certificate approve
+
+oc get nodes
+```
+
+### Check Operator configuration
+
+> :information_source: Run this on Installer
+
+```
+watch -n5 oc get clusteroperators
+```
+
+> :warning: Wait for **AVAILABLE** column to be set to true for all operator.
+
 
 ### Launch wait-for-install-complete
 
-> :information_source: Run this on Cli
+> :information_source: Run this on Installer
 
 ```
 INST_DIR=~/ocpinst
@@ -911,6 +979,8 @@ oc get nodes
 
 ### Set etcd-quorum-guard to unmanaged state
 
+> :warning: Apply patch only if you set **MASTER_COUNT** above to **1**
+
 > :information_source: Run this on Installer
 
 ```
@@ -927,6 +997,8 @@ EOF
 ```
 
 ### Downscale etcd-quorum-guard to one
+
+> :warning: Apply patch only if you set **MASTER_COUNT** above to **1**
 
 > :information_source: Run this on Installer
 
@@ -1025,28 +1097,6 @@ watch -n 10 vim-cmd vmsvc/getallvms | awk '$2 ~ "'$VM_PATTERN'" && $1 !~ "Vmid" 
 vim-cmd vmsvc/getallvms | awk '$2 ~ "'$VM_PATTERN'" && $1 !~ "Vmid" {print "vim-cmd vmsvc/destroy " $1}' | sh
 ```
 
-### Remove bootstrap from load balancer
-
-#### Set environment
-
-> :warning: Adapt settings to fit to your environment.
-
-> :information_source: Run this on ESX
-
-```
-LB_CONF="/etc/haproxy/haproxy.cfg" && echo $LB_CONF
-BS_PATTERN="server bs-"
-```
-
-#### Remove bootstrap from load balancer
-
-> :information_source: Run this on Load Balancer
-
-```
-sed -i -e 's/\('"$BS_PATTERN"'*\)/# \1/g' $LB_CONF
-systemctl restart haproxy
-```
-
 <br>
 
 :checkered_flag::checkered_flag::checkered_flag:
@@ -1056,3 +1106,28 @@ systemctl restart haproxy
 > :warning: Wait for at least **24** hours before taking a valid snapshot
 
 #### -  [Take snapshot](https://github.com/bpshparis/sandbox/blob/master/Manage-ESX-snapshots.md#manage-esx-snapshots)
+
+
+<!--
+
+Administration > Cluster Settings > Global Configuration > Alertmanager
+Create receiver named receiver0
+Choose PagerDuty for Receiver Type
+Choose Events API v2 from Integration Type
+Choose password from Routing Key
+Choose severity for Routing Labels NAME
+Choose warning for Routing Labels VALUE
+Hit save button
+Save YAML in YAML tab -> alertmanager-main has been updated to version 41453 
+
+https://docs.openshift.com/container-platform/4.4/applications/pruning-objects.html#pruning-images_pruning-objects
+
+oc edit imagepruners.imageregistry.operator.openshift.io/cluster
+change spec:suspend from true to false
+
+https://docs.openshift.com/container-platform/4.4/operators/olm-understanding-operatorhub.html#olm-operatorhub-arch-operatorhub_crd_olm-understanding-operatorhub
+
+oc edit OperatorHub cluster
+add spec:disableAllDefaultSources: true
+
+-->
