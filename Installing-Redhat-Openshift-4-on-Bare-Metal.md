@@ -655,7 +655,7 @@ watch -n 5 vim-cmd vmsvc/getallvms | awk '$2 ~ "'$VM_PATTERN'" && $1 !~ "Vmid" {
 > :information_source: Run this on Installer
 
 ```
-ESX_SERVER="ocp7"
+ESX_SERVER="ocp5"
 BS_VNC_PORT=9
 M1_VNC_PORT=1
 W1_VNC_PORT=4
@@ -967,7 +967,7 @@ oc adm policy add-cluster-role-to-user cluster-admin admin
 > :information_source: Run this on Installer
 
 ```
-LB_HOSTNAME="cli-ocp7"
+LB_HOSTNAME="cli-ocp5"
 ```
 
 ```
