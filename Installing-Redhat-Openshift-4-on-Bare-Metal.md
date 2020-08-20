@@ -972,8 +972,6 @@ LB_HOSTNAME="cli-ocp7"
 
 ```
 oc login https://$LB_HOSTNAME:6443 -u admin -p admin --insecure-skip-tls-verify=true
-
-oc get nodes
 ```
 
 ### Set etcd-quorum-guard to unmanaged state
@@ -1038,7 +1036,7 @@ oc new-project validate
 
 oc new-app django-psql-example
 
-sleep 20
+sleep 60
 
 oc logs -f bc/django-psql-example
 ```
@@ -1090,7 +1088,7 @@ vim-cmd vmsvc/getallvms | awk '$2 ~ "'$VM_PATTERN'" && $1 !~ "Vmid" {print "vim-
 watch -n 10 vim-cmd vmsvc/getallvms | awk '$2 ~ "'$VM_PATTERN'" && $1 !~ "Vmid" {print "vim-cmd vmsvc/power.getstate " $1}' | sh
 ```
 
-> :bulb: Leave watch with **Ctrl + c** when everyone is **powered off**
+> :bulb: Leave watch with **Ctrl + c** when bootstrap is **powered off**
 
 ```
 vim-cmd vmsvc/getallvms | awk '$2 ~ "'$VM_PATTERN'" && $1 !~ "Vmid" {print "vim-cmd vmsvc/destroy " $1}' | sh
