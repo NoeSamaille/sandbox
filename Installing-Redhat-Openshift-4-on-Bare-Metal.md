@@ -854,7 +854,7 @@ oc get csr -o go-template='{{range .items}}{{if not .status}}{{.metadata.name}}{
 oc get nodes
 ```
 
-### Check Operator configuration
+### Check Operator configuration
 
 > :information_source: Run this on Installer
 
