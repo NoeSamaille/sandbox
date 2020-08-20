@@ -284,6 +284,7 @@ systemctl enable haproxy
 DOMAIN=$(cat /etc/resolv.conf | awk '$1 ~ "^search" {print $2}') && echo $DOMAIN
 WEB_SERVER_SOFT_URL="http://web/soft"
 INST_DIR=~/ocpinst && echo $INST_DIR
+MASTER_COUNT="3"
 ```
 
 #### Set install-config.yaml
@@ -291,11 +292,11 @@ INST_DIR=~/ocpinst && echo $INST_DIR
 > :information_source: Run this on Installer
 
 ```
-[ -d "$INST_DIR" ] && rm -rf $INST_DIR/* || mkdir $INST_DIR
+[ -d "$INST_DIR" ] && { rm -rf $INST_DIR; mkdir $INST_DIR; }
 cd $INST_DIR
 
 wget -c $WEB_SERVER_SOFT_URL/install-config.yaml
-sed -i '10s/.*/  replicas: 1/'  install-config.yaml
+sed -i "10s/.*/  replicas: $MASTER_COUNT/"  install-config.yaml
 sed -i "s/\(^baseDomain: \).*$/\1$DOMAIN/" install-config.yaml
 sed -i -e '12s/^  name:.*$/  name: '$OCP'/' install-config.yaml
 
@@ -363,6 +364,7 @@ tar xvzf $INSTALLER_FILE
 
 wget -c $WEB_SERVER_SOFT_URL/$CLIENT_FILE
 tar -xvzf $CLIENT_FILE -C $(echo $PATH | awk -F":" 'NR==1 {print $1}')
+oc version
 ```
 
 ### Create manifest and ignition files
