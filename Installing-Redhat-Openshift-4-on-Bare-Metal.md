@@ -864,6 +864,12 @@ watch -n5 oc get clusteroperators
 
 > :warning: Wait for **AVAILABLE** column to be set to true for all operator.
 
+<br>
+
+:hourglass_flowing_sand: :smoking::coffee::smoking::coffee::smoking::coffee::smoking: :coffee: :hourglass_flowing_sand: :beer::beer::beer::pill:  :zzz::zzz: :zzz::zzz: :zzz::zzz::hourglass_flowing_sand: :smoking::coffee: :toilet: :shower: :smoking: :coffee::smoking: :coffee: :smoking: :coffee: :hourglass: 
+
+<br>
+
 
 ### Launch wait-for-install-complete
 
@@ -877,12 +883,6 @@ INST_DIR=~/ocpinst
 cd $INST_DIR
 ./openshift-install --dir=$PWD wait-for install-complete --log-level=debug
 ```
-
-<br>
-
-:hourglass_flowing_sand: :smoking::coffee::smoking::coffee::smoking::coffee::smoking: :coffee: :hourglass_flowing_sand: :beer::beer::beer::pill:  :zzz::zzz: :zzz::zzz: :zzz::zzz::hourglass_flowing_sand: :smoking::coffee: :toilet: :shower: :smoking: :coffee::smoking: :coffee: :smoking: :coffee: :hourglass: 
-
-<br>
 
 >:bulb: Leave screen with **Ctrl + a + d**
 
