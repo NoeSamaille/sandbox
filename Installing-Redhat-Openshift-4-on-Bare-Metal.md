@@ -786,6 +786,8 @@ M1_IP="172.16.187.51"
 
 ##### Troubleshoot wait-for-bootstrap-complete
 
+> :information_source: Run this on Installer
+
 ```
 cd $INST_DIR
 ./openshift-install gather bootstrap --bootstrap $BS_IP --key ~/.ssh/id_rsa --master "$M1_IP"
@@ -801,7 +803,7 @@ cd $INST_DIR
 
 > :warning: Adapt settings to fit to your environment.
 
-> :information_source: Run this on ESX
+> :information_source: Run this on Load Balancer
 
 ```
 LB_CONF="/etc/haproxy/haproxy.cfg" && echo $LB_CONF
