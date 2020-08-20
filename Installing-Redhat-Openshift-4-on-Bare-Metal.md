@@ -822,7 +822,7 @@ systemctl restart haproxy
 
 > :warning: Adapt settings to fit to your environment.
 
-> :information_source: Run this on Load Balancer
+> :information_source: Run this on Installer
 
 ```
 INST_DIR=~/ocpinst
