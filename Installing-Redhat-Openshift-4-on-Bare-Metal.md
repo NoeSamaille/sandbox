@@ -910,8 +910,8 @@ cd $INST_DIR
 
 ```
 INST_DIR=~/ocpinst
-WEB_SERVER_OC_URL="http://web/soft/openshift-client-linux-4.3.1.tar.gz"
-OC_FILE="openshift-client-linux-4.3.1.tar.gz"
+WEB_SERVER_OC_URL="http://web/soft/openshift-client-linux-4.3.33.tar.gz"
+OC_FILE="openshift-client-linux-4.3.33.tar.gz"
 ```
 
 #### Create an admin user with  cluster-admin role
