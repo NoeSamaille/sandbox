@@ -623,7 +623,7 @@ esxcli network firewall ruleset set -e true -r gdbserver
 > :information_source: Run this on ESX
 
 ```
-VM_PATTERN="[mw][1-5]|bs|cli"
+VM_PATTERN="[mw][1-5]|bs"
 ```
 
 #### Start cluster nodes
