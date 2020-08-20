@@ -284,7 +284,7 @@ systemctl enable haproxy
 DOMAIN=$(cat /etc/resolv.conf | awk '$1 ~ "^search" {print $2}') && echo $DOMAIN
 WEB_SERVER_SOFT_URL="http://web/soft"
 INST_DIR=~/ocpinst && echo $INST_DIR
-MASTER_COUNT="3"
+MASTER_COUNT="1"
 ```
 
 #### Set install-config.yaml
