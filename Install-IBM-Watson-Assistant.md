@@ -6,7 +6,7 @@
 
 ## System requirements
 
-- Have completed  [Prepare for IBM Watson Assistant](https://github.com/bpshparis/sandbox/blob/master/Prepare-for-IBM-Watson-Assistant-1.4.2.md#prepare-for-ibm-watson-assistant)
+- Have completed  [Prepare for IBM Watson Assistant](https://github.com/bpshparis/sandbox/blob/master/Prepare-for-IBM-Watson-Assistant.md#prepare-for-ibm-watson-assistant)
 - One **WEB server** where following files are available in **read mode**:
   - [ibm-watson-assistant-1.4.2-x86_64.tar](https://github.com/bpshparis/sandbox/blob/master/Prepare-for-IBM-Watson-Assistant-1.4.2.md#save-ibm-watson-assistant-142-downloads-to-web-server)
 
