@@ -232,7 +232,8 @@ oc login https://$LB_HOSTNAME:6443 -u admin -p admin --insecure-skip-tls-verify=
 watch -n5 "oc get pvc | grep 'db2' && oc get po | grep 'db2'"
 ```
 
->:bulb: Don't pay attention to this
+>:bulb: Don't pay attention to those errors 
+
 ![](img/db2-view-errors.jpg)
 
 
