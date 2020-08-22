@@ -1,4 +1,4 @@
-# Install IBM Watson Assistant 1.4.2
+# Install IBM Watson Assistant
 
 ## Hardware requirements
 
@@ -6,7 +6,7 @@
 
 ## System requirements
 
-- Have completed  [Prepare for IBM Watson Assistant 1.4.2](https://github.com/bpshparis/sandbox/blob/master/Prepare-for-IBM-Watson-Assistant-1.4.2.md#prepare-for-ibm-watson-assistant-142)
+- Have completed  [Prepare for IBM Watson Assistant](https://github.com/bpshparis/sandbox/blob/master/Prepare-for-IBM-Watson-Assistant-1.4.2.md#prepare-for-ibm-watson-assistant)
 - One **WEB server** where following files are available in **read mode**:
   - [ibm-watson-assistant-1.4.2-x86_64.tar](https://github.com/bpshparis/sandbox/blob/master/Prepare-for-IBM-Watson-Assistant-1.4.2.md#save-ibm-watson-assistant-142-downloads-to-web-server)
 
@@ -14,7 +14,7 @@
 :checkered_flag::checkered_flag::checkered_flag:
 <br>
 
-## Install IBM Watson Assistant 1.4.2
+## Install IBM Watson Assistant
 
 > :information_source: Commands below are valid for a **Linux/Centos 7**.
 
@@ -35,7 +35,7 @@ NS="cpd"
 oc login https://$LB_HOSTNAME:6443 -u admin -p admin --insecure-skip-tls-verify=true -n $NS
 ```
 
-### Copy IBM Watson Assistant 1.4.2 downloads from web server
+### Copy IBM Watson Assistant downloads from web server
 
 > :warning: Adapt settings to fit to your environment.
 
@@ -61,7 +61,7 @@ tar xvf $TAR_FILE
 rm -f $TAR_FILE
 ```
 
-### Push IBM Watson Assistant 1.4.2 images to Openshift registry
+### Push IBM Watson Assistant images to Openshift registry
 
 > :warning: To avoid network failure, launch installation on locale console or in a screen
 
@@ -80,8 +80,11 @@ pkill screen; screen -mdS ADM && screen -r ADM
 ```
 INST_DIR=~/cpd
 ASSEMBLY="ibm-watson-assistant"
-VERSION="1.4.2"
 ARCH="x86_64"
+VERSION=$(find $INST_DIR/bin/cpd-linux-workspace/assembly/$ASSEMBLY/$ARCH/* -type d | awk -F'/' '{print $NF}')
+
+[ ! -z "$VERSION" ] && echo $VERSION "-> OK" || echo "ERROR: VERSION is not set."
+
 ```
 
 ```
@@ -100,7 +103,7 @@ $INST_DIR/bin/cpd-linux preloadImages \
 ```
 
 
-### Create IBM Watson Assistant 1.4.2 resources on cluster
+### Create IBM Watson Assistant resources on cluster
 
 > :information_source: Run this on Installer
 
@@ -115,7 +118,7 @@ $INST_DIR/bin/cpd-linux adm \
 --accept-all-licenses
 ```
 
-### Override values for IBM Watson Assistant 1.4.2 installation
+### Override values for IBM Watson Assistant installation
 
 > :warning: Adapt settings to fit to your environment.
 
@@ -137,7 +140,7 @@ sed -i -e 's/\(^\s\{4\}'$LANG':\).*$/\1 true/' $OVERRIDE
 ```
 
 
-### Add the cluster namespace label to IBM Watson Assistant 1.4.2 namespace
+### Add the cluster namespace label to IBM Watson Assistant namespace
 
 > :warning: The label is needed to permit communication between IBM Watson Assistant 1.4.2's namespace and the Cloud Pak for Data namespace by using a network policy.
 
@@ -148,7 +151,7 @@ oc label --overwrite namespace $(oc project -q) ns=$(oc project -q)
 oc get namespace $(oc project -q) --show-labels 
 ```
 
-### Install IBM Watson Assistant 1.4.2
+### Install IBM Watson Assistant
 
 > :warning: Adapt settings to fit to your environment.
 
@@ -179,7 +182,7 @@ $INST_DIR/bin/cpd-linux \
 watch -n5 "oc get pvc | grep 'watson-ass' && oc get po | grep 'watson-ass'"
 ```
 
-### Check IBM Watson Assistant 1.4.2 status
+### Check IBM Watson Assistant status
 
 > :information_source: Run this on Installer
 
@@ -193,7 +196,7 @@ $INST_DIR/bin/cpd-linux status \
 ![](img/wa-ready.jpg)
 
 
-### Access IBM Watson Assistant 1.4.2 web console
+### Access IBM Watson Assistant web console
 
 > :information_source: Run this on Installer
 
