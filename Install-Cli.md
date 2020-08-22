@@ -6,8 +6,8 @@ One Lenovo **X3550M5** or similar to host **1** virtual machine:
 
 | name                         | role                      | vcpus | ram (GB) | storage (GB) | ethernet (10GB) |
 | ---------------------------- | ------------------------- | ----- | -------- | ------------ | --------------- |
-| cli-ocp5.iicparis.fr.ibm.com | load balancer + installer | 4     | 16       | 250          | 1               |
-| **TOTAL**                   |                                                   | **4** | **16** | **250**   | **1**          |
+| cli-ocp5.iicparis.fr.ibm.com | load balancer + installer | 4     | 16       | 500          | 1               |
+| **TOTAL**                   |                                                   | **4** | **16** | **500**   | **1**          |
 
 
 ## System requirements
