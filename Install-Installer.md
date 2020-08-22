@@ -1,4 +1,4 @@
-# Install Cli
+# Install Installer
 
 ## Hardware requirements
 
@@ -221,9 +221,9 @@ watch -n 5 "./getVMAddress.sh"
 
 > :bulb: Leave watch with **Ctrl + c** 
 
-### Set Cli enrironment
+### Set Installer enrironment
 
-> :information_source: Run this on Cli
+> :information_source: Run this on Installer
 
 ```
 cat >> ~/.bashrc << EOF
