@@ -31,6 +31,12 @@ One Lenovo **X3550M5** or similar to host **1** virtual machine:
 
 ## Add DNS records
 
+> :information_source: Commands below are valid for a **bind9** running on a **Ubuntu 16**
+
+### Set environment
+
+> :warning: Adapt settings to fit to your environment
+
 > :information_source: Run this on DNS
 
 ```
