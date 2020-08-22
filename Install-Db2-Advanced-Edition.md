@@ -236,6 +236,13 @@ watch -n5 "oc get pvc | grep 'db2' && oc get po | grep 'db2'"
 
 ![](img/db2-view-errors.jpg)
 
+### Check BLUDB database status
+
+> :information_source: Run this on Cloud Pak for Data web console
+
+1.   From the navigation, select Collect > My data.     
+
+![](img/db2-bludb-ok.jpg)
 
 <br>
 :checkered_flag::checkered_flag::checkered_flag:
