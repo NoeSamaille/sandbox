@@ -200,7 +200,7 @@ oc get routes | awk 'NR==2 {print "Access the web console at https://" $2}'
 ![](img/labelled-but-not-tainted.jpg)
 
 5.   Check **Deploy database on dedicated nodes**.
-6.   Value for node label should match label added to workers above (e.g. **database-db2oltp**)
+6.   Value for node label should match label added to workers above (e.g. **database-db2oltp**).
 
 7.   Select **portworx-db2-rwx-sc** for System storage. 
 8.   Select **portworx-db2-rwo-sc** for User storage. 
