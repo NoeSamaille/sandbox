@@ -199,12 +199,15 @@ oc get routes | awk 'NR==2 {print "Access the web console at https://" $2}'
 
 ![](img/labelled-but-not-tainted.jpg)
 
-5.   Select **portworx-db2-rwx-sc** for System storage. 
-6.   Select **portworx-db2-rwo-sc** for User storage. 
-7.   Select **portworx-db2-rwx-sc** for Backup storage. 
-8.   Click on **Continue with defaults**. 
-9.   (optional) Change Display name to **BLUDB**.
-10.   Click on **Create**.
+5.   Check **Deploy database on dedicated nodes**.
+6.   Value for node label should match label added to workers above (e.g. **database-db2oltp**)
+
+7.   Select **portworx-db2-rwx-sc** for System storage. 
+8.   Select **portworx-db2-rwo-sc** for User storage. 
+9.   Select **portworx-db2-rwx-sc** for Backup storage. 
+10.   Click on **Continue with defaults**. 
+11.   (optional) Change Display name to **BLUDB**.
+12.   Click on **Create**.
 
 
 ### Monitorin BLUDB database creation
