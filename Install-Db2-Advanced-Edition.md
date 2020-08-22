@@ -224,7 +224,7 @@ NS="cpd"
 oc login https://$LB_HOSTNAME:6443 -u admin -p admin --insecure-skip-tls-verify=true -n $NS
 ```
 
-#### Monitorin BLUDB database creation
+#### Monitoring BLUDB database creation
 
 > :information_source: Run this on Installer 
 
