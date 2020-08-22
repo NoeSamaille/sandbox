@@ -1,4 +1,4 @@
-# Install Db2 Advanced Edition
+# Install Db2 Warehouse
 
 ## Hardware requirements
 
@@ -6,15 +6,15 @@
 
 ## System requirements
 
-- Have completed  [Prepare for DB2 Advanced Edition](https://github.com/bpshparis/sandbox/blob/master/Prepare-for-DB2-Advanced-Edition.md#prepare-for-db2-advanced-edition)
+- Have completed  [Prepare for Db2 Warehouse](https://github.com/bpshparis/sandbox/blob/master/Prepare-for-DB2-Warehouse.md#prepare-for-db2-warehouse)
 - One **WEB server** where following files are available in **read mode**:
-  - [db2oltp-3.0.1-x86_64.tar](https://github.com/bpshparis/sandbox/blob/master/Prepare-for-DB2-Advanced-Edition.md#save-db2-advanced-edition-downloads-to-web-server)
+  - [db2wh-3.0.1-x86_64.tar](https://github.com/bpshparis/sandbox/blob/master/Prepare-for-DB2-Warehouse.md#save-db2-warehouse-downloads-to-web-server)
 
 <br>
 :checkered_flag::checkered_flag::checkered_flag:
 <br>
 
-## Install Db2 Advanced Edition
+## Install Db2 Warehouse
 
 > :information_source: Commands below are valid for a **Linux/Centos 7**.
 
@@ -35,12 +35,12 @@ NS="cpd"
 oc login https://$LB_HOSTNAME:6443 -u admin -p admin --insecure-skip-tls-verify=true -n $NS
 ```
 
-### Label worker node for Db2 Advanced Edition
+### Label worker node for Db2 Warehouse
 
 > :information_source: Run this on Installer 
 
 ```
-LABEL="\"icp4data=database-db2oltp\""
+LABEL="\"icp4data=database-db2wh\""
 ```
 
 ```
@@ -53,7 +53,7 @@ oc get nodes | awk '$3 ~ "compute|worker" {print "oc label node " $1 " "'$LABEL'
 oc get nodes --show-labels | awk '$3 ~ "compute|worker" {print $1 " -> " $6}'
 ```
 
-### Copy Db2 Advanced Edition Downloads from web server
+### Copy Db2 Warehouse Downloads from web server
 
 > :warning: Adapt settings to fit to your environment.
 
@@ -61,7 +61,7 @@ oc get nodes --show-labels | awk '$3 ~ "compute|worker" {print $1 " -> " $6}'
 
 ```
 INST_DIR=~/cpd
-ASSEMBLY="db2oltp"
+ASSEMBLY="db2wh"
 VERSION="3.0.1"
 ARCH="x86_64"
 TAR_FILE="$ASSEMBLY-$VERSION-$ARCH.tar"
@@ -78,7 +78,7 @@ tar xvf $TAR_FILE
 rm -f $TAR_FILE
 ```
 
-### Push Db2 Advanced Edition images to Openshift registry
+### Push Db2 Warehouse images to Openshift registry
 
 > :warning: To avoid network failure, launch installation on locale console or in a screen
 
@@ -96,7 +96,7 @@ pkill screen; screen -mdS ADM && screen -r ADM
 
 ```
 INST_DIR=~/cpd
-ASSEMBLY="db2oltp"
+ASSEMBLY="db2wh"
 ARCH="x86_64"
 VERSION=$(find $INST_DIR/bin/cpd-linux-workspace/assembly/$ASSEMBLY/$ARCH/* -type d | awk -F'/' '{print $NF}')
 
@@ -119,7 +119,7 @@ $INST_DIR/bin/cpd-linux preloadImages \
 ```
 
 
-### Create Db2 Advanced Edition resources on cluster
+### Create Db2 Warehouse resources on cluster
 
 > :information_source: Run this on Installer
 
@@ -134,7 +134,7 @@ $INST_DIR/bin/cpd-linux adm \
 --accept-all-licenses
 ```
 
-### Install Db2 Advanced Edition
+### Install Db2 Warehouse
 
 > :warning: Adapt settings to fit to your environment.
 
@@ -157,7 +157,7 @@ $INST_DIR/bin/cpd-linux \
 --accept-all-licenses
 ```
 
-### Check Db2 Advanced Edition status
+### Check Db2 Warehouse status
 
 > :information_source: Run this on Installer
 
@@ -189,8 +189,6 @@ oc get routes | awk 'NR==2 {print "Access the web console at https://" $2}'
 ### Creating BLUDB database
 
 > :information_source: Run this on Cloud Pak for Data web console
-
-![](img/menu-collect-mydata.jpg)
 
 1.   From the navigation, select Collect > My data.     
 2.   Open the Databases tab, which is only visible after you install the database service.
