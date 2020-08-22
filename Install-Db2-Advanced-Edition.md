@@ -234,7 +234,7 @@ oc login https://$LB_HOSTNAME:6443 -u admin -p admin --insecure-skip-tls-verify=
 > :information_source: Run this on Installer 
 
 ```
-watch -n5 "oc get pvc | grep 'db2' && oc get po | grep 'db2'"
+watch -n5 "oc get pvc | grep 'db2oltp' && oc get po | grep 'db2oltp'"
 ```
 
 >:bulb: Don't pay attention to those errors 

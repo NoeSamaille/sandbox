@@ -6,9 +6,9 @@
 
 ## System requirements
 
-- Have completed  [Prepare for Db2 Warehouse](https://github.com/bpshparis/sandbox/blob/master/Prepare-for-DB2-Warehouse.md#prepare-for-db2-warehouse)
+- Have completed  [Prepare for Db2 Warehouse](https://github.com/bpshparis/sandbox/blob/master/Prepare-for-Db2-Warehouse.md#prepare-for-db2-warehouse)
 - One **WEB server** where following files are available in **read mode**:
-  - [db2wh-3.0.1-x86_64.tar](https://github.com/bpshparis/sandbox/blob/master/Prepare-for-DB2-Warehouse.md#save-db2-warehouse-downloads-to-web-server)
+  - [db2wh-3.0.1-x86_64.tar](https://github.com/bpshparis/sandbox/blob/master/Prepare-for-Db2-Warehouse.md#save-db2-warehouse-downloads-to-web-server)
 
 <br>
 :checkered_flag::checkered_flag::checkered_flag:
@@ -168,13 +168,13 @@ $INST_DIR/bin/cpd-linux status \
 --arch $ARCH
 ```
 
-![](img/db2oltp-ready.jpg)
+![](img/db2wh-ready.jpg)
 
 <br>
 :checkered_flag::checkered_flag::checkered_flag:
 <br>
 
-## Creating BLUDB database
+## Creating BLUDBWH database
 
 ### Access Cloud Pak for Data web console
 
@@ -186,9 +186,11 @@ oc get routes | awk 'NR==2 {print "Access the web console at https://" $2}'
 
 > :bulb: Login as **admin** using **password** for password 
 
-### Creating BLUDB database
+### Creating BLUDBWH database
 
 > :information_source: Run this on Cloud Pak for Data web console
+
+![](img/menu-collect-mydata.jpg)
 
 1.   From the navigation, select Collect > My data.     
 2.   Open the Databases tab, which is only visible after you install the database service.
@@ -206,11 +208,11 @@ oc get routes | awk 'NR==2 {print "Access the web console at https://" $2}'
 8.   Select **portworx-db2-rwo-sc** for User storage. 
 9.   Select **portworx-db2-rwx-sc** for Backup storage. 
 10.   Click on **Continue with defaults**. 
-11.   (optional) Change Display name to **BLUDB**.
+11.   (optional) Change Display name to **BLUDBWH**.
 12.   Click on **Create**.
 
 
-### Monitorin BLUDB database creation
+### Monitoring BLUDBWH database creation
 
 #### Log in OCP
 
@@ -232,20 +234,20 @@ oc login https://$LB_HOSTNAME:6443 -u admin -p admin --insecure-skip-tls-verify=
 > :information_source: Run this on Installer 
 
 ```
-watch -n5 "oc get pvc | grep 'db2' && oc get po | grep 'db2'"
+watch -n5 "oc get pvc | grep 'db2wh' && oc get po | grep 'db2wh'"
 ```
 
 >:bulb: Don't pay attention to those errors 
 
-![](img/db2-view-errors.jpg)
+![](img/db2wh-view-errors.jpg)
 
-### Check BLUDB database status
+### Check BLUDBWH database status
 
 > :information_source: Run this on Cloud Pak for Data web console
 
 1.   From the navigation, select Collect > My data.     
 
-![](img/db2-bludb-ok.jpg)
+![](img/db2wh-bludb-ok.jpg)
 
 <br>
 :checkered_flag::checkered_flag::checkered_flag:
