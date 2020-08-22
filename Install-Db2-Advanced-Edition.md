@@ -1,4 +1,4 @@
-# Install Cloud Pak for Data 3.0.1
+# Install Db2 Advanced Edition
 
 ## Hardware requirements
 
@@ -6,15 +6,15 @@
 
 ## System requirements
 
-- Have completed  [Prepare for Cloud Pak for Data 3.0.1](https://github.com/bpshparis/sandbox/blob/master/Prepare-for-Cloud-Pak-for-Data-3.0.1.md#prepare-for-cloud-pak-for-data-301)
+- Have completed  [Prepare for DB2 Advanced Edition](https://github.com/bpshparis/sandbox/blob/master/Prepare-for-DB2-Advanced-Edition.md#prepare-for-db2-advanced-edition)
 - One **WEB server** where following files are available in **read mode**:
-  - [lite-3.0.1-x86_64.tar](https://github.com/bpshparis/sandbox/blob/master/Prepare-for-Cloud-Pak-for-Data-3.0.1.md#save-cloud-pak-for-data-downloads-to-web-server)
+  - [db2oltp-3.0.1-x86_64.tar](https://github.com/bpshparis/sandbox/blob/master/Prepare-for-DB2-Advanced-Edition.md#save-db2-advanced-edition-downloads-to-web-server)
 
 <br>
 :checkered_flag::checkered_flag::checkered_flag:
 <br>
 
-## Install Cloud Pak for Data 3.0.1
+## Install Db2 Advanced Edition
 
 > :information_source: Commands below are valid for a **Linux/Centos 7**.
 
@@ -28,29 +28,32 @@
 
 ```
 LB_HOSTNAME="cli-ocp15"
+NS="cpd"
 ```
 
 ```
-oc login https://$LB_HOSTNAME:6443 -u admin -p admin --insecure-skip-tls-verify=true
+oc login https://$LB_HOSTNAME:6443 -u admin -p admin --insecure-skip-tls-verify=true -n $NS
 ```
 
-### Create Cloud Pak for Data project
+### Label worker node for Db2 Advanced Edition
 
-> :warning: Adapt settings to fit to your environment.
-
-> :information_source: Run this on Installer
+> :information_source: Run this on Installer 
 
 ```
-PRJ="cpd"
-PRJ_ADMIN="admin"
-```
-```
-oc new-project $PRJ
-
-oc adm policy add-role-to-user cpd-admin-role $PRJ_ADMIN --role-namespace=$(oc project -q) -n $(oc project -q)
+LABEL="\"icp4data=database-db2oltp\""
 ```
 
-### Copy Cloud Pak for Data Downloads from web server
+```
+oc get nodes | awk '$3 ~ "compute|worker" {print "oc label node " $1 " "'$LABEL'" --overwrite"}' | sh
+```
+
+>:bulb: Check workers are labelled
+
+```
+oc get nodes --show-labels | awk '$3 ~ "compute|worker" {print $1 " -> " $6}'
+```
+
+### Copy Db2 Advanced Edition Downloads from web server
 
 > :warning: Adapt settings to fit to your environment.
 
@@ -58,7 +61,7 @@ oc adm policy add-role-to-user cpd-admin-role $PRJ_ADMIN --role-namespace=$(oc p
 
 ```
 INST_DIR=~/cpd
-ASSEMBLY="lite"
+ASSEMBLY="db2oltp"
 VERSION="3.0.1"
 ARCH="x86_64"
 TAR_FILE="$ASSEMBLY-$VERSION-$ARCH.tar"
@@ -75,7 +78,7 @@ tar xvf $TAR_FILE
 rm -f $TAR_FILE
 ```
 
-### Push Cloud Pak for Data images to Openshift registry
+### Push Db2 Advanced Edition images to Openshift registry
 
 > :warning: To avoid network failure, launch installation on locale console or in a screen
 
@@ -93,9 +96,11 @@ pkill screen; screen -mdS ADM && screen -r ADM
 
 ```
 INST_DIR=~/cpd
-ASSEMBLY="lite"
-VERSION="3.0.1"
+ASSEMBLY="db2oltp"
 ARCH="x86_64"
+VERSION=$(find $INST_DIR/bin/cpd-linux-workspace/assembly/$ASSEMBLY/$ARCH/* -type d | awk -F'/' '{print $NF}')
+
+[ ! -z "$VERSION" ] && echo $VERSION "-> OK" || echo "ERROR: VERSION is not set."
 ```
 
 ```
@@ -114,7 +119,7 @@ $INST_DIR/bin/cpd-linux preloadImages \
 ```
 
 
-### Create Cloud Pak for Data resources on cluster
+### Create Db2 Advanced Edition resources on cluster
 
 > :information_source: Run this on Installer
 
@@ -129,13 +134,7 @@ $INST_DIR/bin/cpd-linux adm \
 --accept-all-licenses
 ```
 
-> :bulb: Check **cpd-admin-sa, cpd-editor-sa and cpd-viewer-sa** services account have been created
-
-```
-oc get sa
-```
-
-### Install Cloud Pak for Data
+### Install Db2 Advanced Edition
 
 > :warning: Adapt settings to fit to your environment.
 
@@ -144,15 +143,9 @@ oc get sa
 ```
 SC="portworx-shared-gp3"
 INT_REG=$(oc describe pod $(oc get pod -n openshift-image-registry | awk '$1 ~ "image-registry-" {print $1}') -n openshift-image-registry | awk '$1 ~ "REGISTRY_OPENSHIFT_SERVER_ADDR:" {print $2}') && echo $INT_REG
-OVERRIDE=$INST_DIR/lite-override.yaml
 ```
 
 ```
-cat > $OVERRIDE << EOF
-zenCoreMetaDb:
-  storageClass: portworx-metastoredb-sc
-EOF
-
 $INST_DIR/bin/cpd-linux \
 --namespace $(oc project -q) \
 --assembly $ASSEMBLY \
@@ -161,18 +154,10 @@ $INST_DIR/bin/cpd-linux \
 --storageclass $SC \
 --cluster-pull-prefix $INT_REG/$(oc project -q) \
 --load-from $INST_DIR/bin/cpd-linux-workspace \
---override $OVERRIDE \
 --accept-all-licenses
-
 ```
 
-> :bulb: Check installation progress
-
-```
-watch -n5 "oc get pvc && oc get po"
-```
-
-### Check Cloud Pak for Data status
+### Check Db2 Advanced Edition status
 
 > :information_source: Run this on Installer
 
@@ -183,8 +168,13 @@ $INST_DIR/bin/cpd-linux status \
 --arch $ARCH
 ```
 
-![](img/lite-ready.jpg)
+![](img/db2oltp-ready.jpg)
 
+<br>
+:checkered_flag::checkered_flag::checkered_flag:
+<br>
+
+## Creating BLUDB database
 
 ### Access Cloud Pak for Data web console
 
@@ -195,6 +185,55 @@ oc get routes | awk 'NR==2 {print "Access the web console at https://" $2}'
 ```
 
 > :bulb: Login as **admin** using **password** for password 
+
+### Creating BLUDB database
+
+> :information_source: Run this on Cloud Pak for Data web console
+
+1.   From the navigation, select Collect > My data.     
+2.   Open the Databases tab, which is only visible after you install the database service.
+3.   Click Create a database.
+4.   Select the database type and version. Click Next. 
+
+>:bulb: Close the **Not enough nodes** error message
+
+![](img/labelled-but-not-tainted.jpg)
+
+5.   Select **portworx-db2-rwx-sc** for System storage. 
+6.   Select **portworx-db2-rwo-sc** for User storage. 
+7.   Select **portworx-db2-rwx-sc** for Backup storage. 
+8.   Click on **Continue with defaults**. 
+9.   (optional) Change Display name to **BLUDB**.
+10.   Click on **Create**.
+
+
+### Monitorin BLUDB database creation
+
+#### Log in OCP
+
+> :warning: Adapt settings to fit to your environment.
+
+> :information_source: Run this on Installer 
+
+```
+LB_HOSTNAME="cli-ocp15"
+NS="cpd"
+```
+
+```
+oc login https://$LB_HOSTNAME:6443 -u admin -p admin --insecure-skip-tls-verify=true -n $NS
+```
+
+#### Monitorin BLUDB database creation
+
+> :information_source: Run this on Installer 
+
+```
+watch -n5 "oc get pvc | grep 'db2' && oc get po | grep 'db2'"
+```
+
+>:bulb: Don't pay attention to this ![](img/db2-view-errors.jpg)
+
 
 <br>
 :checkered_flag::checkered_flag::checkered_flag:
