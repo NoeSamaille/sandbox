@@ -220,7 +220,7 @@ oc login https://cli-$OCP:8443 -u admin -p admin --insecure-skip-tls-verify=true
 > :information_source: Run this on Installer
 
 ```
-LB_HOSTNAME="cli-ocp7"
+LB_HOSTNAME="cli-ocp15"
 NS="default"
 ```
 
@@ -389,7 +389,7 @@ pkill screen; screen -mdS ADM && screen -r ADM
 > :information_source: Run this on Installer
 
 ```
-LB_HOSTNAME="cli-ocp7"
+LB_HOSTNAME="cli-ocp15"
 NS="kube-system"
 WEB_SERVER_PX_URL="http://web/cloud-pak/cpdv3.0.1_portworx.tgz"
 PX_FILE="cpdv3.0.1_portworx.tgz"

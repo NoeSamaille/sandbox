@@ -237,5 +237,34 @@ EOF
 source ~/.bashrc
 ```
 
+### :bulb: Optional: Disable security
+
+> :information_source: Run this on Installer
+
+```
+systemctl stop firewalld &&
+systemctl disable firewalld &&
+setenforce 0 &&
+sed -i -e 's/^SELINUX=\w*/SELINUX=disabled/' /etc/selinux/config
+```
+
+### Install vncviewer
+
+> :information_source: Run this on Installer
+
+```
+VNC_PWD="password"
+```
+
+```
+[ -z $(command -v vncviewer) ] && yum install -y tigervnc || echo "vncviewer already installed"
+[ -z $(command -v vncpasswd) ] && yum install -y tigervnc-server-minimal || echo "vncpasswd already installed"
+echo $VNC_PWD | vncpasswd -f > ~/.vnc/passwd
+```
+
+<br>
 
 :checkered_flag::checkered_flag::checkered_flag:
+
+<br>
+

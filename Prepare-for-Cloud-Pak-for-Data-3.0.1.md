@@ -34,7 +34,7 @@ INST_DIR=~/cpd && echo $INST_DIR
 ```
 
 ```
-[ -d "$INST_DIR" ] && rm -rf $INST_DIR/* || mkdir $INST_DIR
+[ -d "$INST_DIR" ] && { rm -rf $INST_DIR; mkdir $INST_DIR; }
 cd $INST_DIR
 
 wget -c $WEB_SERVER_CP_URL/$INST_FILE
@@ -76,7 +76,7 @@ podman login -u $USERNAME -p $APIKEY $REG
 
 #### Add username and apikey to repo.yaml
 
-> :information_source: Run this on Cli
+> :information_source: Run this on Installer
 
 ```
 sed -i -e 's/\(^\s\{4\}username:\).*$/\1 '$USERNAME'/' repo.yaml

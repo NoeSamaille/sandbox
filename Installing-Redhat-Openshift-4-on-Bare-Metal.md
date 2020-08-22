@@ -243,17 +243,6 @@ backend machine-config-server
 EOF
 ```
 
-### :bulb: Optional: Disable security
-
-> :information_source: Run this on Load Balancer
-
-```
-systemctl stop firewalld &&
-systemctl disable firewalld &&
-setenforce 0 &&
-sed -i -e 's/^SELINUX=\w*/SELINUX=disabled/' /etc/selinux/config
-```
-
 ### Start  load balancer
 
 > :information_source: Run this on Load Balancer
@@ -544,7 +533,7 @@ wget -c $WEB_SERVER_VMDK_URL/rhcos.vmx -P $VMDK_PATH
 
 ### Create cluster nodes
 
-> :bulb: Thanks to ESX VNC integrated server, bootstrap process will be monitor able.<br>
+> :bulb: Thanks to ESX VNC integrated server, bootstrap process will be monitorable.<br>
 > Change default settings in **createOCP4Cluster.sh** if needed.
 >
 > -  BOOTSTRAP_VNC_PORT="**5909**"
@@ -576,31 +565,10 @@ chmod +x ./createOCP4Cluster.sh
 
 <br>
 
-## VNC Viewer
-
-### Set environment
-
-> :warning: **VNC_PWD** have to match **VNC_PWD** set in **createOCP4Cluster.sh**.
-
-> :information_source: Run this on Installer
-
-```
-VNC_PWD="password"
-```
-
-### Install a vncviewer to monitor bootstrap process
-
-> :information_source: Run this on Installer
-
-```
-[ -z $(command -v vncviewer) ] && yum install -y tigervnc || echo "vncviewer already installed"
-[ -z $(command -v vncpasswd) ] && yum install -y tigervnc-server-minimal || echo "vncpasswd already installed"
-echo $VNC_PWD | vncpasswd -f > ~/.vnc/passwd
-```
+:checkered_flag::checkered_flag::checkered_flag:
 
 <br>
 
-:checkered_flag::checkered_flag::checkered_flag:
 
 ## Start cluster nodes
 
@@ -709,23 +677,9 @@ vncviewer $ESX_SERVER:$W3_VNC_PORT
 
 <br>
 
-## Install OCP 4
-
-### Launch OCP 4 installation
-
-> :bulb: To avoid network failure, launch installation on **locale console** or in a **screen**
-
-> :information_source: Run this on Installer
-
-```
-[ ! -z $(command -v screen) ] && echo screen already installed || yum install screen -y
-
-pkill screen; screen -mdS ADM && screen -r ADM
-```
+## Monitor OCP 4 installation
 
 ### Launch wait-for-bootstrap-complete
-
-#### Set environment
 
 > :warning: Adapt settings to fit to your environment.
 
@@ -734,10 +688,6 @@ pkill screen; screen -mdS ADM && screen -r ADM
 ```
 INST_DIR=~/ocpinst
 ```
-
-#### Launch wait-for-bootstrap-complete
-
-> :information_source: Run this on Installer
 
 ```
 cd $INST_DIR
@@ -763,16 +713,11 @@ ssh-add ~/.ssh/id_rsa
 
 ![](img/bscomplete.jpg)
 
-#### -  :thumbsup: [Next step](#remove-bootstrap-from-load-balancer)
-#### -  :thumbsdown: [Troubleshoot wait-for-bootstrap-complete](#troubleshoot-wait-for-bootstrap-complete)
-#### -  :thumbsdown: [Revert snapshot](https://github.com/bpshparis/sandbox/blob/master/Manage-ESX-snapshots.md#manage-esx-snapshots)
+### -  :thumbsup: [Next step](#remove-bootstrap-from-load-balancer)
+### -  :thumbsdown: [Troubleshoot wait-for-bootstrap-complete](#troubleshoot-wait-for-bootstrap-complete)
+### -  :thumbsdown: [Revert snapshot](https://github.com/bpshparis/sandbox/blob/master/Manage-ESX-snapshots.md#manage-esx-snapshots)
 
-
-#### Troubleshoot wait-for-bootstrap-complete
-
-##### Set environment
-
->:bulb: Leave screen with **Ctrl + a + d**
+### Troubleshoot wait-for-bootstrap-complete
 
 > :warning: Adapt settings to fit to your environment.
 
@@ -784,22 +729,20 @@ BS_IP="172.16.187.59"
 M1_IP="172.16.187.51"
 ```
 
-##### Troubleshoot wait-for-bootstrap-complete
-
-> :information_source: Run this on Installer
-
 ```
 cd $INST_DIR
 ./openshift-install gather bootstrap --bootstrap $BS_IP --key ~/.ssh/id_rsa --master "$M1_IP"
 ```
 
-#### -  [Revert snapshot](https://github.com/bpshparis/sandbox/blob/master/Manage-ESX-snapshots.md#manage-esx-snapshots)
+### -  [Revert snapshot](https://github.com/bpshparis/sandbox/blob/master/Manage-ESX-snapshots.md#manage-esx-snapshots)
+
+<br>
+
+:checkered_flag::checkered_flag::checkered_flag:
 
 <br>
 
 ### Remove bootstrap from load balancer
-
-#### Set environment
 
 > :warning: Adapt settings to fit to your environment.
 
@@ -810,14 +753,16 @@ LB_CONF="/etc/haproxy/haproxy.cfg" && echo $LB_CONF
 BS_PATTERN="server bs-"
 ```
 
-#### Remove bootstrap from load balancer
-
-> :information_source: Run this on Load Balancer
-
 ```
 sed -i -e 's/\('"$BS_PATTERN"'*\)/# \1/g' $LB_CONF
 systemctl restart haproxy
 ```
+<br>
+
+:checkered_flag::checkered_flag::checkered_flag:
+
+<br>
+
 ### Login to cluster as system:admin
 
 > :warning: Adapt settings to fit to your environment.
@@ -873,6 +818,8 @@ watch -n5 oc get clusteroperators
 
 ### Launch wait-for-install-complete
 
+> :warning: Adapt settings to fit to your environment.
+
 > :information_source: Run this on Installer
 
 ```
@@ -889,8 +836,8 @@ cd $INST_DIR
 ![](img/installcomplete.jpg)
 
 
-#### -  :thumbsup: [Next step](#post-install-ocp-4)
-#### -  :thumbsdown: [Revert snapshot](https://github.com/bpshparis/sandbox/blob/master/Manage-ESX-snapshots.md#manage-esx-snapshots)
+### -  :thumbsup: [Next step](#post-install-ocp-4)
+### -  :thumbsdown: [Revert snapshot](https://github.com/bpshparis/sandbox/blob/master/Manage-ESX-snapshots.md#manage-esx-snapshots)
 
 <br>
 
@@ -900,9 +847,7 @@ cd $INST_DIR
 
 ## Post install OCP 4
 
-### Create an admin user with  cluster-admin role
-
-#### Set environment
+### Login to cluster as system:admin
 
 > :warning: Adapt settings to fit to your environment.
 
@@ -910,16 +855,6 @@ cd $INST_DIR
 
 ```
 INST_DIR=~/ocpinst
-WEB_SERVER_OC_URL="http://web/soft/openshift-client-linux-4.3.33.tar.gz"
-OC_FILE="openshift-client-linux-4.3.33.tar.gz"
-```
-
-#### Create an admin user with  cluster-admin role
-
-> :information_source: Run this on Installer
-
-```
-[ -z $(command -v oc) ] && { wget -c $WEB_SERVER_OC_URL; tar xvzf $OC_FILE -C $(echo $PATH | awk -F':' '{print $1}'); } || echo oc installed
 ```
 
 ```
@@ -927,6 +862,8 @@ export KUBECONFIG=$INST_DIR/auth/kubeconfig
 oc whoami
 ```
 >:bulb: Command above should return **system:admin**
+
+### Create an admin user with cluster-admin role
 
 > :information_source: Run this on Installer
 
@@ -958,7 +895,6 @@ EOF
 sleep 10
 oc adm policy add-cluster-role-to-user cluster-admin admin
 ```
-
 
 ### Login to cluster as admin
 
@@ -995,7 +931,7 @@ EOF
 
 ### Downscale etcd-quorum-guard to one
 
-> :warning: Apply patch only if you set **MASTER_COUNT** above to **1**
+> :warning: Apply scale only if you set **MASTER_COUNT** above to **1**
 
 > :information_source: Run this on Installer
 
@@ -1036,7 +972,7 @@ oc new-project validate
 
 oc new-app django-psql-example
 
-sleep 60
+sleep 120
 
 oc logs -f bc/django-psql-example
 ```
@@ -1102,7 +1038,7 @@ vim-cmd vmsvc/getallvms | awk '$2 ~ "'$VM_PATTERN'" && $1 !~ "Vmid" {print "vim-
 
 > :warning: Wait for at least **24** hours before taking a valid snapshot
 
-#### -  [Take snapshot](https://github.com/bpshparis/sandbox/blob/master/Manage-ESX-snapshots.md#manage-esx-snapshots)
+### -  [Take snapshot](https://github.com/bpshparis/sandbox/blob/master/Manage-ESX-snapshots.md#manage-esx-snapshots)
 
 
 <!--
