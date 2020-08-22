@@ -705,10 +705,6 @@ ssh-add ~/.ssh/id_rsa
 
 <br>
 
->:bulb: Leave screen with **Ctrl + a + d**
-
->:bulb: Come back with **screen -r ADM**
-
 >:bulb: bootstrap complete output
 
 ![](img/bscomplete.jpg)
