@@ -94,7 +94,7 @@ for host in cli; do IP=$(dig @localhost +short $host-$OCP.$DOMAIN); echo -n $IP 
 :checkered_flag::checkered_flag::checkered_flag:
 
 
-## Create Cli
+## Create Installer
 
 ### Download material
 
@@ -113,7 +113,7 @@ wget -c $WEB_SERVER_VMDK_URL/rhel.vmx -P $VMDK_PATH
 wget -c $WEB_SERVER_SOFT_URL/createCli.sh
 ```
 
-### Create Cli
+### Create Installer
 
 >:warning: Set **OCP**, **DATASTORE**, **VMS_PATH**, **CENTOS_VMDK** and **VMX** variables accordingly in **createCli.sh** before proceeding.
 
@@ -124,7 +124,7 @@ chmod +x ./createCli.sh
 ./createCli.sh
 ```
 
-### Start Cli
+### Start Installer
 
 > :information_source: Run this on ESX
 
@@ -134,7 +134,7 @@ vim-cmd vmsvc/getallvms | awk '$2 ~ "'$PATTERN'" && $1 !~ "Vmid" {print "vim-cmd
 vim-cmd vmsvc/getallvms | awk '$2 ~ "'$PATTERN'" && $1 !~ "Vmid" {print "vim-cmd vmsvc/power.getstate " $1}' | sh
 ```
 
-### Get Cli dhcp address
+### Get Installer dhcp address
 
 > :information_source: Run this on ESX
 
@@ -156,7 +156,7 @@ watch -n 5 "./getVMAddress.sh | tee $CLI_DYN_ADDR"
 
 > :bulb: Leave watch with **Ctrl + c**
 
-### Configure Cli 
+### Configure Installer 
 
 #### Download necessary stuff
 
@@ -171,7 +171,7 @@ wget -c $WEB_SERVER_SOFT_URL/extendRootLV.sh
 chmod +x extendRootLV.sh
 ```
 
-#### Create and copy ESX public key to Cli
+#### Create and copy ESX public key to Installer
 
 > :warning: To be able to ssh from ESX you need to enable sshClient rule outgoing port
 
@@ -191,7 +191,7 @@ esxcli network firewall ruleset set -e true -r sshClient
 for ip in $(awk -F ";" '{print $3}' $CLI_DYN_ADDR); do cat /.ssh/id_rsa.pub | ssh -o StrictHostKeyChecking=no root@$ip '[ ! -d "/root/.ssh" ] && mkdir /root/.ssh && cat >> /root/.ssh/authorized_keys'; done
 ```
 
-#### Extend Cli Root logical volume
+#### Extend Installer Root logical volume
 
 >:warning: Set **DISK**, **PART**, **VG** and **LV** variables accordingly in **extendRootLV.sh** before proceeding.
 
@@ -203,7 +203,7 @@ for ip in $(awk -F ";" '{print $3}' $CLI_DYN_ADDR); do echo "copying extendRootL
 for ip in $(awk -F ";" '{print $3}' $CLI_DYN_ADDR); do ssh -o StrictHostKeyChecking=no root@$ip 'hostname -f; /root/extendRootLV.sh'; done
 ```
 
-#### Set Cli static ip address and reboot Cli
+#### Set Installer static ip address and reboot Installer
 
 > :information_source: Run this on ESX
 
@@ -215,7 +215,7 @@ for LINE in $(awk -F ";" '{print $0}' $CLI_DYN_ADDR); do  HOSTNAME=$(echo $LINE 
 for ip in $(awk -F ";" '{print $3}' $CLI_DYN_ADDR); do ssh -o StrictHostKeyChecking=no root@$ip 'reboot'; done
 ```
 
-#### Check Cli static ip address
+#### Check Installer static ip address
 
 > :warning: Wait for cluster nodes to be up and display it static address in the **3rd column**
 
@@ -227,14 +227,14 @@ watch -n 5 "./getVMAddress.sh"
 
 > :bulb: Leave watch with **Ctrl + c** 
 
-### Set Installer enrironment
+### Set Installer environment
 
 > :information_source: Run this on Installer
 
 ```
 cat >> ~/.bashrc << EOF
 
-export OCP=ocp7
+export OCP=ocp5
 export SSHPASS=spcspc
 alias l='ls -Alhtr'
 
