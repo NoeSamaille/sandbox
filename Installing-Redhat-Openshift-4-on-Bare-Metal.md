@@ -861,7 +861,13 @@ oc whoami
 
 ### Create an admin user with cluster-admin role
 
+> :warning: Adapt settings to fit to your environment.
+
 > :information_source: Run this on Installer
+
+```
+INST_DIR=~/ocpinst
+```
 
 ```
 cd $INST_DIR
