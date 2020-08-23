@@ -985,6 +985,25 @@ oc logs -f bc/django-psql-example
 oc get routes | awk 'NR>1 {print "\nTo access your application, Visit url:\n"$2}'
 ```
 
+### Extract OCP 4 CA
+
+> :information_source: Run this on Installer
+
+```
+[ -z "$(command -v openssl)" ] && yum install -y openssl || echo "openssl already installed"
+
+CONSOLE_HOSTNAME=$(oc get routes -n openshift-console | awk '$2 ~ "console-" {print $2}')
+
+CERT_COUNT=$(openssl s_client -showcerts -connect $CONSOLE_HOSTNAME:443  </dev/null | grep -c 'BEGIN CERTIFICATE')
+
+openssl s_client -showcerts -connect $CONSOLE_HOSTNAME:443  </dev/null | awk '/BEGIN CERTIFICATE/&&++k=='$COUNT',/END CERTIFICATE/' > $CONSOLE_HOSTNAME.crt
+
+[ -z "$(openssl x509 -noout -text -in  $CONSOLE_HOSTNAME.crt | grep  CA:TRUE)" ] && echo "ERROR: " $CONSOLE_HOSTNAME.crt "is not a valid CA" || echo "OK:" $CONSOLE_HOSTNAME.crt "is a valid CA"
+```
+
+>:bulb: Add **$CONSOLE_HOSTNAME.crt** to Authorities in your web browser Certificate Manager
+
+
 ### Get OCP 4 web console url and login
 
 > :information_source: Run this on Installer
