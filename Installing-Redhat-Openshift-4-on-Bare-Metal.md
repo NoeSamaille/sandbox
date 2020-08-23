@@ -985,7 +985,7 @@ oc logs -f bc/django-psql-example
 oc get routes | awk 'NR>1 {print "\nTo access your application, Visit url:\n"$2}'
 ```
 
-### Extract OCP 4 CA
+### Extract OCP 4 web console CA
 
 > :information_source: Run this on Installer
 
