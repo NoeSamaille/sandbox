@@ -996,7 +996,7 @@ CONSOLE_HOSTNAME=$(oc get routes -n openshift-console | awk '$2 ~ "console-" {pr
 
 CERT_COUNT=$(openssl s_client -showcerts -connect $CONSOLE_HOSTNAME:443  </dev/null | grep -c 'BEGIN CERTIFICATE')
 
-openssl s_client -showcerts -connect $CONSOLE_HOSTNAME:443  </dev/null | awk '/BEGIN CERTIFICATE/&&++k=='$COUNT',/END CERTIFICATE/' > $CONSOLE_HOSTNAME.crt
+openssl s_client -showcerts -connect $CONSOLE_HOSTNAME:443  </dev/null | awk '/BEGIN CERTIFICATE/&&++k=='$CERT_COUNT',/END CERTIFICATE/' > $CONSOLE_HOSTNAME.crt
 
 [ -z "$(openssl x509 -noout -text -in  $CONSOLE_HOSTNAME.crt | grep  CA:TRUE)" ] && echo "ERROR: " $CONSOLE_HOSTNAME.crt "is not a valid CA" || echo "OK:" $CONSOLE_HOSTNAME.crt "is a valid CA"
 ```
