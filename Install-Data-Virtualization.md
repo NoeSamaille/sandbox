@@ -201,7 +201,7 @@ oc get routes | awk 'NR==2 {print "Access the web console at https://" $2}'
 
 1.   Click the Services icon ![](img/catalog.jpg) from the Cloud Pak for Data web user interface.   
 2.   From the list of services, locate the **Data Virtualization** service under the Data sources category. Click the action menu and select **Provision instance**.
-3.   Leave **kernel semaphore checkbox unchecked** (RHCOS kernel is 4.18) 
+3.   Leave **kernel semaphore** checkbox **unchecked** (RHCOS kernel is 4.18) 
 4.   Keep default value for Nodes.
 5.   **Create new claim** with **portworx-dv-shared-gp** as Storage class for both Persistent storage and Cache storage.
 6.   Provision the service by clicking **Configure**.
