@@ -134,6 +134,13 @@ $INST_DIR/bin/cpd-linux adm \
 --accept-all-licenses
 ```
 
+> :bulb: Check **compose, cpd-cdcp-sa, cpd-databases-sa and db2u** services account have been created
+
+```
+oc get sa
+```
+
+
 ### Install Db2 Warehouse
 
 > :warning: Adapt settings to fit to your environment.
