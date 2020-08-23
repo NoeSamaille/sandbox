@@ -1001,7 +1001,7 @@ openssl s_client -showcerts -connect $CONSOLE_HOSTNAME:443  </dev/null | awk '/B
 [ -z "$(openssl x509 -noout -text -in  $CONSOLE_HOSTNAME.crt | grep  CA:TRUE)" ] && echo "ERROR: " $CONSOLE_HOSTNAME.crt "is not a valid CA" || echo "OK:" $CONSOLE_HOSTNAME.crt "is a valid CA"
 ```
 
->:bulb: Add **$CONSOLE_HOSTNAME.crt** to Authorities in your web browser Certificate Manager
+>:bulb: Add **$CONSOLE_HOSTNAME.crt** to Authorities in your **web browser Certificate Manager**
 
 
 ### Get OCP 4 web console url and login
