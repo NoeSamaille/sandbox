@@ -94,8 +94,10 @@ pkill screen; screen -mdS ADM && screen -r ADM
 ```
 INST_DIR=~/cpd
 ASSEMBLY="lite"
-VERSION="3.0.1"
 ARCH="x86_64"
+VERSION=$(find $INST_DIR/bin/cpd-linux-workspace/assembly/$ASSEMBLY/$ARCH/* -type d | awk -F'/' '{print $NF}')
+
+[ ! -z "$VERSION" ] && echo $VERSION "-> OK" || echo "ERROR: VERSION is not set."
 ```
 
 ```
