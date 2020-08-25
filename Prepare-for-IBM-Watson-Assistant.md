@@ -34,7 +34,7 @@ INST_DIR=~/cpd && echo $INST_DIR
 ```
 
 ```
-[ -d "$INST_DIR" ] && rm -rf $INST_DIR/* || mkdir $INST_DIR
+[ -d "$INST_DIR" ] && { rm -rf $INST_DIR; mkdir $INST_DIR; } || mkdir $INST_DIR
 cd $INST_DIR
 
 wget -c $WEB_SERVER_CP_URL/$INST_FILE

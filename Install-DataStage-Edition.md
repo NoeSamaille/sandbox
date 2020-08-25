@@ -1,4 +1,4 @@
-# Install IBM Watson Assistant
+# Install DataStage Edition
 
 ## Hardware requirements
 
@@ -6,15 +6,15 @@
 
 ## System requirements
 
-- Have completed  [Prepare for IBM Watson Assistant](https://github.com/bpshparis/sandbox/blob/master/Prepare-for-IBM-Watson-Assistant.md#prepare-for-ibm-watson-assistant)
+- Have completed  [Prepare for DataStage Edition](https://github.com/bpshparis/sandbox/blob/master/Prepare-for-DataStage-Edition.md#prepare-for-datastage-edition)
 - One **WEB server** where following files are available in **read mode**:
-  - [ibm-watson-assistant-1.4.2-x86_64.tar](https://github.com/bpshparis/sandbox/blob/master/Prepare-for-IBM-Watson-Assistant-1.4.2.md#save-ibm-watson-assistant-142-downloads-to-web-server)
+  - [ds-3.2.307-x86_64.tar](https://github.com/bpshparis/sandbox/blob/master/Prepare-for-DataStage-Edition.md#save-datastage-edition-downloads-to-web-server)
 
 <br>
 :checkered_flag::checkered_flag::checkered_flag:
 <br>
 
-## Install IBM Watson Assistant
+## Install CDataStage Edition
 
 > :information_source: Commands below are valid for a **Linux/Centos 7**.
 
@@ -27,7 +27,7 @@
 > :information_source: Run this on Installer 
 
 ```
-LB_HOSTNAME="cli-ocp7"
+LB_HOSTNAME="cli-ocp15"
 NS="cpd"
 ```
 
@@ -35,7 +35,7 @@ NS="cpd"
 oc login https://$LB_HOSTNAME:6443 -u admin -p admin --insecure-skip-tls-verify=true -n $NS
 ```
 
-### Copy IBM Watson Assistant downloads from web server
+### Copy DataStage Edition Downloads from web server
 
 > :warning: Adapt settings to fit to your environment.
 
@@ -43,15 +43,14 @@ oc login https://$LB_HOSTNAME:6443 -u admin -p admin --insecure-skip-tls-verify=
 
 ```
 INST_DIR=~/cpd
-ASSEMBLY="ibm-watson-assistant"
-VERSION="1.4.2"
+ASSEMBLY="ds"
+VERSION="3.2.307"
 ARCH="x86_64"
 TAR_FILE="$ASSEMBLY-$VERSION-$ARCH.tar"
 WEB_SERVER_CP_URL="http://web/cloud-pak/assemblies"
 ```
 
 ```
-cd ~
 [ -d "$INST_DIR" ] && { rm -rf $INST_DIR; mkdir $INST_DIR; } || mkdir $INST_DIR
 cd $INST_DIR
 
@@ -61,7 +60,7 @@ tar xvf $TAR_FILE
 rm -f $TAR_FILE
 ```
 
-### Push IBM Watson Assistant images to Openshift registry
+### Push DataStage Edition images to Openshift registry
 
 > :warning: To avoid network failure, launch installation on locale console or in a screen
 
@@ -79,12 +78,11 @@ pkill screen; screen -mdS ADM && screen -r ADM
 
 ```
 INST_DIR=~/cpd
-ASSEMBLY="ibm-watson-assistant"
+ASSEMBLY="ds"
 ARCH="x86_64"
 VERSION=$(find $INST_DIR/bin/cpd-linux-workspace/assembly/$ASSEMBLY/$ARCH/* -type d | awk -F'/' '{print $NF}')
 
 [ ! -z "$VERSION" ] && echo $VERSION "-> OK" || echo "ERROR: VERSION is not set."
-
 ```
 
 ```
@@ -103,7 +101,7 @@ $INST_DIR/bin/cpd-linux preloadImages \
 ```
 
 
-### Create IBM Watson Assistant resources on cluster
+### Create DataStage Edition resources on cluster
 
 > :information_source: Run this on Installer
 
@@ -118,48 +116,45 @@ $INST_DIR/bin/cpd-linux adm \
 --accept-all-licenses
 ```
 
-### Override values for IBM Watson Assistant installation
+>:bulb: Check **wdp-db2-sa** and **wkc-iis-sa** services account have been created
+
+```
+oc get sa
+```
+
+
+### Install DataStage Edition
 
 > :warning: Adapt settings to fit to your environment.
 
 > :information_source: Run this on Installer
 
 ```
-SECRET=$(oc get secrets | grep default-dockercfg | awk '{print $1}') && echo $SECRET
-TYPE="Development"
-LANG="french"
-OVERRIDE=$(find $INST_DIR/bin/cpd-linux-workspace/modules -type f -exec grep -q "portworx" '{}' \; -print)
-[ ! -f "$OVERRIDE" ] && echo "ERROR: OVERRIDE is not a valid file." || echo $OVERRIDE "-> OK"
-```
-
-```
-sed -i -e 's/\(^\s\{2\}deploymentType:\).*$/\1 "'$TYPE'"/' $OVERRIDE
-sed -i -e 's/\(^\s\{4\}pullSecret:\).*$/\1 "'$SECRET'"/' $OVERRIDE
-sed -i -e 's/\(^\s\{4\}'$LANG':\).*$/\1 true/' $OVERRIDE
-
-```
-
-
-### Add the cluster namespace label to IBM Watson Assistant namespace
-
-> :warning: The label is needed to permit communication between IBM Watson Assistant 1.4.2's namespace and the Cloud Pak for Data namespace by using a network policy.
-
-> :information_source: Run this on Installer
-
-```
-oc label --overwrite namespace $(oc project -q) ns=$(oc project -q)
-oc get namespace $(oc project -q) --show-labels 
-```
-
-### Install IBM Watson Assistant
-
-> :warning: Adapt settings to fit to your environment.
-
-> :information_source: Run this on Installer
-
-```
-SC="portworx-assistant"
+SC="portworx-shared-gp3"
 INT_REG=$(oc describe pod $(oc get pod -n openshift-image-registry | awk '$1 ~ "image-registry-" {print $1}') -n openshift-image-registry | awk '$1 ~ "REGISTRY_OPENSHIFT_SERVER_ADDR:" {print $2}') && echo $INT_REG
+OVERRIDE=$INST_DIR/ds-override.yaml
+```
+
+```
+cat > $OVERRIDE << EOF
+shared-services:
+  kafka:
+    volumeClaim:
+      overrideStorageClass: true
+      storageClassName: "portworx-kafka-sc"
+
+wdp-db2:
+  support4kDevice: true
+  volumeClaim:
+    storageClassName: "portworx-db2-rwo-sc"
+    overrideStorageClass: true
+
+xmetarepoVolumeInfo:
+  support4kDevice: true
+  volumeClaim:
+    storageClassName: "portworx-db2-rwo-sc"
+    overrideStorageClass: true
+EOF
 ```
 
 ```
@@ -179,10 +174,11 @@ $INST_DIR/bin/cpd-linux \
 > :bulb: Check installation progress
 
 ```
-watch -n5 "oc get pvc | grep 'watson-ass' && oc get po | grep 'watson-ass'"
+watch -n5 "oc get pvc | egrep -w 'ds|iis|is|kafka|solr' ; oc get po | egrep -w 'ds|iis|is|kafka|solr'"
 ```
 
-### Check IBM Watson Assistant status
+
+### Check DataStage Edition status
 
 > :information_source: Run this on Installer
 
@@ -193,18 +189,11 @@ $INST_DIR/bin/cpd-linux status \
 --arch $ARCH
 ```
 
-![](img/wa-ready.jpg)
+![](img/ds-ready.jpg)
 
 
-### Access IBM Watson Assistant web console
 
-> :information_source: Run this on Installer
 
-```
-oc get routes | awk 'NR==2 {print "Access the web console at https://" $2}'
-```
-
-> :bulb: Login as **admin** using **password** for password 
 
 <br>
 :checkered_flag::checkered_flag::checkered_flag:

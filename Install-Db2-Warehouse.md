@@ -69,7 +69,7 @@ WEB_SERVER_CP_URL="http://web/cloud-pak/assemblies"
 ```
 
 ```
-[ -d "$INST_DIR" ] && { rm -rf $INST_DIR; mkdir $INST_DIR; }
+[ -d "$INST_DIR" ] && { rm -rf $INST_DIR; mkdir $INST_DIR; } || mkdir $INST_DIR
 cd $INST_DIR
 
 mkdir bin && cd bin
