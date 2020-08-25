@@ -192,8 +192,32 @@ $INST_DIR/bin/cpd-linux status \
 ![](img/ds-ready.jpg)
 
 
+### Start working with DataStage Edition
+
+#### Access IBM Watson Assistant web console
+
+> :information_source: Run this on Installer
+
+```
+oc get routes | awk 'NR==2 {print "Access the web console at https://" $2}'
+```
+
+> :bulb: Login as **admin** using **password** for password 
 
 
+#### Start working with DataStage Edition
+
+> :information_source: Run this on Cloud Pak for Data web console
+
+![](img/projects.jpg)
+
+1.   From the navigation, select Projects.     
+
+> :bulb: If Projects is missing then browse
+
+```
+oc get routes | awk 'NR==2 {print "https://" $2 "/zen/#/projectList"}'
+```
 
 <br>
 :checkered_flag::checkered_flag::checkered_flag:
