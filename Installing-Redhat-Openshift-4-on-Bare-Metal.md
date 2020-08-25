@@ -281,7 +281,7 @@ MASTER_COUNT="1"
 > :information_source: Run this on Installer
 
 ```
-[ -d "$INST_DIR" ] && { rm -rf $INST_DIR; mkdir $INST_DIR; }
+[ -d "$INST_DIR" ] && { rm -rf $INST_DIR; mkdir $INST_DIR; } || mkdir $INST_DIR
 cd $INST_DIR
 
 wget -c $WEB_SERVER_SOFT_URL/install-config.yaml
