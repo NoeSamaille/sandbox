@@ -1059,6 +1059,12 @@ vim-cmd vmsvc/getallvms | awk '$2 ~ "'$VM_PATTERN'" && $1 !~ "Vmid" {print "vim-
 
 > :warning: Wait for at least **24** hours before taking a valid snapshot
 
+>:bulb: Check cluster age
+
+```
+oc get nodes | awk 'NR==2 {print $4}'
+```
+
 ### -  [Take snapshot](https://github.com/bpshparis/sandbox/blob/master/Manage-ESX-snapshots.md#manage-esx-snapshots)
 
 
