@@ -311,7 +311,7 @@ WEB_SERVER="web"
 WEB_SERVER_PATH="/web/$OCP"
 ```
 
-#### Backup install-config.yaml on web server
+#### Backup install-config.yaml and ssh keys on web server
 
 > :information_source: Run this on Installer
 
@@ -322,7 +322,7 @@ sshpass -e ssh -o StrictHostKeyChecking=no root@$WEB_SERVER "rm -rf $WEB_SERVER_
 
 sshpass -e ssh -o StrictHostKeyChecking=no root@$WEB_SERVER "mkdir $WEB_SERVER_PATH"
 
-sshpass -e scp -o StrictHostKeyChecking=no install-config.yaml root@$WEB_SERVER:$WEB_SERVER_PATH
+sshpass -e scp -o StrictHostKeyChecking=no install-config.yaml ~/.ssh/id_rsa* root@$WEB_SERVER:$WEB_SERVER_PATH
 
 sshpass -e ssh -o StrictHostKeyChecking=no root@$WEB_SERVER "chmod -R +r $WEB_SERVER_PATH"
 ```

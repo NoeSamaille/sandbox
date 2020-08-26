@@ -120,7 +120,7 @@ $INST_DIR/bin/cpd-linux adm \
 
 > :warning: **vm.max_map_count** has to be set to **262144** for workers.
 
-> :warning: Access to cluster nodes are allowed as **core** only and only from the machine which run this [step](https://github.com/bpshparis/sandbox/blob/master/Installing-Redhat-Openshift-4-on-Bare-Metal.md#launch-wait-for-bootstrap-complete)
+> :warning: Access to cluster nodes are allowed over ssh as **core** only and only with **ssh public key** which run this [step](https://github.com/bpshparis/sandbox/blob/master/Installing-Redhat-Openshift-4-on-Bare-Metal.md#launch-wait-for-bootstrap-complete)
 
 #### Check
 
