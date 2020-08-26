@@ -1,4 +1,4 @@
-# Install DataStage Edition
+# Install Watson Studio
 
 ## Hardware requirements
 
@@ -6,15 +6,15 @@
 
 ## System requirements
 
-- Have completed  [Prepare for DataStage Edition](https://github.com/bpshparis/sandbox/blob/master/Prepare-for-DataStage-Edition.md#prepare-for-datastage-edition)
+- Have completed  [Prepare for Watson Studio](https://github.com/bpshparis/sandbox/blob/master/Prepare-for-Watson-Studio.md#prepare-for-watson-studio)
 - One **WEB server** where following files are available in **read mode**:
-  - [ds-3.2.307-x86_64.tar](https://github.com/bpshparis/sandbox/blob/master/Prepare-for-DataStage-Edition.md#save-datastage-edition-downloads-to-web-server)
+  - [wsl-3.0.1-x86_64.tar](https://github.com/bpshparis/sandbox/blob/master/Prepare-for-Watson-Studio.md#save-watson-studio-downloads-to-web-server)
 
 <br>
 :checkered_flag::checkered_flag::checkered_flag:
 <br>
 
-## Install DataStage Edition
+## Install Watson Studio
 
 > :information_source: Commands below are valid for a **Linux/Centos 7**.
 
@@ -35,7 +35,7 @@ NS="cpd"
 oc login https://$LB_HOSTNAME:6443 -u admin -p admin --insecure-skip-tls-verify=true -n $NS
 ```
 
-### Copy DataStage Edition Downloads from web server
+### Copy Watson Studio Downloads from web server
 
 > :warning: Adapt settings to fit to your environment.
 
@@ -43,8 +43,8 @@ oc login https://$LB_HOSTNAME:6443 -u admin -p admin --insecure-skip-tls-verify=
 
 ```
 INST_DIR=~/cpd
-ASSEMBLY="ds"
-VERSION="3.2.307"
+ASSEMBLY="wsl"
+VERSION="3.0.1"
 ARCH="x86_64"
 TAR_FILE="$ASSEMBLY-$VERSION-$ARCH.tar"
 WEB_SERVER_CP_URL="http://web/cloud-pak/assemblies"
@@ -60,7 +60,7 @@ tar xvf $TAR_FILE
 rm -f $TAR_FILE
 ```
 
-### Push DataStage Edition images to Openshift registry
+### Push Watson Studio images to Openshift registry
 
 > :warning: To avoid network failure, launch installation on locale console or in a screen
 
@@ -78,7 +78,7 @@ pkill screen; screen -mdS ADM && screen -r ADM
 
 ```
 INST_DIR=~/cpd
-ASSEMBLY="ds"
+ASSEMBLY="wsl"
 ARCH="x86_64"
 VERSION=$(find $INST_DIR/bin/cpd-linux-workspace/assembly/$ASSEMBLY/$ARCH/* -type d | awk -F'/' '{print $NF}')
 
@@ -101,7 +101,7 @@ $INST_DIR/bin/cpd-linux preloadImages \
 ```
 
 
-### Create DataStage Edition resources on cluster
+### Create Watson Studio resources on cluster
 
 > :information_source: Run this on Installer
 
@@ -116,14 +116,46 @@ $INST_DIR/bin/cpd-linux adm \
 --accept-all-licenses
 ```
 
->:bulb: Check **wdp-db2-sa** and **wkc-iis-sa** services account have been created
+### Prepare for Elasticsearch
+
+> :warning: **vm.max_map_count** has to be set to **262144** for workers.
+
+> :warning: Access to cluster nodes are allowed as **core** only and only from the machine which run this [step](https://github.com/bpshparis/sandbox/blob/master/Installing-Redhat-Openshift-4-on-Bare-Metal.md#launch-wait-for-bootstrap-complete)
+
+#### Check
+
+> :warning: Adapt settings to fit to your environment.
+
+> :information_source: Run this on Installer
 
 ```
-oc get sa
+WORKERS="w1-ocp5 w2-ocp5 w3-ocp5"
+ROOT_PWD="password"
 ```
 
+```
+for node in $WORKERS; do ssh -o StrictHostKeyChecking=no core@$node 'hostname -f; sysctl -n vm.max_map_count'; done
+```
 
-### Install DataStage Edition
+#### Update if necessary
+
+> :information_source: Run this on Installer
+
+```
+for node in $WORKERS; do ssh -o StrictHostKeyChecking=no core@$node 'hostname -f; echo '$ROOT_PWD' | sudo passwd root --stdin'; done
+
+for node in $WORKERS; do ssh -o StrictHostKeyChecking=no core@$node 'hostname -f; echo '$ROOT_PWD' | sudo -S sysctl -w vm.max_map_count=262144'; done
+
+for node in $WORKERS; do ssh -o StrictHostKeyChecking=no core@$node 'hostname -f; echo '$ROOT_PWD' | sudo -S chmod 646 /etc/sysctl.conf; ls -Alhtr /etc/sysctl.conf'; done
+
+for node in $WORKERS; do ssh -o StrictHostKeyChecking=no core@$node 'hostname -f; echo "vm.max_map_count=262144" | tee -a /etc/sysctl.conf'; done
+
+for node in $WORKERS; do ssh -o StrictHostKeyChecking=no core@$node 'hostname -f; tail -2 /etc/sysctl.conf'; done
+
+for node in $WORKERS; do ssh -o StrictHostKeyChecking=no core@$node 'hostname -f; echo '$ROOT_PWD' | sudo -S chmod 644 /etc/sysctl.conf; ls -Alhtr /etc/sysctl.conf'; done
+```
+
+### Install Watson Studio
 
 > :warning: Adapt settings to fit to your environment.
 
@@ -132,28 +164,31 @@ oc get sa
 ```
 SC="portworx-shared-gp3"
 INT_REG=$(oc describe pod $(oc get pod -n openshift-image-registry | awk '$1 ~ "image-registry-" {print $1}') -n openshift-image-registry | awk '$1 ~ "REGISTRY_OPENSHIFT_SERVER_ADDR:" {print $2}') && echo $INT_REG
-OVERRIDE=$INST_DIR/ds-override.yaml
+OVERRIDE=$INST_DIR/wsl-override.yaml
 ```
 
 ```
 cat > $OVERRIDE << EOF
-shared-services:
-  kafka:
-    volumeClaim:
-      overrideStorageClass: true
-      storageClassName: "portworx-kafka-sc"
-
-wdp-db2:
-  support4kDevice: true
-  volumeClaim:
-    storageClassName: "portworx-db2-rwo-sc"
+zenCoreMetaDb:
+  storageClass: "portworx-metastoredb-sc"
+couchdb:
+  persistentVolume:
+    storageClass: "portworx-couchdb-sc"
     overrideStorageClass: true
-
-xmetarepoVolumeInfo:
-  support4kDevice: true
-  volumeClaim:
-    storageClassName: "portworx-db2-rwo-sc"
+elasticsearch:
+  persistence:
+    storageClass: "portworx-elastic-sc"
     overrideStorageClass: true
+wdp-rabbitmq:
+  securityContext:
+    fsGroup: 1000320900
+  persistentVolume:
+    overrideStorageClass: true
+    storageClass: "portworx-gp3-sc"
+redis-ha:
+  persistentVolume:
+    overrideStorageClass: true  
+    storageClass: "portworx-gp3-sc"
 EOF
 ```
 
@@ -174,11 +209,11 @@ $INST_DIR/bin/cpd-linux \
 > :bulb: Check installation progress
 
 ```
-watch -n5 "oc get pvc | egrep -w 'ds|iis|is|kafka|solr' ; oc get po | egrep -w 'ds|iis|is|kafka|solr'"
+watch -n5 "oc get pvc | egrep -w 'wkc|couchdb|cassandra|rabbitmq|elasticsearch|redis' ; oc get po | egrep -w 'wkc|couchdb|cassandra|rabbitmq|elasticsearch|redis|ax|portal'"
 ```
 
 
-### Check DataStage Edition status
+### Check Watson Studio status
 
 > :information_source: Run this on Installer
 
@@ -189,10 +224,10 @@ $INST_DIR/bin/cpd-linux status \
 --arch $ARCH
 ```
 
-![](img/ds-ready.jpg)
+![](img/wsl-ready.jpg)
 
 
-### Start working with DataStage Edition
+### Start working with Watson Studio
 
 #### Access Cloud Pak for Data web console
 
@@ -205,7 +240,7 @@ oc get routes | awk 'NR==2 {print "Access the web console at https://" $2}'
 > :bulb: Login as **admin** using **password** for password 
 
 
-#### Start working with DataStage Edition
+#### Start working with Watson Studio
 
 > :information_source: Run this on Cloud Pak for Data web console
 
