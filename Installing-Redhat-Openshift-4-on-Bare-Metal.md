@@ -307,6 +307,7 @@ sed -i "s:^sshKey\:.*$:sshKey\: '$PUB_KEY':"  install-config.yaml
 > :information_source: Run this on Installer
 
 ```
+OCP="ocp5"
 WEB_SERVER="web"
 WEB_SERVER_PATH="/web/$OCP"
 ```
@@ -454,6 +455,7 @@ wget -c $WEB_SERVER_SOFT_URL/buildIso.sh
 > - **OCP**
 > - **WEB_SRV_URL**
 > - **RAW_IMG_URL**
+> - **DEVICE**
 > - **DNS**
 > -  **DOMAIN**
 > -  **IF**
@@ -630,6 +632,11 @@ W1_VNC_PORT=4
 W2_VNC_PORT=5
 W3_VNC_PORT=6
 ```
+
+>:bulb: Check nodes monitoring display something like
+
+![](img/progress.jpg)
+
 
 ### Monitor bootstrap
 
