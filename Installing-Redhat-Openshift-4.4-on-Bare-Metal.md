@@ -1,4 +1,4 @@
-# Installing Redhat Openshift 4 on Bare Metal
+# Installing Redhat Openshift 4.4 on Bare Metal
 
 This article is *read between lines* of [Installing a cluster on bare metal](https://docs.openshift.com/container-platform/4.3/installing/installing_bare_metal/installing-bare-metal.html).
 
@@ -11,16 +11,18 @@ Download [Redhat Openshift 4 on Bare Metal material](https://cloud.redhat.com/op
 ## Hardware requirements
 
 -  One computer which will be called **Installer** that runs Linux or MacOS, with 500 MB of local disk space.
--  One Lenovo **X3550M5** or similar to host **4** virtual machines (bootstrap will be removed after cluster install):
+-  One Lenovo **X3550M5** or similar to host **6** virtual machines (bootstrap will be removed after cluster install):
 
 | name                        | role                                              | vcpus  | ram (GB) | storage (GB) | ethernet (10GB) |
 | --------------------------- | ------------------------------------------------- | ------ | -------- | ------------ | --------------- |
-| m1-ocp5.iicparis.fr.ibm.com | master + etcd                                     | 4      | 16       | 120          | 1               |
-| w1-ocp5.iicparis.fr.ibm.com | worker                                            | 16     | 64       | 120          | 1               |
-| w2-ocp5.iicparis.fr.ibm.com | worker                                            | 16     | 64       | 120          | 1               |
-| w3-ocp5.iicparis.fr.ibm.com | worker                                            | 16     | 64       | 120          | 1               |
+| m1-ocp5.iicparis.fr.ibm.com | master + etcd                                     | 4      | 16       | 200          | 1               |
+| m2-ocp5.iicparis.fr.ibm.com | master + etcd                                     | 4      | 16       | 200          | 1               |
+| m3-ocp5.iicparis.fr.ibm.com | master + etcd                                     | 4      | 16       | 200          | 1               |
+| w1-ocp5.iicparis.fr.ibm.com | worker                                            | 16     | 64       | 200          | 1               |
+| w2-ocp5.iicparis.fr.ibm.com | worker                                            | 16     | 64       | 200          | 1               |
+| w3-ocp5.iicparis.fr.ibm.com | worker                                            | 16     | 64       | 200          | 1               |
 | bs-ocp5.iicparis.fr.ibm.com | bootstrap (will be removed after cluster install) | 4      | 16       | 120          | 1               |
-| **TOTAL**                   |                                                   | **52** | **208**  | **480**      | **4**           |
+| **TOTAL**                   |                                                   | **60** | **240**  | **1200**      | **6**           |
 
 
 ## System requirements
@@ -31,18 +33,18 @@ Download [Redhat Openshift 4 on Bare Metal material](https://cloud.redhat.com/op
 
 | Port      | machines                                                     | Description           |
 | --------- | ------------------------------------------------------------ | --------------------- |
-| 6443      | m1-ocp5.iicparis.fr.ibm.com<br>bs-ocp5.iicparis.fr.ibm.com   | Kubernetes API server |
-| 22623 | m1-ocp5.iicparis.fr.ibm.com<br/>bs-ocp5.iicparis.fr.ibm.com  | Machine Config server |
+| 6443      | m1-ocp5.iicparis.fr.ibm.com<br>m2-ocp5.iicparis.fr.ibm.com<br/>m3-ocp5.iicparis.fr.ibm.com<br/>bs-ocp5.iicparis.fr.ibm.com | Kubernetes API server |
+| 22623 | m1-ocp5.iicparis.fr.ibm.com<br/>m2-ocp5.iicparis.fr.ibm.com<br/>m3-ocp5.iicparis.fr.ibm.com<br/>bs-ocp5.iicparis.fr.ibm.com | Machine Config server |
 | 443       | w1-ocp5.iicparis.fr.ibm.com<br/>w2-ocp5.iicparis.fr.ibm.com<br/>w3-ocp5.iicparis.fr.ibm.com | HTTPS traffic         |
 | 80        | w1-ocp5.iicparis.fr.ibm.com<br/>w2-ocp5.iicparis.fr.ibm.com<br/>w3-ocp5.iicparis.fr.ibm.com | HTTP traffic          |
 
 - One **WEB server** where following files are available in **read mode**:
 
   - [Openshift pull secret](https://cloud.redhat.com/openshift/install/pull-secret) saved as pull-secret.txt
-  - [Linux](https://mirror.openshift.com/pub/openshift-v4/clients/ocp/4.3.33/openshift-install-linux-4.3.33.tar.gz) or [MacOS](https://mirror.openshift.com/pub/openshift-v4/clients/ocp/4.3.33/openshift-install-mac-4.3.33.tar.gz) OpenShift installer
-  - [Linux](https://mirror.openshift.com/pub/openshift-v4/clients/ocp/4.3.33/openshift-client-linux-4.3.33.tar.gz) or [MacOS](https://mirror.openshift.com/pub/openshift-v4/clients/ocp/4.3.33/openshift-client-mac-4.3.33.tar.gz) Openshift command line interface
-  - [Red Hat Enterprise Linux CoreOS raw image (*rhcos-4.X.X-x86_64-metal.x86_64.raw.gz*)](https://mirror.openshift.com/pub/openshift-v4/dependencies/rhcos/4.3/latest/rhcos-4.3.8-x86_64-metal.x86_64.raw.gz)
-  - [Red Hat Enterprise Linux CoreOS iso image (*rhcos-4.X.X-x86_64-installer.x86_64.iso*)](https://mirror.openshift.com/pub/openshift-v4/dependencies/rhcos/4.3/latest/rhcos-4.3.8-x86_64-installer.x86_64.iso)
+  - [Linux](https://mirror.openshift.com/pub/openshift-v4/clients/ocp/4.4.17/openshift-install-linux-4.4.17.tar.gz) or [MacOS](https://mirror.openshift.com/pub/openshift-v4/clients/ocp/4.4.17/openshift-install-mac-4.4.17.tar.gz) OpenShift installer
+  - [Linux](https://mirror.openshift.com/pub/openshift-v4/clients/ocp/4.4.17/openshift-client-linux-4.4.17.tar.gz) or [MacOS](https://mirror.openshift.com/pub/openshift-v4/clients/ocp/4.4.17/openshift-client-mac-4.4.17.tar.gz) Openshift command line interface
+  - [Red Hat Enterprise Linux CoreOS raw image](https://mirror.openshift.com/pub/openshift-v4/dependencies/rhcos/4.4/latest/rhcos-4.4.17-x86_64-metal.x86_64.raw.gz)
+  - [Red Hat Enterprise Linux CoreOS iso image](https://mirror.openshift.com/pub/openshift-v4/dependencies/rhcos/4.4/latest/rhcos-4.4.17-x86_64-installer.x86_64.iso)
   - [Openshift installation configuration file (*install-config.yaml*)](scripts/install-config.yaml)
   - [rhcos.vmx](scripts/rhcos.vmx)
   - [createOCP4Cluster.sh](scripts/createOCP4Cluster.sh)
@@ -66,6 +68,8 @@ IP_HEAD="172.16"
 OCP=ocp5
 CLI_IP=$IP_HEAD.187.50
 M1_IP=$IP_HEAD.187.51
+M2_IP=$IP_HEAD.187.52
+M3_IP=$IP_HEAD.187.53
 W1_IP=$IP_HEAD.187.54
 W2_IP=$IP_HEAD.187.55
 W3_IP=$IP_HEAD.187.56
@@ -81,6 +85,8 @@ RZONE=/var/lib/bind/$IP_HEAD.rev
 cat >> $MZONE << EOF
 cli-$OCP.$DOMAIN.   IN      A       $CLI_IP
 m1-$OCP.$DOMAIN.   IN      A       $M1_IP
+m2-$OCP.$DOMAIN.   IN      A       $M2_IP
+m3-$OCP.$DOMAIN.   IN      A       $M3_IP
 w1-$OCP.$DOMAIN.   IN      A       $W1_IP
 w2-$OCP.$DOMAIN.   IN      A       $W2_IP
 w3-$OCP.$DOMAIN.   IN      A       $W3_IP
@@ -89,8 +95,12 @@ api.$OCP.$DOMAIN.  IN      A       $CLI_IP
 api-int.$OCP.$DOMAIN.      IN      A       $CLI_IP
 apps.$OCP.$DOMAIN. IN      A       $CLI_IP
 etcd-0.$OCP.$DOMAIN.       IN      A       $M1_IP
+etcd-1.$OCP.$DOMAIN.       IN      A       $M2_IP
+etcd-2.$OCP.$DOMAIN.       IN      A       $M3_IP
 *.apps.$OCP.$DOMAIN.       IN      CNAME   apps.$OCP.$DOMAIN.
 _etcd-server-ssl._tcp.$OCP.$DOMAIN.        86400   IN      SRV     0 10 2380 etcd-0.$OCP.$DOMAIN.
+_etcd-server-ssl._tcp.$OCP.$DOMAIN.        86400   IN      SRV     0 10 2380 etcd-1.$OCP.$DOMAIN.
+_etcd-server-ssl._tcp.$OCP.$DOMAIN.        86400   IN      SRV     0 10 2380 etcd-2.$OCP.$DOMAIN.
 EOF
 ```
 
@@ -102,6 +112,8 @@ EOF
 cat >> $RZONE << EOF
 $(echo $CLI_IP | awk -F. '{print $4 "." $3 "." $2 "." $1}').in-addr.arpa.    IN      PTR     cli-$OCP.$DOMAIN.
 $(echo $M1_IP | awk -F. '{print $4 "." $3 "." $2 "." $1}').in-addr.arpa.    IN      PTR     m1-$OCP.$DOMAIN.
+$(echo $M2_IP | awk -F. '{print $4 "." $3 "." $2 "." $1}').in-addr.arpa.    IN      PTR     m2-$OCP.$DOMAIN.
+$(echo $M3_IP | awk -F. '{print $4 "." $3 "." $2 "." $1}').in-addr.arpa.    IN      PTR     m3-$OCP.$DOMAIN.
 $(echo $W1_IP | awk -F. '{print $4 "." $3 "." $2 "." $1}').in-addr.arpa.    IN      PTR     w1-$OCP.$DOMAIN.
 $(echo $W2_IP | awk -F. '{print $4 "." $3 "." $2 "." $1}').in-addr.arpa.    IN      PTR     w2-$OCP.$DOMAIN.
 $(echo $W3_IP | awk -F. '{print $4 "." $3 "." $2 "." $1}').in-addr.arpa.    IN      PTR     w3-$OCP.$DOMAIN.
@@ -122,7 +134,7 @@ service bind9 restart
 > :information_source: Run this on DNS
 
 ```
-for host in m1 w1 w2 w3 bs; do echo -n $host-$OCP "-> "; dig @localhost +short $host-$OCP.$DOMAIN; done
+for host in m1 m2 m3 w1 w2 w3 bs; do echo -n $host-$OCP "-> "; dig @localhost +short $host-$OCP.$DOMAIN; done
 ```
 
 ### Test reverse zone
@@ -130,7 +142,7 @@ for host in m1 w1 w2 w3 bs; do echo -n $host-$OCP "-> "; dig @localhost +short $
 > :information_source: Run this on DNS
 
 ```
-for host in m1 w1 w2 w3 bs; do IP=$(dig @localhost +short $host-$OCP.$DOMAIN); echo -n $IP "-> "; dig @localhost +short -x $IP; done
+for host in m1 m2 m3 w1 w2 w3 bs; do IP=$(dig @localhost +short $host-$OCP.$DOMAIN); echo -n $IP "-> "; dig @localhost +short -x $IP; done
 ```
 
 ### Test alias
@@ -167,6 +179,7 @@ dig @localhost +short _etcd-server-ssl._tcp.$OCP.$DOMAIN SRV
 OCP="ocp5"
 DOMAIN=$(cat /etc/resolv.conf | awk '$1 ~ "^search" {print $2}') && echo $DOMAIN
 LB_CONF="/etc/haproxy/haproxy.cfg" && echo $LB_CONF
+[ -f "$LB_CONF" ] && echo "haproxy already installed" || yum install haproxy -y
 ```
 
 ### :bulb: **Optional**: Remove existing config
@@ -226,6 +239,8 @@ backend openshift-api-server
     balance source
     mode tcp
     server m1-$OCP $(dig +short m1-$OCP.$DOMAIN):6443 check
+    server m2-$OCP $(dig +short m2-$OCP.$DOMAIN):6443 check
+    server m3-$OCP $(dig +short m3-$OCP.$DOMAIN):6443 check
     server bs-$OCP $(dig +short bs-$OCP.$DOMAIN):6443 check
 
 frontend machine-config-server
@@ -238,6 +253,8 @@ backend machine-config-server
     balance source
     mode tcp
     server m1-$OCP $(dig +short m1-$OCP.$DOMAIN):22623 check
+    server m2-$OCP $(dig +short m2-$OCP.$DOMAIN):22623 check
+    server m3-$OCP $(dig +short m3-$OCP.$DOMAIN):22623 check
     server bs-$OCP $(dig +short bs-$OCP.$DOMAIN):22623 check
 
 EOF
@@ -273,7 +290,7 @@ systemctl enable haproxy
 DOMAIN=$(cat /etc/resolv.conf | awk '$1 ~ "^search" {print $2}') && echo $DOMAIN
 WEB_SERVER_SOFT_URL="http://web/soft"
 INST_DIR=~/ocpinst && echo $INST_DIR
-MASTER_COUNT="1"
+MASTER_COUNT="3"
 ```
 
 #### Set install-config.yaml
@@ -338,8 +355,8 @@ sshpass -e ssh -o StrictHostKeyChecking=no root@$WEB_SERVER "chmod -R +r $WEB_SE
 
 ```
 WEB_SERVER_SOFT_URL="http://web/soft"
-INSTALLER_FILE="openshift-install-linux-4.3.33.tar.gz"
-CLIENT_FILE="openshift-client-linux-4.3.33.tar.gz"
+INSTALLER_FILE="openshift-install-linux-4.4.17.tar.gz"
+CLIENT_FILE="openshift-client-linux-4.4.17.tar.gz"
 ```
 
 #### Install Openshift installer, oc and kubectl commands
@@ -383,7 +400,7 @@ sed -i 's/mastersSchedulable: true/mastersSchedulable: false/' manifests/cluster
 ```
 WEB_SERVER="web"
 WEB_SERVER_PATH="/web/$OCP"
-RHCOS_IMG_PATH="/web/img/rhcos-4.3.8-x86_64-metal.x86_64.raw.gz"
+RHCOS_IMG_PATH="/web/img/rhcos-4.4.17-x86_64-metal.x86_64.raw.gz"
 ```
 
 #### Make ignition files and RHCOS image available on web server
@@ -417,7 +434,7 @@ ESX_SERVER="ocp5"
 
 ```
 WEB_SERVER_ISO_URL="http://web/iso"
-RHCOS_ISO_FILE="rhcos-4.3.8-x86_64-installer.x86_64.iso"
+RHCOS_ISO_FILE="rhcos-4.4.17-x86_64-installer.x86_64.iso"
 ISO_PATH="/media/iso"
 RW_ISO_PATH="/media/isorw"
 WEB_SERVER_SOFT_URL="http://web/soft"
