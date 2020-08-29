@@ -1000,16 +1000,17 @@ watch -n5 "oc get clusteroperators | grep registry"
 ```
 oc new-project validate
 
-oc new-app django-psql-example
+oc new-app ruby~https://github.com/sclorg/ruby-ex.git
 
 sleep 120
 
-oc logs -f bc/django-psql-example
+oc logs -f bc/ruby-ex
 ```
 
 >:bulb: Wait until **Successfully pushed image-registry.openshift-image-registry.svc:5000/validate/django-psql-example**
 
 ```
+oc expose svc/ruby-ex
 oc get routes | awk 'NR>1 {print "\nTo access your application, Visit url:\n"$2}'
 ```
 
