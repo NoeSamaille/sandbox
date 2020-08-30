@@ -333,6 +333,29 @@ watch -n5 "oc get pod -n openshift-storage"
 oc patch storageclass ocs-storagecluster-cephfs -p '{"metadata": {"annotations":{"storageclass.kubernetes.io/is-default-class":"true"}}}'
 ```
 
+#### Remove emptyDir storage
+
+> :information_source: Run this on Installer
+
+```
+oc patch -f configs.imageregistry.operator.openshift.io --type='json' -p='[{"op": "remove", "path": "/spec/storage/emptyDir"}]' --dry-run
+
+oc patch -f configs.imageregistry.operator.openshift.io --type='json' -p='[{"op": "remove", "path": "/spec/storage/emptyDir"}]'
+```
+
+#### Add persistent storage to the registry
+
+> :information_source: Run this on Installer
+
+```
+oc patch configs.imageregistry.operator.openshift.io cluster --type merge --patch '{"spec":{"storage":{"pvc":{"claim": ""}}}}'
+```
+
+>:bulb; Check pvc is  created and new pod is running
+
+```
+watch -n5 "oc get pod -n openshift-image-registry; oc get pvc -n openshift-image-registry"
+```
 
 <br>
 
