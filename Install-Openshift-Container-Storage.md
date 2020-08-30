@@ -230,7 +230,7 @@ metadata:
 EOF
 ```
 
-#### Add the labels to workers
+#### Add label to workers
 
 ```
 LABEL="\"cluster.ocs.openshift.io/openshift-storage=\""
