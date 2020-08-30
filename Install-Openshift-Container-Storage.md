@@ -240,7 +240,7 @@ oc get nodes | awk '$3 ~ "compute|worker" {print "oc label node " $1 " "'$LABEL'
 
 #### Installing Red Hat OpenShift Container Storage Operator using the Operator Hub
 
->:bulb Get Openshift web console url
+>:bulb: Get Openshift web console url
 
 ```
 oc get route -n openshift-console | awk 'NR>1 && $1 ~ "console" {print "https://"$2}'
@@ -309,7 +309,7 @@ EOF
 oc create -f $RES
 ```
 
->bulb: Monitor resources creation
+>:bulb: Monitor resources creation
 
 ```
 watch -n5 "oc get pvc -n openshift-storage; oc get pv -n openshift-storage"
@@ -333,7 +333,7 @@ watch -n5 "oc get pod -n openshift-storage"
 oc patch storageclass ocs-storagecluster-cephfs -p '{"metadata": {"annotations":{"storageclass.kubernetes.io/is-default-class":"true"}}}'
 ```
 
-#### Remove emptyDir storage
+##### Remove emptyDir storage
 
 > :information_source: Run this on Installer
 
@@ -343,7 +343,7 @@ oc patch -f configs.imageregistry.operator.openshift.io --type='json' -p='[{"op"
 oc patch -f configs.imageregistry.operator.openshift.io --type='json' -p='[{"op": "remove", "path": "/spec/storage/emptyDir"}]'
 ```
 
-#### Add persistent storage to the registry
+##### Add persistent storage to the registry
 
 > :information_source: Run this on Installer
 
