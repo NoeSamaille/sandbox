@@ -325,7 +325,7 @@ watch -n5 "oc get pod -n openshift-storage"
 
 #### Test the ocs-storagecluster-cephfs StorageClass adding persistent storage to the registry
 
-##### Set the ocs-storagecluster-cephfs StorageClass as the default one
+##### Set the ocs-storagecluster-cephfs StorageClass as the default one
 
 > :information_source: Run this on Installer
 
