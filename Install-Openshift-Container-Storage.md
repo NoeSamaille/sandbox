@@ -351,7 +351,7 @@ oc patch -f configs.imageregistry.operator.openshift.io --type='json' -p='[{"op"
 oc patch configs.imageregistry.operator.openshift.io cluster --type merge --patch '{"spec":{"storage":{"pvc":{"claim": ""}}}}'
 ```
 
->:bulb; Check pvc is  created and new pod is running
+>:bulb: Check pvc is  created and new pod is running
 
 ```
 watch -n5 "oc get pod -n openshift-image-registry; oc get pvc -n openshift-image-registry"
