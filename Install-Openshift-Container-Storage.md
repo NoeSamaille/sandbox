@@ -120,7 +120,7 @@ WORKERS_LIST="workers.yaml"
 oc get nodes | awk '$3 ~ "compute|worker" {print "          - " $1 "\r"}' | tee $WORKERS_LIST
 ```
 
-#### Provision the local volumes file system
+#### Provision local volumes file system
 
 > :warning: Adapt settings to fit to your environment.
 
@@ -162,7 +162,7 @@ oc create -f $FS_RES
 watch -n5 "oc get all -n $NS; oc get pv -n $NS"
 ```
 
-#### Provision the local volumes
+#### Provision local volumes
 
 > :warning: Adapt settings to fit to your environment.
 
