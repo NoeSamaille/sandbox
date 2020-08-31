@@ -268,6 +268,22 @@ VNC_PWD="password"
 echo $VNC_PWD | vncpasswd -f > ~/.vnc/passwd
 ```
 
+### Install oc and kubectl
+
+> :information_source: Run this on Installer
+
+```
+OC_URL="https://mirror.openshift.com/pub/openshift-v4/clients/ocp/4.4.17/openshift-client-linux-4.4.17.tar.gz"
+
+[ -z $(command -v oc) ] && { wget -c $OC_URL; tar -xvzf $(echo $OC_URL | awk -F'/' '{print $NF}') -C $(echo $PATH | awk -F":" 'NR==1 {print $1}'); oc version; } || { echo "oc and bubectl already installed"; }
+
+
+yum -y install bash-completion
+oc completion bash >>/etc/bash_completion.d/oc_completion
+```
+
+
+
 <br>
 
 :checkered_flag::checkered_flag::checkered_flag:
