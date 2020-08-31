@@ -2,7 +2,7 @@
 
 ## Hardware requirements
 
--  One computer which will be called **Installer** that runs Linux or MacOS, with 500 MB of local disk space.
+-  One computer which will be called **Installer** that runs Linux or MacOS.
 
 ## System requirements
 

@@ -10,7 +10,7 @@ Download [Redhat Openshift 4 on Bare Metal material](https://cloud.redhat.com/op
 
 ## Hardware requirements
 
--  One computer which will be called **Installer** that runs Linux or MacOS, with 500 MB of local disk space.
+-  One computer which will be called **Installer** that runs Linux or MacOS.
 -  One Lenovo **X3550M5** or similar to host **4** virtual machines (bootstrap will be removed after cluster install):
 
 | name                        | role                                              | vcpus  | ram (GB) | storage (GB) | ethernet (10GB) |
