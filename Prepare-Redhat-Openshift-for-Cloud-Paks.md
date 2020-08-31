@@ -499,6 +499,36 @@ watch -n5 "oc get pvc | grep test && oc get po | grep test"
 oc get sc
 ```
 
+### Add persistent storage to the registry
+
+#### Set default  storageclass
+
+> :information_source: Run this on Installer
+
+```
+SC="portworx-shared-gp3"
+
+oc patch storageclass $SC -p '{"metadata": {"annotations":{"storageclass.kubernetes.io/is-default-class":"true"}}}'
+```
+
+##### Remove emptyDir storage
+
+> :information_source: Run this on Installer
+
+```
+oc patch configs.imageregistry.operator.openshift.io --type='json' -p='[{"op": "remove", "path": "/spec/storage/emptyDir"}]' --dry-run
+
+oc patch configs.imageregistry.operator.openshift.io --type='json' -p='[{"op": "remove", "path": "/spec/storage/emptyDir"}]'
+```
+
+##### Add persistent storage to the registry
+
+> :information_source: Run this on Installer
+
+```
+oc patch configs.imageregistry.operator.openshift.io cluster --type merge --patch '{"spec":{"storage":{"pvc":{"claim": ""}}}}'
+```
+
 <br>
 
 :checkered_flag::checkered_flag::checkered_flag:

@@ -325,12 +325,14 @@ watch -n5 "oc get pod -n openshift-storage"
 
 #### Add persistent storage to the registry
 
-##### Set ocs-storagecluster-cephfs StorageClass as default
+##### Set default  storageclass
 
 > :information_source: Run this on Installer
 
 ```
-oc patch storageclass ocs-storagecluster-cephfs -p '{"metadata": {"annotations":{"storageclass.kubernetes.io/is-default-class":"true"}}}'
+SC="ocs-storagecluster-cephfs"
+
+oc patch storageclass $SC -p '{"metadata": {"annotations":{"storageclass.kubernetes.io/is-default-class":"true"}}}'
 ```
 
 ##### Remove emptyDir storage
@@ -338,9 +340,9 @@ oc patch storageclass ocs-storagecluster-cephfs -p '{"metadata": {"annotations":
 > :information_source: Run this on Installer
 
 ```
-oc patch -f configs.imageregistry.operator.openshift.io --type='json' -p='[{"op": "remove", "path": "/spec/storage/emptyDir"}]' --dry-run
+oc patch configs.imageregistry.operator.openshift.io --type='json' -p='[{"op": "remove", "path": "/spec/storage/emptyDir"}]' --dry-run
 
-oc patch -f configs.imageregistry.operator.openshift.io --type='json' -p='[{"op": "remove", "path": "/spec/storage/emptyDir"}]'
+oc patch configs.imageregistry.operator.openshift.io --type='json' -p='[{"op": "remove", "path": "/spec/storage/emptyDir"}]'
 ```
 
 ##### Add persistent storage to the registry
