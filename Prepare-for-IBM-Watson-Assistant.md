@@ -161,7 +161,6 @@ ASSEMBLY="ibm-watson-assistant"
 ARCH="x86_64"
 CPD_BIN="cpd-linux"
 CPD_WKS="cpd-linux-workspace/"
-TAR_FILE="$ASSEMBLY-$VERSION-$ARCH.tar"
 WEB_SERVER="web"
 WEB_SERVER_PATH="/web/cloud-pak/assemblies"
 WEB_SERVER_USER="root"
@@ -169,6 +168,7 @@ WEB_SERVER_PASS="password"
 VERSION=$(find $INST_DIR/bin/cpd-linux-workspace/assembly/$ASSEMBLY/$ARCH/* -type d | awk -F'/' '{print $NF}')
 
 [ ! -z "$VERSION" ] && echo $VERSION "-> OK" || echo "ERROR: VERSION is not set."
+TAR_FILE="$ASSEMBLY-$VERSION-$ARCH.tar"
 ```
 
 ```

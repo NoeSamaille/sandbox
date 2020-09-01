@@ -154,6 +154,7 @@ WEB_SERVER_PASS="password"
 VERSION=$(find $INST_DIR/bin/cpd-linux-workspace/assembly/$ASSEMBLY/$ARCH/* -type d | awk -F'/' '{print $NF}')
 
 [ ! -z "$VERSION" ] && echo $VERSION "-> OK" || echo "ERROR: VERSION is not set."
+TAR_FILE="$ASSEMBLY-$VERSION-$ARCH.tar"
 ```
 
 ```
