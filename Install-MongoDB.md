@@ -252,7 +252,7 @@ watch -n5 "oc get pvc | egrep -w 'mongodb'; oc get po | egrep -w 'mongodb'"
 ```
 NS="cpd"
 
-oc get routes -n $NS | grep mongodb | awk '{print "https://" $2}'
+oc get routes -n $NS | grep mongodb | awk '{print "http://" $2}'
 ```
 
 <br>
