@@ -967,7 +967,7 @@ watch -n5 "oc get clusteroperators | grep registry"
 
 <br>
 
-## Test OCP 4
+## Test OCP
 
 > :information_source: Run this on Installer
 
@@ -988,7 +988,7 @@ oc expose svc/ruby-ex
 oc get routes | awk 'NR>1 {print "\nTo access your application, Visit url:\n"$2}'
 ```
 
-### Extract OCP 4 web console CA
+### Extract OCP web console CA
 
 > :warning: Adapt settings to fit to your environment.
 
