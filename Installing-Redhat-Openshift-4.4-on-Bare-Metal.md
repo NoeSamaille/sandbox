@@ -1041,7 +1041,7 @@ openssl s_client -showcerts -connect $CONSOLE_HOSTNAME:443  </dev/null | awk '/B
 >:bulb: Add **$CONSOLE_HOSTNAME.crt** to Authorities in your **web browser Certificate Manager**
 
 
-### Get OCP 4 web console url and login
+### Get OCP web console url and login
 
 > :information_source: Run this on Installer
 
