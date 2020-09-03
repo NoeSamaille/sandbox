@@ -272,7 +272,7 @@ systemctl enable haproxy
 :checkered_flag::checkered_flag::checkered_flag:
 
 
-## Prepare installing OCP 4
+## Prepare installing OCP
 
 > :information_source: Commands below are valid for a **Linux/Centos 7**.
 
@@ -283,6 +283,8 @@ systemctl enable haproxy
 #### Set environment
 
 > :warning: Adapt settings to fit to your environment
+
+> :warning: Keep **MASTER_COUNT** set to **3** as installing with one master only does not work anymore in **OCP 4.4**.
 
 > :information_source: Run this on Installer
 
@@ -701,7 +703,7 @@ vncviewer $ESX_SERVER:$W3_VNC_PORT
 
 <br>
 
-## Monitor OCP 4 installation
+## Monitor OCP installation
 
 ### Launch wait-for-bootstrap-complete
 
@@ -869,7 +871,7 @@ cd $INST_DIR
 
 <br>
 
-## Post install OCP 4
+## Post install OCP
 
 ### Login to cluster as system:admin
 
@@ -895,13 +897,14 @@ oc whoami
 
 ```
 INST_DIR=~/ocpinst
+ADMIN_PASSWD="admin"
 ```
 
 ```
 cd $INST_DIR
 [ -z $(command -v htpasswd) ] && yum install -y httpd-tools || echo "htpasswd already installed"
 
-htpasswd -c -B -b admin.htpasswd admin admin                     
+htpasswd -c -B -b admin.htpasswd admin $ADMIN_PASSWD                     
 
 oc create secret generic admin-secret --from-file=htpasswd=$INST_DIR/admin.htpasswd  -n openshift-config
 
@@ -938,35 +941,6 @@ LB_HOSTNAME="cli-ocp5"
 
 ```
 oc login https://$LB_HOSTNAME:6443 -u admin -p admin --insecure-skip-tls-verify=true
-```
-
-### Set etcd-quorum-guard to unmanaged state
-
-> :warning: Apply patch only if you set **MASTER_COUNT** above to **1**
-
-> :information_source: Run this on Installer
-
-```
-oc patch clusterversion/version --type='merge' -p "$(cat <<- EOF
-spec:
-  overrides:
-    - group: apps/v1
-      kind: Deployment
-      name: etcd-quorum-guard
-      namespace: openshift-machine-config-operator
-      unmanaged: true
-EOF
-)"
-```
-
-### Downscale etcd-quorum-guard to one
-
-> :warning: Apply scale only if you set **MASTER_COUNT** above to **1**
-
-> :information_source: Run this on Installer
-
-```
-oc scale --replicas=1 deployment/etcd-quorum-guard -n openshift-machine-config-operator
 ```
 
 ### Setup image-registry to use ephemeral storage
@@ -1049,7 +1023,7 @@ openssl s_client -showcerts -connect $CONSOLE_HOSTNAME:443  </dev/null | awk '/B
 oc get route -n openshift-console | awk 'NR>1 && $1 ~ "console" {print "\nWeb Console is available with htpasswd_provider as admin with admin as password at:\nhttps://"$2}'
 ```
 
->:bulb: Login with htpasswd_provider
+>:bulb: Login with htpasswd_provider as **admin** using **admin** as password
 
 ![](img/loginwith-4.4.jpg)
 
