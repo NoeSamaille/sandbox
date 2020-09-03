@@ -340,9 +340,9 @@ oc patch storageclass $SC -p '{"metadata": {"annotations":{"storageclass.kuberne
 > :information_source: Run this on Installer
 
 ```
-oc patch configs.imageregistry.operator.openshift.io --type='json' -p='[{"op": "remove", "path": "/spec/storage/emptyDir"}]' --dry-run
+oc patch configs.imageregistry.operator.openshift.io cluster --type='json' -p='[{"op": "remove", "path": "/spec/storage/emptyDir"}]' --dry-run
 
-oc patch configs.imageregistry.operator.openshift.io --type='json' -p='[{"op": "remove", "path": "/spec/storage/emptyDir"}]'
+oc patch configs.imageregistry.operator.openshift.io cluster --type='json' -p='[{"op": "remove", "path": "/spec/storage/emptyDir"}]'
 ```
 
 ##### Add persistent storage to the registry
