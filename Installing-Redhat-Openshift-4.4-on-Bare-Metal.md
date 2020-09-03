@@ -862,7 +862,7 @@ cd $INST_DIR
 ![](img/installcomplete.jpg)
 
 
-### -  :thumbsup: [Next step](#post-install-ocp-4)
+### -  :thumbsup: [Next step](#post-install-ocp)
 ### -  :thumbsdown: [Revert snapshot](https://github.com/bpshparis/sandbox/blob/master/Manage-ESX-snapshots.md#manage-esx-snapshots)
 
 <br>
