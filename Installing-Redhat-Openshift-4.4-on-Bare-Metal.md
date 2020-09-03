@@ -1053,6 +1053,7 @@ oc get route -n openshift-console | awk 'NR>1 && $1 ~ "console" {print "\nWeb Co
 
 ![](img/loginwith-4.4.jpg)
 
+
 <br>
 
 :checkered_flag::checkered_flag::checkered_flag:
