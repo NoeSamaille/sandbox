@@ -1,0 +1,202 @@
+NAME                                                   READY   STATUS      RESTARTS   AGE
+pod/callerapi-f88f58ccc-9fdsq                          1/1     Running     0          48m
+pod/classifyprocess-classify-68c9c8d46c-qtc78          1/1     Running     0          48m
+pod/db2-release-db2u-restore-morph-job-pcwck           0/1     Completed   0          100m
+pod/db2u-release-db2u-0                                1/1     Running     0          104m
+pod/db2u-release-db2u-ldap-547b5d96c8-9h8gz            1/1     Running     0          104m
+pod/db2u-release-db2u-nodes-cfg-job-nfrn7              0/1     Completed   0          104m
+pod/db2u-release-db2u-sqllib-shared-job-dgcgp          0/1     Completed   0          104m
+pod/db2u-release-db2u-tools-84cff64577-v6nzv           1/1     Running     0          104m
+pod/db2u-release-etcd-0                                1/1     Running     0          104m
+pod/db2u-release-etcd-1                                1/1     Running     0          104m
+pod/db2u-release-etcd-2                                1/1     Running     0          103m
+pod/ibm-cp4a-operator-77d884584c-l77wj                 2/2     Running     0          106m
+pod/icp4adeploy-ban-job-f68sl                          0/1     Completed   0          54m
+pod/icp4adeploy-bastudio-authoring-jms-0               1/1     Running     0          16m
+pod/icp4adeploy-bastudio-bootstrap-d6rtf               0/1     Completed   0          17m
+pod/icp4adeploy-bastudio-deployment-74f45485b9-2r8c9   1/1     Running     0          14m
+pod/icp4adeploy-bastudio-ltpa-58b2c                    0/1     Completed   0          17m
+pod/icp4adeploy-bastudio-oidc-cjgqj                    0/1     Completed   0          17m
+pod/icp4adeploy-cpe-deploy-668f5d7f87-hx4vf            1/1     Running     0          83m
+pod/icp4adeploy-css-deploy-1-5bfcd44df9-wzqp6          1/1     Running     0          78m
+pod/icp4adeploy-dba-rr-185cee9f43                      1/1     Running     0          95m
+pod/icp4adeploy-dba-rr-aaf5b8cfb8                      1/1     Running     0          95m
+pod/icp4adeploy-dba-rr-faa082da37                      1/1     Running     0          95m
+pod/icp4adeploy-graphql-deploy-59fbb564f9-58sqb        1/1     Running     0          75m
+pod/icp4adeploy-navigator-deploy-69474bb98d-qmx68      1/1     Running     0          62m
+pod/icp4adeploy-openldap-deploy-56d64954c5-k2czk       1/1     Running     0          97m
+pod/icp4adeploy-pbk-ae-db-job-djm2f                    0/1     Completed   0          21m
+pod/icp4adeploy-pbk-ae-deployment-5ddc78ddc7-tftpf     1/1     Running     0          21m
+pod/icp4adeploy-pbk-ae-oidc-job-fc66w                  0/1     Completed   0          21m
+pod/icp4adeploy-phpldapadmin-87b9f9ddc-bks7c           1/1     Running     0          96m
+pod/icp4adeploy-rabbitmq-ha-0                          1/1     Running     0          48m
+pod/icp4adeploy-rabbitmq-ha-1                          1/1     Running     0          45m
+pod/icp4adeploy-redis-ha-server-0                      2/2     Running     0          48m
+pod/icp4adeploy-redis-ha-server-1                      2/2     Running     0          47m
+pod/icp4adeploy-rr-backup-1599585000-6spgq             0/1     Completed   0          67s
+pod/icp4adeploy-rr-setup-pod                           0/1     Completed   0          95m
+pod/icp4adeploy-ums-deployment-cbb969cc8-2lzks         1/1     Running     0          91m
+pod/icp4adeploy-ums-ltpa-creation-job-5d59j            0/1     Completed   0          92m
+pod/ocr-extraction-7b6d5d7757-2tdd6                    1/1     Running     0          48m
+pod/pdfprocess-b8dd479fb-276hg                         1/1     Running     0          48m
+pod/postprocessing-795465ddf-pb75x                     1/1     Running     0          48m
+pod/processing-extraction-57b68bc6bb-nnlb5             1/1     Running     0          48m
+pod/set-container-manage-cgroup-84vzt                  1/1     Running     0          104m
+pod/set-container-manage-cgroup-9hjz2                  1/1     Running     0          104m
+pod/set-container-manage-cgroup-hhlfj                  1/1     Running     0          104m
+pod/setup-64cc5866f4-s2stm                             1/1     Running     0          48m
+pod/spbackend-7bd5b96c4b-7nn8c                         1/1     Running     0          48m
+pod/spfrontend-75c4d6c48f-hlwzf                        1/1     Running     0          48m
+pod/updatefiledetail-69b844ccfc-ljpnm                  1/1     Running     6          48m
+pod/utf8process-745567c7bf-j28ch                       1/1     Running     0          48m
+
+NAME                                                 TYPE        CLUSTER-IP       EXTERNAL-IP   PORT(S)                                                                           AGE
+service/callerapi                                    ClusterIP   172.30.220.132   <none>        8080/TCP                                                                          48m
+service/db2u-release-db2u-engn-svc                   NodePort    172.30.82.57     <none>        50000:30974/TCP,50001:31437/TCP                                                   104m
+service/db2u-release-db2u-internal                   ClusterIP   None             <none>        50000/TCP,9443/TCP                                                                104m
+service/db2u-release-db2u-ldap                       NodePort    172.30.46.236    <none>        389:31233/TCP                                                                     104m
+service/db2u-release-etcd                            ClusterIP   None             <none>        2380/TCP,2379/TCP                                                                 104m
+service/ibm-cp4a-operator-metrics                    ClusterIP   172.30.86.219    <none>        8383/TCP,8686/TCP                                                                 105m
+service/icp4adeploy-bastudio-authoring-jms-service   ClusterIP   172.30.111.221   <none>        7286/TCP,9443/TCP                                                                 16m
+service/icp4adeploy-bastudio-service                 ClusterIP   172.30.148.47    <none>        443/TCP,9103/TCP                                                                  14m
+service/icp4adeploy-cpe-svc                          ClusterIP   172.30.206.53    <none>        9080/TCP,9443/TCP,9103/TCP                                                        83m
+service/icp4adeploy-css-svc-1                        ClusterIP   172.30.185.121   <none>        8199/TCP,9103/TCP                                                                 78m
+service/icp4adeploy-db2-service                      ClusterIP   172.30.3.107     <none>        50000/TCP,50001/TCP,25000/TCP,25001/TCP,25002/TCP,25003/TCP,25004/TCP,25005/TCP   104m
+service/icp4adeploy-dba-rr                           ClusterIP   None             <none>        2379/TCP,2380/TCP                                                                 95m
+service/icp4adeploy-dba-rr-client                    ClusterIP   172.30.145.117   <none>        2379/TCP,9103/TCP                                                                 95m
+service/icp4adeploy-graphql-svc                      ClusterIP   172.30.2.86      <none>        9080/TCP,9443/TCP,9103/TCP                                                        75m
+service/icp4adeploy-ldap-service                     ClusterIP   172.30.57.17     <none>        389/TCP,636/TCP                                                                   97m
+service/icp4adeploy-navigator-svc                    ClusterIP   172.30.136.219   <none>        9080/TCP,9443/TCP,9103/TCP                                                        62m
+service/icp4adeploy-pbk-ae-service                   ClusterIP   172.30.197.169   <none>        443/TCP,9103/TCP                                                                  22m
+service/icp4adeploy-phpldapadmin-svc                 ClusterIP   172.30.81.50     <none>        6443/TCP                                                                          96m
+service/icp4adeploy-rabbitmq                         ClusterIP   172.30.153.37    <none>        15672/TCP,5672/TCP,4369/TCP,5671/TCP                                              48m
+service/icp4adeploy-rabbitmq-ha-discovery            ClusterIP   None             <none>        15672/TCP,5672/TCP,4369/TCP,5671/TCP                                              48m
+service/icp4adeploy-redis-ha                         ClusterIP   None             <none>        6379/TCP,26379/TCP                                                                48m
+service/icp4adeploy-redis-ha-announce-0              ClusterIP   172.30.253.202   <none>        6379/TCP,26379/TCP                                                                48m
+service/icp4adeploy-redis-ha-announce-1              ClusterIP   172.30.51.31     <none>        6379/TCP,26379/TCP                                                                48m
+service/icp4adeploy-ums-scim-service                 ClusterIP   172.30.217.217   <none>        9443/TCP,443/TCP                                                                  91m
+service/icp4adeploy-ums-service                      ClusterIP   172.30.141.134   <none>        9443/TCP,443/TCP                                                                  91m
+service/icp4adeploy-ums-sso-service                  ClusterIP   172.30.108.68    <none>        9443/TCP,443/TCP                                                                  91m
+service/icp4adeploy-ums-teams-service                ClusterIP   172.30.11.161    <none>        9443/TCP,443/TCP                                                                  91m
+service/spbackend                                    NodePort    172.30.68.191    <none>        8080:30836/TCP                                                                    48m
+service/spfrontend                                   NodePort    172.30.242.57    <none>        8080:32657/TCP                                                                    48m
+
+NAME                                         DESIRED   CURRENT   READY   UP-TO-DATE   AVAILABLE   NODE SELECTOR   AGE
+daemonset.apps/set-container-manage-cgroup   3         3         3       3            3           <none>          104m
+
+NAME                                              READY   UP-TO-DATE   AVAILABLE   AGE
+deployment.apps/callerapi                         1/1     1            1           48m
+deployment.apps/classifyprocess-classify          1/1     1            1           48m
+deployment.apps/db2u-release-db2u-ldap            1/1     1            1           104m
+deployment.apps/db2u-release-db2u-tools           1/1     1            1           104m
+deployment.apps/ibm-cp4a-operator                 1/1     1            1           106m
+deployment.apps/icp4adeploy-bastudio-deployment   1/1     1            1           14m
+deployment.apps/icp4adeploy-cpe-deploy            1/1     1            1           83m
+deployment.apps/icp4adeploy-css-deploy-1          1/1     1            1           78m
+deployment.apps/icp4adeploy-graphql-deploy        1/1     1            1           75m
+deployment.apps/icp4adeploy-navigator-deploy      1/1     1            1           62m
+deployment.apps/icp4adeploy-openldap-deploy       1/1     1            1           97m
+deployment.apps/icp4adeploy-pbk-ae-deployment     1/1     1            1           21m
+deployment.apps/icp4adeploy-phpldapadmin          1/1     1            1           96m
+deployment.apps/icp4adeploy-ums-deployment        1/1     1            1           91m
+deployment.apps/ocr-extraction                    1/1     1            1           48m
+deployment.apps/pdfprocess                        1/1     1            1           48m
+deployment.apps/postprocessing                    1/1     1            1           48m
+deployment.apps/processing-extraction             1/1     1            1           48m
+deployment.apps/setup                             1/1     1            1           48m
+deployment.apps/spbackend                         1/1     1            1           48m
+deployment.apps/spfrontend                        1/1     1            1           48m
+deployment.apps/updatefiledetail                  1/1     1            1           48m
+deployment.apps/utf8process                       1/1     1            1           48m
+
+NAME                                                         DESIRED   CURRENT   READY   AGE
+replicaset.apps/callerapi-f88f58ccc                          1         1         1       48m
+replicaset.apps/classifyprocess-classify-68c9c8d46c          1         1         1       48m
+replicaset.apps/db2u-release-db2u-ldap-547b5d96c8            1         1         1       104m
+replicaset.apps/db2u-release-db2u-tools-84cff64577           1         1         1       104m
+replicaset.apps/ibm-cp4a-operator-77d884584c                 1         1         1       106m
+replicaset.apps/icp4adeploy-bastudio-deployment-74f45485b9   1         1         1       14m
+replicaset.apps/icp4adeploy-cpe-deploy-668f5d7f87            1         1         1       83m
+replicaset.apps/icp4adeploy-css-deploy-1-5bfcd44df9          1         1         1       78m
+replicaset.apps/icp4adeploy-graphql-deploy-59fbb564f9        1         1         1       75m
+replicaset.apps/icp4adeploy-navigator-deploy-69474bb98d      1         1         1       62m
+replicaset.apps/icp4adeploy-openldap-deploy-56d64954c5       1         1         1       97m
+replicaset.apps/icp4adeploy-pbk-ae-deployment-5ddc78ddc7     1         1         1       21m
+replicaset.apps/icp4adeploy-phpldapadmin-87b9f9ddc           1         1         1       96m
+replicaset.apps/icp4adeploy-ums-deployment-cbb969cc8         1         1         1       91m
+replicaset.apps/ocr-extraction-7b6d5d7757                    1         1         1       48m
+replicaset.apps/pdfprocess-b8dd479fb                         1         1         1       48m
+replicaset.apps/postprocessing-795465ddf                     1         1         1       48m
+replicaset.apps/processing-extraction-57b68bc6bb             1         1         1       48m
+replicaset.apps/setup-64cc5866f4                             1         1         1       48m
+replicaset.apps/spbackend-7bd5b96c4b                         1         1         1       48m
+replicaset.apps/spfrontend-75c4d6c48f                        1         1         1       48m
+replicaset.apps/updatefiledetail-69b844ccfc                  1         1         1       48m
+replicaset.apps/utf8process-745567c7bf                       1         1         1       48m
+
+NAME                                                  READY   AGE
+statefulset.apps/db2u-release-db2u                    1/1     104m
+statefulset.apps/db2u-release-etcd                    3/3     104m
+statefulset.apps/icp4adeploy-bastudio-authoring-jms   1/1     16m
+statefulset.apps/icp4adeploy-rabbitmq-ha              2/2     48m
+statefulset.apps/icp4adeploy-redis-ha-server          2/2     48m
+
+NAME                                            COMPLETIONS   DURATION   AGE
+job.batch/db2-release-db2u-restore-morph-job    1/1           97s        100m
+job.batch/db2u-release-db2u-nodes-cfg-job       1/1           66s        104m
+job.batch/db2u-release-db2u-sqllib-shared-job   1/1           37s        104m
+job.batch/icp4adeploy-ban-job                   1/1           47m        54m
+job.batch/icp4adeploy-bastudio-bootstrap        1/1           7m22s      17m
+job.batch/icp4adeploy-bastudio-ltpa             1/1           49s        17m
+job.batch/icp4adeploy-bastudio-oidc             1/1           10s        17m
+job.batch/icp4adeploy-pbk-ae-db-job             1/1           2m31s      21m
+job.batch/icp4adeploy-pbk-ae-oidc-job           1/1           11s        21m
+job.batch/icp4adeploy-rr-backup-1599585000      1/1           4s         67s
+job.batch/icp4adeploy-ums-ltpa-creation-job     1/1           63s        92m
+
+NAME                                  SCHEDULE      SUSPEND   ACTIVE   LAST SCHEDULE   AGE
+cronjob.batch/icp4adeploy-rr-backup   */5 * * * *   False     0        70s             95m
+
+NAME                                                       IMAGE REPOSITORY                                                                                       TAGS                  UPDATED
+imagestream.image.openshift.io/backend                     default-route-openshift-image-registry.apps.ocp15.iicparis.fr.ibm.com/cp4a/backend                     20.0.1                27 hours ago
+imagestream.image.openshift.io/busybox                     default-route-openshift-image-registry.apps.ocp15.iicparis.fr.ibm.com/cp4a/busybox                     latest                27 hours ago
+imagestream.image.openshift.io/cmis                        default-route-openshift-image-registry.apps.ocp15.iicparis.fr.ibm.com/cp4a/cmis                        ga-304-cmis-if010     27 hours ago
+imagestream.image.openshift.io/cpe                         default-route-openshift-image-registry.apps.ocp15.iicparis.fr.ibm.com/cp4a/cpe                         ga-554-p8cpe-if001    27 hours ago
+imagestream.image.openshift.io/css                         default-route-openshift-image-registry.apps.ocp15.iicparis.fr.ibm.com/cp4a/css                         ga-554-p8css-if001    27 hours ago
+imagestream.image.openshift.io/db2                         default-route-openshift-image-registry.apps.ocp15.iicparis.fr.ibm.com/cp4a/db2                         11.5.1.0-CN1          27 hours ago
+imagestream.image.openshift.io/db2u.auxiliary.auth         default-route-openshift-image-registry.apps.ocp15.iicparis.fr.ibm.com/cp4a/db2u.auxiliary.auth         11.5.1.0-CN1          27 hours ago
+imagestream.image.openshift.io/db2u.instdb                 default-route-openshift-image-registry.apps.ocp15.iicparis.fr.ibm.com/cp4a/db2u.instdb                 11.5.1.0-CN1          27 hours ago
+imagestream.image.openshift.io/db2u.tools                  default-route-openshift-image-registry.apps.ocp15.iicparis.fr.ibm.com/cp4a/db2u.tools                  11.5.1.0-CN1          27 hours ago
+imagestream.image.openshift.io/dba-keytool-initcontainer   default-route-openshift-image-registry.apps.ocp15.iicparis.fr.ibm.com/cp4a/dba-keytool-initcontainer   20.0.2                27 hours ago
+imagestream.image.openshift.io/dba-keytool-jobcontainer    default-route-openshift-image-registry.apps.ocp15.iicparis.fr.ibm.com/cp4a/dba-keytool-jobcontainer    20.0.2                27 hours ago
+imagestream.image.openshift.io/etcd                        default-route-openshift-image-registry.apps.ocp15.iicparis.fr.ibm.com/cp4a/etcd                        v3.3.10               27 hours ago
+imagestream.image.openshift.io/extraction                  default-route-openshift-image-registry.apps.ocp15.iicparis.fr.ibm.com/cp4a/extraction                  20.0.1                27 hours ago
+imagestream.image.openshift.io/extshare                    default-route-openshift-image-registry.apps.ocp15.iicparis.fr.ibm.com/cp4a/extshare                    ga-307-es-if002       27 hours ago
+imagestream.image.openshift.io/graphql                     default-route-openshift-image-registry.apps.ocp15.iicparis.fr.ibm.com/cp4a/graphql                     ga-554-p8cgql-if001   27 hours ago
+imagestream.image.openshift.io/icp4a-operator              default-route-openshift-image-registry.apps.ocp15.iicparis.fr.ibm.com/cp4a/icp4a-operator              20.0.2                27 hours ago
+imagestream.image.openshift.io/mongo                       default-route-openshift-image-registry.apps.ocp15.iicparis.fr.ibm.com/cp4a/mongo                       20.0.1                27 hours ago
+imagestream.image.openshift.io/navigator                   default-route-openshift-image-registry.apps.ocp15.iicparis.fr.ibm.com/cp4a/navigator                   ga-308-icn            26 hours ago
+imagestream.image.openshift.io/navigator-sso               default-route-openshift-image-registry.apps.ocp15.iicparis.fr.ibm.com/cp4a/navigator-sso               ga-308-icn            26 hours ago
+imagestream.image.openshift.io/openldap                    default-route-openshift-image-registry.apps.ocp15.iicparis.fr.ibm.com/cp4a/openldap                    1.3.0                 27 hours ago
+imagestream.image.openshift.io/phpldapadmin                default-route-openshift-image-registry.apps.ocp15.iicparis.fr.ibm.com/cp4a/phpldapadmin                0.9.0                 27 hours ago
+imagestream.image.openshift.io/processing                  default-route-openshift-image-registry.apps.ocp15.iicparis.fr.ibm.com/cp4a/processing                  20.0.1                27 hours ago
+imagestream.image.openshift.io/rabbitmq                    default-route-openshift-image-registry.apps.ocp15.iicparis.fr.ibm.com/cp4a/rabbitmq                    20.0.1                27 hours ago
+imagestream.image.openshift.io/redis                       default-route-openshift-image-registry.apps.ocp15.iicparis.fr.ibm.com/cp4a/redis                       20.0.1                27 hours ago
+imagestream.image.openshift.io/spfrontend                  default-route-openshift-image-registry.apps.ocp15.iicparis.fr.ibm.com/cp4a/spfrontend                  20.0.1                27 hours ago
+imagestream.image.openshift.io/taskmgr                     default-route-openshift-image-registry.apps.ocp15.iicparis.fr.ibm.com/cp4a/taskmgr                     ga-307-tm-if002       27 hours ago
+imagestream.image.openshift.io/ums                         default-route-openshift-image-registry.apps.ocp15.iicparis.fr.ibm.com/cp4a/ums                         20.0.2                27 hours ago
+
+NAME                                                      HOST/PORT                                            PATH   SERVICES                        PORT         TERMINATION            WILDCARD
+route.route.openshift.io/aca-spbackend                    backend.cp4a.apps.ocp15.iicparis.fr.ibm.com                 spbackend                       spbackend    reencrypt/Redirect     None
+route.route.openshift.io/aca-spfrontend                   frontend.cp4a.apps.ocp15.iicparis.fr.ibm.com                spfrontend                      spfrontend   reencrypt/Redirect     None
+route.route.openshift.io/icp4a-icp4adeploy-rr-route       rr.cp4a.apps.ocp15.iicparis.fr.ibm.com                      icp4adeploy-dba-rr-client       2379         passthrough/Redirect   None
+route.route.openshift.io/icp4adeploy-bastudio-route       bas.cp4a.apps.ocp15.iicparis.fr.ibm.com                     icp4adeploy-bastudio-service    https        reencrypt/Redirect     None
+route.route.openshift.io/icp4adeploy-cpe-route            cpe-cp4a.apps.ocp15.iicparis.fr.ibm.com                     icp4adeploy-cpe-svc             https        reencrypt/Redirect     None
+route.route.openshift.io/icp4adeploy-graphql-route        graphql-cp4a.apps.ocp15.iicparis.fr.ibm.com                 icp4adeploy-graphql-svc         https        reencrypt/Redirect     None
+route.route.openshift.io/icp4adeploy-navigator-route      navigator-cp4a.apps.ocp15.iicparis.fr.ibm.com               icp4adeploy-navigator-svc       https        reencrypt/Redirect     None
+route.route.openshift.io/icp4adeploy-pbk-ae-service       ae-pbk.cp4a.apps.ocp15.iicparis.fr.ibm.com                  icp4adeploy-pbk-ae-service      https        reencrypt/Redirect     None
+route.route.openshift.io/icp4adeploy-phpldapadmin-route   ldapwebconsole-cp4a.apps.ocp15.iicparis.fr.ibm.com          icp4adeploy-phpldapadmin-svc    https-port   reencrypt/Redirect     None
+route.route.openshift.io/icp4adeploy-ums-route            ums.cp4a.apps.ocp15.iicparis.fr.ibm.com              /      icp4adeploy-ums-service         https        reencrypt              None
+route.route.openshift.io/icp4adeploy-ums-scim-route       ums-scim.ums.cp4a.apps.ocp15.iicparis.fr.ibm.com     /      icp4adeploy-ums-scim-service    https        reencrypt              None
+route.route.openshift.io/icp4adeploy-ums-sso-route        ums-sso.ums.cp4a.apps.ocp15.iicparis.fr.ibm.com      /      icp4adeploy-ums-sso-service     https        reencrypt              None
+route.route.openshift.io/icp4adeploy-ums-teams-route      ums-teams.ums.cp4a.apps.ocp15.iicparis.fr.ibm.com    /      icp4adeploy-ums-teams-service   https        reencrypt              None
