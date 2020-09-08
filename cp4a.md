@@ -127,5 +127,6 @@ For details, refer to the troubleshooting section in Knowledge Center here:
 https://www.ibm.com/support/knowledgecenter/SSYHZ8_20.0.x/com.ibm.dba.install/op_topics/tsk_trbleshoot_operators.html
 
 
+watch -n5 "oc get pvc -n cp4a; oc get all -n cp4a"
 
 
