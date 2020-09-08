@@ -14,7 +14,7 @@ OCP=""
 [ -z "$OCP" ] && { echo -e "$RED ERROR: OCP is empty. Exiting... $NC"; exit 1; }
 
 WEB_SRV_URL="http://172.16.160.150/$OCP"
-RAW_IMG_URL="$WEB_SRV_URL/rhcos-4.3.8-x86_64-metal.x86_64.raw.gz"
+RAW_IMG_URL="$WEB_SRV_URL/rhcos-4.3.33-x86_64-metal.x86_64.raw.gz"
 
 DNS="172.16.160.100"
 DOMAIN="iicparis.fr.ibm.com"
