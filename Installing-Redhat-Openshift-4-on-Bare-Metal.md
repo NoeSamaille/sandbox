@@ -785,6 +785,11 @@ export KUBECONFIG=$INST_DIR/auth/kubeconfig
 oc whoami
 ```
 
+>:warning: Launch command until following errors are displayed
+
+- Unable to connect to the server: EOF
+- Error from server (NotFound): the server could not find the requested resource (get users.user.openshift.io ~)
+
 >:bulb: Last command above should return **system:admin**
 
 
