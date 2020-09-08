@@ -41,8 +41,8 @@ Download [Redhat Openshift 4 on Bare Metal material](https://cloud.redhat.com/op
   - [Openshift pull secret](https://cloud.redhat.com/openshift/install/pull-secret) saved as pull-secret.txt
   - [Linux](https://mirror.openshift.com/pub/openshift-v4/clients/ocp/4.3.33/openshift-install-linux-4.3.33.tar.gz) or [MacOS](https://mirror.openshift.com/pub/openshift-v4/clients/ocp/4.3.33/openshift-install-mac-4.3.33.tar.gz) OpenShift installer
   - [Linux](https://mirror.openshift.com/pub/openshift-v4/clients/ocp/4.3.33/openshift-client-linux-4.3.33.tar.gz) or [MacOS](https://mirror.openshift.com/pub/openshift-v4/clients/ocp/4.3.33/openshift-client-mac-4.3.33.tar.gz) Openshift command line interface
-  - [Red Hat Enterprise Linux CoreOS raw image (*rhcos-4.X.X-x86_64-metal.x86_64.raw.gz*)](https://mirror.openshift.com/pub/openshift-v4/dependencies/rhcos/4.3/latest/rhcos-4.3.8-x86_64-metal.x86_64.raw.gz)
-  - [Red Hat Enterprise Linux CoreOS iso image (*rhcos-4.X.X-x86_64-installer.x86_64.iso*)](https://mirror.openshift.com/pub/openshift-v4/dependencies/rhcos/4.3/latest/rhcos-4.3.8-x86_64-installer.x86_64.iso)
+  - [Red Hat Enterprise Linux CoreOS raw image (*rhcos-4.3.33-x86_64-metal.x86_64.raw.gz*)](https://mirror.openshift.com/pub/openshift-v4/dependencies/rhcos/4.3/4.3.33/rhcos-4.3.33-x86_64-metal.x86_64.raw.gz)
+  - [Red Hat Enterprise Linux CoreOS iso image (*rhcos-4.3.33-x86_64-installer.x86_64.iso*)](https://mirror.openshift.com/pub/openshift-v4/dependencies/rhcos/4.3/4.3.33/rhcos-4.3.33-x86_64-installer.x86_64.iso)
   - [Openshift installation configuration file (*install-config.yaml*)](scripts/install-config.yaml)
   - [rhcos.vmx](scripts/rhcos.vmx)
   - [createOCP4Cluster.sh](scripts/createOCP4Cluster.sh)
@@ -63,13 +63,13 @@ Download [Redhat Openshift 4 on Bare Metal material](https://cloud.redhat.com/op
 ```
 DOMAIN=$(cat /etc/resolv.conf | awk '$1 ~ "search" {print $2}') && echo $DOMAIN
 IP_HEAD="172.16"
-OCP=ocp5
-CLI_IP=$IP_HEAD.187.50
-M1_IP=$IP_HEAD.187.51
-W1_IP=$IP_HEAD.187.54
-W2_IP=$IP_HEAD.187.55
-W3_IP=$IP_HEAD.187.56
-BS_IP=$IP_HEAD.187.59
+OCP=ocp3
+CLI_IP=$IP_HEAD.187.30
+M1_IP=$IP_HEAD.187.31
+W1_IP=$IP_HEAD.187.34
+W2_IP=$IP_HEAD.187.35
+W3_IP=$IP_HEAD.187.36
+BS_IP=$IP_HEAD.187.39
 MZONE=/var/lib/bind/$DOMAIN.hosts
 RZONE=/var/lib/bind/$IP_HEAD.rev
 ```
@@ -255,7 +255,7 @@ systemctl enable haproxy
 :checkered_flag::checkered_flag::checkered_flag:
 
 
-## Prepare installing OCP
+## Prepare installing OCP 4
 
 > :information_source: Commands below are valid for a **Linux/Centos 7**.
 
@@ -307,7 +307,7 @@ sed -i "s:^sshKey\:.*$:sshKey\: '$PUB_KEY':"  install-config.yaml
 > :information_source: Run this on Installer
 
 ```
-OCP="ocp5"
+OCP="ocp3"
 WEB_SERVER="web"
 WEB_SERVER_PATH="/web/$OCP"
 ```
@@ -684,7 +684,7 @@ vncviewer $ESX_SERVER:$W3_VNC_PORT
 
 <br>
 
-## Monitor OCP installation
+## Monitor OCP 4 installation
 
 ### Launch wait-for-bootstrap-complete
 
@@ -852,7 +852,7 @@ cd $INST_DIR
 
 <br>
 
-## Post install OCP
+## Post install OCP 4
 
 ### Login to cluster as system:admin
 
@@ -878,14 +878,13 @@ oc whoami
 
 ```
 INST_DIR=~/ocpinst
-ADMIN_PASSWD="admin"
 ```
 
 ```
 cd $INST_DIR
 [ -z $(command -v htpasswd) ] && yum install -y httpd-tools || echo "htpasswd already installed"
 
-htpasswd -c -B -b admin.htpasswd admin $ADMIN_PASSWD                     
+htpasswd -c -B -b admin.htpasswd admin admin                     
 
 oc create secret generic admin-secret --from-file=htpasswd=$INST_DIR/admin.htpasswd  -n openshift-config
 
@@ -977,7 +976,7 @@ watch -n5 "oc get clusteroperators | grep registry"
 
 <br>
 
-## Test OCP
+## Test OCP 4
 
 > :information_source: Run this on Installer
 
@@ -997,7 +996,7 @@ oc logs -f bc/django-psql-example
 oc get routes | awk 'NR>1 {print "\nTo access your application, Visit url:\n"$2}'
 ```
 
-### Extract OCP web console CA
+### Extract OCP 4 web console CA
 
 > :warning: Adapt settings to fit to your environment.
 
@@ -1024,7 +1023,7 @@ openssl s_client -showcerts -connect $CONSOLE_HOSTNAME:443  </dev/null | awk '/B
 >:bulb: Add **$CONSOLE_HOSTNAME.crt** to Authorities in your **web browser Certificate Manager**
 
 
-### Get OCP web console url and login
+### Get OCP 4 web console url and login
 
 > :information_source: Run this on Installer
 
@@ -1032,7 +1031,7 @@ openssl s_client -showcerts -connect $CONSOLE_HOSTNAME:443  </dev/null | awk '/B
 oc get route -n openshift-console | awk 'NR>1 && $1 ~ "console" {print "\nWeb Console is available with htpasswd_provider as admin with admin as password at:\nhttps://"$2}'
 ```
 
->:bulb: Login with htpasswd_provider as **admin** using **admin** as password
+>:bulb: Login with htpasswd_provider
 
 ![](img/loginwith.jpg)
 
