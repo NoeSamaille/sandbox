@@ -255,7 +255,7 @@ systemctl enable haproxy
 :checkered_flag::checkered_flag::checkered_flag:
 
 
-## Prepare installing OCP 4
+## Prepare installing OCP
 
 > :information_source: Commands below are valid for a **Linux/Centos 7**.
 
@@ -684,7 +684,7 @@ vncviewer $ESX_SERVER:$W3_VNC_PORT
 
 <br>
 
-## Monitor OCP 4 installation
+## Monitor OCP installation
 
 ### Launch wait-for-bootstrap-complete
 
@@ -852,7 +852,7 @@ cd $INST_DIR
 
 <br>
 
-## Post install OCP 4
+## Post install OCP
 
 ### Login to cluster as system:admin
 
@@ -878,13 +878,14 @@ oc whoami
 
 ```
 INST_DIR=~/ocpinst
+ADMIN_PASSWD="admin"
 ```
 
 ```
 cd $INST_DIR
 [ -z $(command -v htpasswd) ] && yum install -y httpd-tools || echo "htpasswd already installed"
 
-htpasswd -c -B -b admin.htpasswd admin admin                     
+htpasswd -c -B -b admin.htpasswd admin $ADMIN_PASSWD                     
 
 oc create secret generic admin-secret --from-file=htpasswd=$INST_DIR/admin.htpasswd  -n openshift-config
 
@@ -976,7 +977,7 @@ watch -n5 "oc get clusteroperators | grep registry"
 
 <br>
 
-## Test OCP 4
+## Test OCP
 
 > :information_source: Run this on Installer
 
@@ -996,7 +997,7 @@ oc logs -f bc/django-psql-example
 oc get routes | awk 'NR>1 {print "\nTo access your application, Visit url:\n"$2}'
 ```
 
-### Extract OCP 4 web console CA
+### Extract OCP web console CA
 
 > :warning: Adapt settings to fit to your environment.
 
@@ -1023,7 +1024,7 @@ openssl s_client -showcerts -connect $CONSOLE_HOSTNAME:443  </dev/null | awk '/B
 >:bulb: Add **$CONSOLE_HOSTNAME.crt** to Authorities in your **web browser Certificate Manager**
 
 
-### Get OCP 4 web console url and login
+### Get OCP web console url and login
 
 > :information_source: Run this on Installer
 
@@ -1031,7 +1032,7 @@ openssl s_client -showcerts -connect $CONSOLE_HOSTNAME:443  </dev/null | awk '/B
 oc get route -n openshift-console | awk 'NR>1 && $1 ~ "console" {print "\nWeb Console is available with htpasswd_provider as admin with admin as password at:\nhttps://"$2}'
 ```
 
->:bulb: Login with htpasswd_provider
+>:bulb: Login with htpasswd_provider as **admin** using **admin** as password
 
 ![](img/loginwith.jpg)
 

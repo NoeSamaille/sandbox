@@ -46,6 +46,7 @@ watch -n 10 vim-cmd vmsvc/getallvms | awk '$2 ~ "'$OTHERS_PATTERN'" && $1 !~ "Vm
 ### -  [List snaphot](#make-snapshot)
 ### -  [Make snaphot](#make-snapshot)
 ### -  [Revert snaphot](#revert-snapshot)
+### -  [Delete snaphot](#delete-snapshot)
 ### -  [Start all](#start-all)
 
 <br>
@@ -78,6 +79,16 @@ vim-cmd vmsvc/getallvms | awk '$2 ~ "'$ALL_PATTERN'" && $1 !~ "Vmid" {print "vim
 for vmid in $(vim-cmd vmsvc/getallvms | awk 'NR>1 && $2 ~ "'$ALL_PATTERN'" {print $1}'); do vim-cmd vmsvc/snapshot.get $vmid | grep -A 1 'Snapshot Name\s\{1,\}: '$SNAPNAME | awk -F' : ' 'NR>1 {print "vim-cmd vmsvc/snapshot.revert "'$vmid'" " $2 " suppressPowerOn"}' | sh; done
 ```
 <br>
+
+### Delete snapshot
+
+> :information_source: Run this on ESX
+
+```
+for vmid in $(vim-cmd vmsvc/getallvms | awk 'NR>1 && $2 ~ "'$ALL_PATTERN'" {print $1}'); do vim-cmd vmsvc/snapshot.get $vmid | grep -A 1 'Snapshot Name\s\{1,\}: '$SNAPNAME | awk -F' : ' 'NR>1 {print "vim-cmd vmsvc/snapshot.remove "'$vmid'" " $2}' | sh; done
+```
+<br>
+
 
 ### Start all
 
