@@ -43,7 +43,7 @@ One Lenovo **X3550M5** or similar to host **1** virtual machine:
 DOMAIN=$(cat /etc/resolv.conf | awk '$1 ~ "search" {print $2}') && echo $DOMAIN
 IP_HEAD="172.16"
 OCP=ocp5
-CLI_IP=$IP_HEAD.187.50
+CLI_IP=$IP_HEAD.187.30
 MZONE=/var/lib/bind/$DOMAIN.hosts
 RZONE=/var/lib/bind/$IP_HEAD.rev
 ```
@@ -234,7 +234,7 @@ watch -n 5 "./getVMAddress.sh"
 ```
 cat >> ~/.bashrc << EOF
 
-export OCP=ocp5
+export OCP=ocp3
 export SSHPASS=spcspc
 alias l='ls -Alhtr'
 
@@ -282,6 +282,7 @@ yum -y install bash-completion
 oc completion bash >>/etc/bash_completion.d/oc_completion
 ```
 
+> :bulb: Logout and login bash for change to take effect.
 
 
 <br>
