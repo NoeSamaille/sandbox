@@ -1,4 +1,4 @@
-[1mShowing the access information and User credentials[0m
+Showing the access information and User credentials
 
 Below are the available routes for FileNet Content Manager:   
 ==========================================================:
@@ -19,7 +19,7 @@ icp4adeploy-ums-sso-route        ums-sso.ums.cp4a.apps.ocp15.iicparis.fr.ibm.com
 icp4adeploy-ums-teams-route      ums-teams.ums.cp4a.apps.ocp15.iicparis.fr.ibm.com    /      icp4adeploy-ums-teams-service   https        reencrypt              None
 
 
-[1mYou can access ACCE and Navigator via the following URLs:[0m
+You can access ACCE and Navigator via the following URLs:
 https://cpe-cp4a.apps.ocp15.iicparis.fr.ibm.com/acce
 https://navigator-cp4a.apps.ocp15.iicparis.fr.ibm.com/navigator
 
@@ -27,10 +27,10 @@ User credentials:
 ================
 
 ACCE usename: cp4admin
-ACCE user password: sXcd65mbGOAhFMpAHujs
+ACCE user password: wRqIP5U99i1RNS7nUmqH
 
 Navigator usename: cp4admin
-Navigator user password: sXcd65mbGOAhFMpAHujs
+Navigator user password: wRqIP5U99i1RNS7nUmqH
 
 Below are the available routes for Automation Content Analyzer:   
 ==============================================================:
@@ -51,7 +51,7 @@ icp4adeploy-ums-sso-route        ums-sso.ums.cp4a.apps.ocp15.iicparis.fr.ibm.com
 icp4adeploy-ums-teams-route      ums-teams.ums.cp4a.apps.ocp15.iicparis.fr.ibm.com    /      icp4adeploy-ums-teams-service   https        reencrypt              None
 
 
-[1mYou can access Automation Content Analyzer via the following URLs:[0m
+You can access Automation Content Analyzer via the following URLs:
 https://backend.cp4a.apps.ocp15.iicparis.fr.ibm.com
 
 https://frontend.cp4a.apps.ocp15.iicparis.fr.ibm.com/?tid=ont1&ont=ONT1
@@ -59,6 +59,7 @@ User credentials:
 ================
 
 Default administrator username: cp4admin
-Default administrator password: sXcd65mbGOAhFMpAHujs
-[1mYou can access Business Automation Studio via the following URLs:[0m
+Default administrator password: wRqIP5U99i1RNS7nUmqH
+You can access Business Automation Studio via the following URLs:
 https://bas.cp4a.apps.ocp15.iicparis.fr.ibm.com/BAStudio
+
