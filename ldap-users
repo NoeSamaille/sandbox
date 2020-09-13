@@ -1,0 +1,186 @@
+[root@cli-ocp15 scripts]# oc get icp4acluster
+NAME          AGE
+icp4adeploy   100m
+[root@cli-ocp15 scripts]# oc get cm icp4adeploy-openldap-customldif -o yaml
+apiVersion: v1
+data:
+  ldap_user.ldif: |-
+    dn: uid=cp4admin,dc=example,dc=org
+    uid: cp4admin
+    cn: cp4admin
+    sn: cp4admin
+    userpassword: wRqIP5U99i1RNS7nUmqH
+    objectclass: top
+    objectClass: posixAccount
+    objectclass: organizationalPerson
+    objectclass: person
+    uidNumber: 14583102
+    gidNumber: 14564100
+    homeDirectory: /home/cp4admin/
+
+    dn: uid=user1,dc=example,dc=org
+    uid: user1
+    cn: user1
+    sn: user1
+    userpassword: vXoAoPxnuq1DVhEKeojw
+    objectclass: top
+    objectClass: posixAccount
+    objectclass: organizationalPerson
+    objectclass: person
+    uidNumber: 14583103
+    gidNumber: 14564100
+    homeDirectory: /home/user1/
+
+    dn: uid=user2,dc=example,dc=org
+    uid: user2
+    cn: user2
+    sn: user2
+    userpassword: Wxa1j2VBsrb2BDvP0PVj
+    objectclass: top
+    objectClass: posixAccount
+    objectclass: organizationalPerson
+    objectclass: person
+    uidNumber: 14583104
+    gidNumber: 14564100
+    homeDirectory: /home/user2/
+
+    dn: uid=user3,dc=example,dc=org
+    uid: user3
+    cn: user3
+    sn: user3
+    userpassword: NRvuhpaAQ05zY6ysnvZO
+    objectclass: top
+    objectClass: posixAccount
+    objectclass: organizationalPerson
+    objectclass: person
+    uidNumber: 14583105
+    gidNumber: 14564100
+    homeDirectory: /home/user3/
+
+    dn: uid=user4,dc=example,dc=org
+    uid: user4
+    cn: user4
+    sn: user4
+    userpassword: 6fOzEicrt56mayRQKtKw
+    objectclass: top
+    objectClass: posixAccount
+    objectclass: organizationalPerson
+    objectclass: person
+    uidNumber: 14583106
+    gidNumber: 14564100
+    homeDirectory: /home/user4/
+
+    dn: uid=user5,dc=example,dc=org
+    uid: user5
+    cn: user5
+    sn: user5
+    userpassword: yIhW2SZ8BrsWcI9rNJAe
+    objectclass: top
+    objectClass: posixAccount
+    objectclass: organizationalPerson
+    objectclass: person
+    uidNumber: 14583107
+    gidNumber: 14564100
+    homeDirectory: /home/user5/
+
+    dn: uid=user6,dc=example,dc=org
+    uid: user6
+    cn: user6
+    sn: user6
+    userpassword: vuYaxCZv0whybIuh34Xz
+    objectclass: top
+    objectClass: posixAccount
+    objectclass: organizationalPerson
+    objectclass: person
+    uidNumber: 14583108
+    gidNumber: 14564100
+    homeDirectory: /home/user6/
+
+    dn: uid=user7,dc=example,dc=org
+    uid: user7
+    cn: user7
+    sn: user7
+    userpassword: kdEhEksyYhTbi80jRsxJ
+    objectclass: top
+    objectClass: posixAccount
+    objectclass: organizationalPerson
+    objectclass: person
+    uidNumber: 14583109
+    gidNumber: 14564100
+    homeDirectory: /home/user7/
+
+    dn: uid=user8,dc=example,dc=org
+    uid: user8
+    cn: user8
+    sn: user8
+    userpassword: u3CAh9YQdMN82wjRcqu5
+    objectclass: top
+    objectClass: posixAccount
+    objectclass: organizationalPerson
+    objectclass: person
+    uidNumber: 14583110
+    gidNumber: 14564100
+    homeDirectory: /home/user8/
+
+    dn: uid=user9,dc=example,dc=org
+    uid: user9
+    cn: user9
+    sn: user9
+    userpassword: i1XuvShFHoNBHk1v8SLR
+    objectclass: top
+    objectClass: posixAccount
+    objectclass: organizationalPerson
+    objectclass: person
+    uidNumber: 14583111
+    gidNumber: 14564100
+    homeDirectory: /home/user9/
+
+    dn: uid=user10,dc=example,dc=org
+    uid: user10
+    cn: user10
+    sn: user10
+    userpassword: pFj4N44PCayom0blasnB
+    objectclass: top
+    objectClass: posixAccount
+    objectclass: organizationalPerson
+    objectclass: person
+    uidNumber: 14583112
+    gidNumber: 14564100
+    homeDirectory: /home/user10/
+
+    dn: cn=P8Administrators,dc=example,dc=org
+    objectclass: groupOfNames
+    objectclass: top
+    cn: P8Administrators
+    member: uid=cp4admin,dc=example,dc=org
+
+    dn: cn=GeneralUsers,dc=example,dc=org
+    objectclass: groupOfNames
+    objectclass: top
+    cn: GeneralUsers
+    member: uid=user1,dc=example,dc=org
+    member: uid=user2,dc=example,dc=org
+    member: uid=user3,dc=example,dc=org
+    member: uid=user4,dc=example,dc=org
+    member: uid=user5,dc=example,dc=org
+    member: uid=user6,dc=example,dc=org
+    member: uid=user7,dc=example,dc=org
+    member: uid=user8,dc=example,dc=org
+    member: uid=user9,dc=example,dc=org
+    member: uid=user10,dc=example,dc=org
+kind: ConfigMap
+metadata:
+  creationTimestamp: "2020-09-13T15:03:38Z"
+  labels:
+    app: icp4adeploy-openldap-deploy
+  name: icp4adeploy-openldap-customldif
+  namespace: cp4a
+  ownerReferences:
+  - apiVersion: icp4a.ibm.com/v1
+    kind: ICP4ACluster
+    name: icp4adeploy
+    uid: ddc7832a-6f92-47c4-ab06-bb3906b885da
+  resourceVersion: "9247174"
+  selfLink: /api/v1/namespaces/cp4a/configmaps/icp4adeploy-openldap-customldif
+  uid: 6dab93f8-b06d-45a4-9ecf-dcf3026bd202
+
