@@ -1,0 +1,65 @@
+Showing the access information and User credentials
+
+Below are the available routes for FileNet Content Manager:   
+==========================================================:
+
+NAME                             HOST/PORT                                            PATH   SERVICES                        PORT         TERMINATION            WILDCARD
+aca-spbackend                    backend.cp4a.apps.ocp15.iicparis.fr.ibm.com                 spbackend                       spbackend    reencrypt/Redirect     None
+aca-spfrontend                   frontend.cp4a.apps.ocp15.iicparis.fr.ibm.com                spfrontend                      spfrontend   reencrypt/Redirect     None
+icp4a-icp4adeploy-rr-route       rr.cp4a.apps.ocp15.iicparis.fr.ibm.com                      icp4adeploy-dba-rr-client       2379         passthrough/Redirect   None
+icp4adeploy-bastudio-route       bas.cp4a.apps.ocp15.iicparis.fr.ibm.com                     icp4adeploy-bastudio-service    https        reencrypt/Redirect     None
+icp4adeploy-cpe-route            cpe-cp4a.apps.ocp15.iicparis.fr.ibm.com                     icp4adeploy-cpe-svc             https        reencrypt/Redirect     None
+icp4adeploy-graphql-route        graphql-cp4a.apps.ocp15.iicparis.fr.ibm.com                 icp4adeploy-graphql-svc         https        reencrypt/Redirect     None
+icp4adeploy-navigator-route      navigator-cp4a.apps.ocp15.iicparis.fr.ibm.com               icp4adeploy-navigator-svc       https        reencrypt/Redirect     None
+icp4adeploy-pbk-ae-service       ae-pbk.cp4a.apps.ocp15.iicparis.fr.ibm.com                  icp4adeploy-pbk-ae-service      https        reencrypt/Redirect     None
+icp4adeploy-phpldapadmin-route   ldapwebconsole-cp4a.apps.ocp15.iicparis.fr.ibm.com          icp4adeploy-phpldapadmin-svc    https-port   reencrypt/Redirect     None
+icp4adeploy-ums-route            ums.cp4a.apps.ocp15.iicparis.fr.ibm.com              /      icp4adeploy-ums-service         https        reencrypt              None
+icp4adeploy-ums-scim-route       ums-scim.ums.cp4a.apps.ocp15.iicparis.fr.ibm.com     /      icp4adeploy-ums-scim-service    https        reencrypt              None
+icp4adeploy-ums-sso-route        ums-sso.ums.cp4a.apps.ocp15.iicparis.fr.ibm.com      /      icp4adeploy-ums-sso-service     https        reencrypt              None
+icp4adeploy-ums-teams-route      ums-teams.ums.cp4a.apps.ocp15.iicparis.fr.ibm.com    /      icp4adeploy-ums-teams-service   https        reencrypt              None
+
+
+You can access ACCE and Navigator via the following URLs:
+https://cpe-cp4a.apps.ocp15.iicparis.fr.ibm.com/acce
+https://navigator-cp4a.apps.ocp15.iicparis.fr.ibm.com/navigator
+
+User credentials:
+================
+
+ACCE usename: cp4admin
+ACCE user password: wRqIP5U99i1RNS7nUmqH
+
+Navigator usename: cp4admin
+Navigator user password: wRqIP5U99i1RNS7nUmqH
+
+Below are the available routes for Automation Content Analyzer:   
+==============================================================:
+
+NAME                             HOST/PORT                                            PATH   SERVICES                        PORT         TERMINATION            WILDCARD
+aca-spbackend                    backend.cp4a.apps.ocp15.iicparis.fr.ibm.com                 spbackend                       spbackend    reencrypt/Redirect     None
+aca-spfrontend                   frontend.cp4a.apps.ocp15.iicparis.fr.ibm.com                spfrontend                      spfrontend   reencrypt/Redirect     None
+icp4a-icp4adeploy-rr-route       rr.cp4a.apps.ocp15.iicparis.fr.ibm.com                      icp4adeploy-dba-rr-client       2379         passthrough/Redirect   None
+icp4adeploy-bastudio-route       bas.cp4a.apps.ocp15.iicparis.fr.ibm.com                     icp4adeploy-bastudio-service    https        reencrypt/Redirect     None
+icp4adeploy-cpe-route            cpe-cp4a.apps.ocp15.iicparis.fr.ibm.com                     icp4adeploy-cpe-svc             https        reencrypt/Redirect     None
+icp4adeploy-graphql-route        graphql-cp4a.apps.ocp15.iicparis.fr.ibm.com                 icp4adeploy-graphql-svc         https        reencrypt/Redirect     None
+icp4adeploy-navigator-route      navigator-cp4a.apps.ocp15.iicparis.fr.ibm.com               icp4adeploy-navigator-svc       https        reencrypt/Redirect     None
+icp4adeploy-pbk-ae-service       ae-pbk.cp4a.apps.ocp15.iicparis.fr.ibm.com                  icp4adeploy-pbk-ae-service      https        reencrypt/Redirect     None
+icp4adeploy-phpldapadmin-route   ldapwebconsole-cp4a.apps.ocp15.iicparis.fr.ibm.com          icp4adeploy-phpldapadmin-svc    https-port   reencrypt/Redirect     None
+icp4adeploy-ums-route            ums.cp4a.apps.ocp15.iicparis.fr.ibm.com              /      icp4adeploy-ums-service         https        reencrypt              None
+icp4adeploy-ums-scim-route       ums-scim.ums.cp4a.apps.ocp15.iicparis.fr.ibm.com     /      icp4adeploy-ums-scim-service    https        reencrypt              None
+icp4adeploy-ums-sso-route        ums-sso.ums.cp4a.apps.ocp15.iicparis.fr.ibm.com      /      icp4adeploy-ums-sso-service     https        reencrypt              None
+icp4adeploy-ums-teams-route      ums-teams.ums.cp4a.apps.ocp15.iicparis.fr.ibm.com    /      icp4adeploy-ums-teams-service   https        reencrypt              None
+
+
+You can access Automation Content Analyzer via the following URLs:
+https://backend.cp4a.apps.ocp15.iicparis.fr.ibm.com
+
+https://frontend.cp4a.apps.ocp15.iicparis.fr.ibm.com/?tid=ont1&ont=ONT1
+User credentials:
+================
+
+Default administrator username: cp4admin
+Default administrator password: wRqIP5U99i1RNS7nUmqH
+You can access Business Automation Studio via the following URLs:
+https://bas.cp4a.apps.ocp15.iicparis.fr.ibm.com/BAStudio
+
