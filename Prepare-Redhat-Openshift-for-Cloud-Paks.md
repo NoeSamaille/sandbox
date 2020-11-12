@@ -192,6 +192,13 @@ OC_FILE="openshift-client-linux-4.3.1.tar.gz"
 [ -z $(command -v oc) ] && { wget -c $WEB_SERVER_OC_URL; tar xvzf $OC_FILE -C $(echo $PATH | awk -F':' '{print $1}'); } || echo oc installed
 ```
 
+```
+yum -y install bash-completion
+oc completion bash >>/etc/bash_completion.d/oc_completion
+```
+
+> :bulb: Logout and login bash for change to take effect.
+
 ### Install podman
 
 > :information_source: Run this on Installer
